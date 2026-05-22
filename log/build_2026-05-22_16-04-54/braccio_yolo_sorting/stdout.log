@@ -1,0 +1,27 @@
+running egg_info
+writing ../../build/braccio_yolo_sorting/braccio_yolo_sorting.egg-info/PKG-INFO
+writing dependency_links to ../../build/braccio_yolo_sorting/braccio_yolo_sorting.egg-info/dependency_links.txt
+writing entry points to ../../build/braccio_yolo_sorting/braccio_yolo_sorting.egg-info/entry_points.txt
+writing requirements to ../../build/braccio_yolo_sorting/braccio_yolo_sorting.egg-info/requires.txt
+writing top-level names to ../../build/braccio_yolo_sorting/braccio_yolo_sorting.egg-info/top_level.txt
+reading manifest file '../../build/braccio_yolo_sorting/braccio_yolo_sorting.egg-info/SOURCES.txt'
+adding license file 'LICENSE'
+writing manifest file '../../build/braccio_yolo_sorting/braccio_yolo_sorting.egg-info/SOURCES.txt'
+running build
+running build_py
+copying braccio_yolo_sorting/braccio_moveit_sorting_controller.py -> /home/sachin/ros2_pick_n_place/build/braccio_yolo_sorting/build/lib/braccio_yolo_sorting
+running install
+running install_lib
+copying /home/sachin/ros2_pick_n_place/build/braccio_yolo_sorting/build/lib/braccio_yolo_sorting/braccio_moveit_sorting_controller.py -> /home/sachin/ros2_pick_n_place/install/braccio_yolo_sorting/lib/python3.12/site-packages/braccio_yolo_sorting
+byte-compiling /home/sachin/ros2_pick_n_place/install/braccio_yolo_sorting/lib/python3.12/site-packages/braccio_yolo_sorting/braccio_moveit_sorting_controller.py to braccio_moveit_sorting_controller.cpython-312.pyc
+running install_data
+copying package.xml -> /home/sachin/ros2_pick_n_place/install/braccio_yolo_sorting/share/braccio_yolo_sorting
+copying launch/braccio_moveit_sorting.launch.py -> /home/sachin/ros2_pick_n_place/install/braccio_yolo_sorting/share/braccio_yolo_sorting/launch
+running install_egg_info
+removing '/home/sachin/ros2_pick_n_place/install/braccio_yolo_sorting/lib/python3.12/site-packages/braccio_yolo_sorting-0.1.0-py3.12.egg-info' (and everything under it)
+Copying ../../build/braccio_yolo_sorting/braccio_yolo_sorting.egg-info to /home/sachin/ros2_pick_n_place/install/braccio_yolo_sorting/lib/python3.12/site-packages/braccio_yolo_sorting-0.1.0-py3.12.egg-info
+running install_scripts
+Installing braccio_moveit_sorting_controller.py script to /home/sachin/ros2_pick_n_place/install/braccio_yolo_sorting/lib/braccio_yolo_sorting
+Installing braccio_sorting_controller.py script to /home/sachin/ros2_pick_n_place/install/braccio_yolo_sorting/lib/braccio_yolo_sorting
+Installing yolo_detector_node.py script to /home/sachin/ros2_pick_n_place/install/braccio_yolo_sorting/lib/braccio_yolo_sorting
+writing list of installed files to '/home/sachin/ros2_pick_n_place/build/braccio_yolo_sorting/install.log'

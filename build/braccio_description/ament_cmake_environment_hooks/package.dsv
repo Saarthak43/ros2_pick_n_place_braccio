@@ -1,0 +1,4 @@
+source;share/braccio_description/local_setup.bash
+source;share/braccio_description/local_setup.dsv
+source;share/braccio_description/local_setup.sh
+source;share/braccio_description/local_setup.zsh

@@ -21,13 +21,14 @@ setup(
     zip_safe=True,
     maintainer='Your Name',
     maintainer_email='you@example.com',
-    description='YOLOv8 color sorting for Braccio (Simulation Only)',
+    description='MoveIt-based YOLO sorting for Braccio',
     license='BSD-3-Clause',
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
             'yolo_detector_node.py = braccio_yolo_sorting.yolo_detector_node:main',
             'braccio_sorting_controller.py = braccio_yolo_sorting.braccio_sorting_controller:main',
+            'braccio_moveit_sorting_controller.py = braccio_yolo_sorting.braccio_moveit_sorting_controller:main',
         ],
     },
 )

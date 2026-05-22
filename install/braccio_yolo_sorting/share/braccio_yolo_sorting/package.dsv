@@ -1,0 +1,6 @@
+source;share/braccio_yolo_sorting/hook/pythonpath.ps1
+source;share/braccio_yolo_sorting/hook/pythonpath.dsv
+source;share/braccio_yolo_sorting/hook/pythonpath.sh
+source;share/braccio_yolo_sorting/hook/ament_prefix_path.ps1
+source;share/braccio_yolo_sorting/hook/ament_prefix_path.dsv
+source;share/braccio_yolo_sorting/hook/ament_prefix_path.sh

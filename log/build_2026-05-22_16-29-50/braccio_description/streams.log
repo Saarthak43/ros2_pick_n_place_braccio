@@ -1,0 +1,39 @@
+[0.008s] Invoking command in '/home/sachin/ros2_pick_n_place/build/braccio_description': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/jazzy DEBUGINFOD_URLS=https://debuginfod.ubuntu.com PS1=(.ros2_venv) \[\e]0;\u@\h: \w\a\]${debian_chroot:+($debian_chroot)}\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]\$ VIRTUAL_ENV_PROMPT=(.ros2_venv) /usr/bin/cmake --build /home/sachin/ros2_pick_n_place/build/braccio_description -- -j12 -l12
+[0.042s] Invoked command in '/home/sachin/ros2_pick_n_place/build/braccio_description' returned '0': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/jazzy DEBUGINFOD_URLS=https://debuginfod.ubuntu.com PS1=(.ros2_venv) \[\e]0;\u@\h: \w\a\]${debian_chroot:+($debian_chroot)}\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]\$ VIRTUAL_ENV_PROMPT=(.ros2_venv) /usr/bin/cmake --build /home/sachin/ros2_pick_n_place/build/braccio_description -- -j12 -l12
+[0.052s] Invoking command in '/home/sachin/ros2_pick_n_place/build/braccio_description': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/jazzy DEBUGINFOD_URLS=https://debuginfod.ubuntu.com PS1=(.ros2_venv) \[\e]0;\u@\h: \w\a\]${debian_chroot:+($debian_chroot)}\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]\$ VIRTUAL_ENV_PROMPT=(.ros2_venv) /usr/bin/cmake --install /home/sachin/ros2_pick_n_place/build/braccio_description
+[0.061s] -- Install configuration: ""
+[0.061s] -- Up-to-date: /home/sachin/ros2_pick_n_place/install/braccio_description/share/braccio_description/urdf
+[0.061s] -- Up-to-date: /home/sachin/ros2_pick_n_place/install/braccio_description/share/braccio_description/urdf/braccio.urdf.xacro
+[0.061s] -- Up-to-date: /home/sachin/ros2_pick_n_place/install/braccio_description/share/braccio_description/stl
+[0.061s] -- Up-to-date: /home/sachin/ros2_pick_n_place/install/braccio_description/share/braccio_description/stl/braccio_left_gripper.stl
+[0.061s] -- Up-to-date: /home/sachin/ros2_pick_n_place/install/braccio_description/share/braccio_description/stl/braccio_base.stl
+[0.061s] -- Up-to-date: /home/sachin/ros2_pick_n_place/install/braccio_description/share/braccio_description/stl/braccio_elbow.stl
+[0.061s] -- Up-to-date: /home/sachin/ros2_pick_n_place/install/braccio_description/share/braccio_description/stl/braccio_wrist_roll.stl
+[0.061s] -- Up-to-date: /home/sachin/ros2_pick_n_place/install/braccio_description/share/braccio_description/stl/OAK-D.stl
+[0.061s] -- Up-to-date: /home/sachin/ros2_pick_n_place/install/braccio_description/share/braccio_description/stl/braccio_wrist_pitch.stl
+[0.061s] -- Up-to-date: /home/sachin/ros2_pick_n_place/install/braccio_description/share/braccio_description/stl/braccio_shoulder.stl
+[0.061s] -- Up-to-date: /home/sachin/ros2_pick_n_place/install/braccio_description/share/braccio_description/stl/braccio_right_gripper.stl
+[0.061s] -- Up-to-date: /home/sachin/ros2_pick_n_place/install/braccio_description/share/braccio_description/config
+[0.061s] -- Up-to-date: /home/sachin/ros2_pick_n_place/install/braccio_description/share/braccio_description/config/braccio_controllers.yaml
+[0.061s] -- Up-to-date: /home/sachin/ros2_pick_n_place/install/braccio_description/share/braccio_description/launch
+[0.062s] -- Up-to-date: /home/sachin/ros2_pick_n_place/install/braccio_description/share/braccio_description/launch/display.launch.py
+[0.062s] -- Up-to-date: /home/sachin/ros2_pick_n_place/install/braccio_description/share/braccio_description/rviz
+[0.062s] -- Up-to-date: /home/sachin/ros2_pick_n_place/install/braccio_description/share/braccio_description/rviz/moveit.rviz
+[0.062s] -- Up-to-date: /home/sachin/ros2_pick_n_place/install/braccio_description/share/braccio_description/rviz/braccio.rviz
+[0.062s] -- Up-to-date: /home/sachin/ros2_pick_n_place/install/braccio_description/share/braccio_description/rviz/urdf.rviz
+[0.062s] -- Up-to-date: /home/sachin/ros2_pick_n_place/install/braccio_description/share/ament_index/resource_index/package_run_dependencies/braccio_description
+[0.062s] -- Up-to-date: /home/sachin/ros2_pick_n_place/install/braccio_description/share/ament_index/resource_index/parent_prefix_path/braccio_description
+[0.062s] -- Up-to-date: /home/sachin/ros2_pick_n_place/install/braccio_description/share/braccio_description/environment/ament_prefix_path.sh
+[0.063s] -- Up-to-date: /home/sachin/ros2_pick_n_place/install/braccio_description/share/braccio_description/environment/ament_prefix_path.dsv
+[0.063s] -- Up-to-date: /home/sachin/ros2_pick_n_place/install/braccio_description/share/braccio_description/environment/path.sh
+[0.063s] -- Up-to-date: /home/sachin/ros2_pick_n_place/install/braccio_description/share/braccio_description/environment/path.dsv
+[0.063s] -- Up-to-date: /home/sachin/ros2_pick_n_place/install/braccio_description/share/braccio_description/local_setup.bash
+[0.063s] -- Up-to-date: /home/sachin/ros2_pick_n_place/install/braccio_description/share/braccio_description/local_setup.sh
+[0.063s] -- Up-to-date: /home/sachin/ros2_pick_n_place/install/braccio_description/share/braccio_description/local_setup.zsh
+[0.063s] -- Up-to-date: /home/sachin/ros2_pick_n_place/install/braccio_description/share/braccio_description/local_setup.dsv
+[0.063s] -- Installing: /home/sachin/ros2_pick_n_place/install/braccio_description/share/braccio_description/package.dsv
+[0.063s] -- Up-to-date: /home/sachin/ros2_pick_n_place/install/braccio_description/share/ament_index/resource_index/packages/braccio_description
+[0.063s] -- Up-to-date: /home/sachin/ros2_pick_n_place/install/braccio_description/share/braccio_description/cmake/braccio_descriptionConfig.cmake
+[0.063s] -- Up-to-date: /home/sachin/ros2_pick_n_place/install/braccio_description/share/braccio_description/cmake/braccio_descriptionConfig-version.cmake
+[0.063s] -- Up-to-date: /home/sachin/ros2_pick_n_place/install/braccio_description/share/braccio_description/package.xml
+[0.064s] Invoked command in '/home/sachin/ros2_pick_n_place/build/braccio_description' returned '0': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/jazzy DEBUGINFOD_URLS=https://debuginfod.ubuntu.com PS1=(.ros2_venv) \[\e]0;\u@\h: \w\a\]${debian_chroot:+($debian_chroot)}\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]\$ VIRTUAL_ENV_PROMPT=(.ros2_venv) /usr/bin/cmake --install /home/sachin/ros2_pick_n_place/build/braccio_description

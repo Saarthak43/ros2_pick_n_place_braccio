@@ -1,0 +1,25 @@
+-- Found ament_cmake: 2.5.6 (/opt/ros/jazzy/share/ament_cmake/cmake)
+-- Configuring done (0.2s)
+-- Generating done (0.0s)
+-- Build files have been written to: /home/sachin/ros2_pick_n_place/build/braccio_gazebo
+-- Install configuration: ""
+-- Up-to-date: /home/sachin/ros2_pick_n_place/install/braccio_gazebo/share/braccio_gazebo/worlds
+-- Installing: /home/sachin/ros2_pick_n_place/install/braccio_gazebo/share/braccio_gazebo/worlds/braccio_sorting.sdf
+-- Installing: /home/sachin/ros2_pick_n_place/install/braccio_gazebo/share/braccio_gazebo/worlds/braccio_sorting.world
+-- Up-to-date: /home/sachin/ros2_pick_n_place/install/braccio_gazebo/share/braccio_gazebo/launch
+-- Up-to-date: /home/sachin/ros2_pick_n_place/install/braccio_gazebo/share/braccio_gazebo/launch/braccio_gazebo.launch.py
+-- Up-to-date: /home/sachin/ros2_pick_n_place/install/braccio_gazebo/share/ament_index/resource_index/package_run_dependencies/braccio_gazebo
+-- Installing: /home/sachin/ros2_pick_n_place/install/braccio_gazebo/share/ament_index/resource_index/parent_prefix_path/braccio_gazebo
+-- Up-to-date: /home/sachin/ros2_pick_n_place/install/braccio_gazebo/share/braccio_gazebo/environment/ament_prefix_path.sh
+-- Up-to-date: /home/sachin/ros2_pick_n_place/install/braccio_gazebo/share/braccio_gazebo/environment/ament_prefix_path.dsv
+-- Up-to-date: /home/sachin/ros2_pick_n_place/install/braccio_gazebo/share/braccio_gazebo/environment/path.sh
+-- Up-to-date: /home/sachin/ros2_pick_n_place/install/braccio_gazebo/share/braccio_gazebo/environment/path.dsv
+-- Up-to-date: /home/sachin/ros2_pick_n_place/install/braccio_gazebo/share/braccio_gazebo/local_setup.bash
+-- Up-to-date: /home/sachin/ros2_pick_n_place/install/braccio_gazebo/share/braccio_gazebo/local_setup.sh
+-- Up-to-date: /home/sachin/ros2_pick_n_place/install/braccio_gazebo/share/braccio_gazebo/local_setup.zsh
+-- Up-to-date: /home/sachin/ros2_pick_n_place/install/braccio_gazebo/share/braccio_gazebo/local_setup.dsv
+-- Installing: /home/sachin/ros2_pick_n_place/install/braccio_gazebo/share/braccio_gazebo/package.dsv
+-- Up-to-date: /home/sachin/ros2_pick_n_place/install/braccio_gazebo/share/ament_index/resource_index/packages/braccio_gazebo
+-- Up-to-date: /home/sachin/ros2_pick_n_place/install/braccio_gazebo/share/braccio_gazebo/cmake/braccio_gazeboConfig.cmake
+-- Up-to-date: /home/sachin/ros2_pick_n_place/install/braccio_gazebo/share/braccio_gazebo/cmake/braccio_gazeboConfig-version.cmake
+-- Up-to-date: /home/sachin/ros2_pick_n_place/install/braccio_gazebo/share/braccio_gazebo/package.xml
