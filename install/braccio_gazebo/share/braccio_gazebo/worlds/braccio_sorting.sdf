@@ -66,7 +66,7 @@
       <self_collide>false</self_collide>
     </model>
     <model name='red_cube_1'>
-      <pose>0.15084075927734375 0.10085321962833405 0.02499990351498127 7.3830687785602785e-07 -1.5913860861152232e-06 0.003292500407826865</pose>
+      <pose>0.15082870423793793 0.10085725784301758 0.024999953806400299 -3.2288408312662187e-07 -1.7206202542487372e-10 0.0034777254112124531</pose>
       <link name='link'>
         <inertial>
           <mass>0.050000000000000003</mass>
@@ -106,7 +106,7 @@
       <self_collide>false</self_collide>
     </model>
     <model name='red_cube_2'>
-      <pose>0.12012651562690735 0.15020541846752167 0.024999966844916344 1.57728456622934e-07 -9.1298470381874679e-07 0.3003491059220994</pose>
+      <pose>0.12012864649295807 0.1502072811126709 0.024999955669045448 1.2828548415391826e-06 5.4084652805988489e-08 0.30040729400143135</pose>
       <link name='link'>
         <inertial>
           <mass>0.050000000000000003</mass>
@@ -146,7 +146,7 @@
       <self_collide>false</self_collide>
     </model>
     <model name='blue_cube_1'>
-      <pose>0.18250317871570587 0.050958633422851562 0.024997064843773842 2.1218829566560994e-08 -0.00012101645181161287 0.0037942026298108315</pose>
+      <pose>0.18250285089015961 0.050860688090324402 0.024999953806400299 -1.5890609063741243e-06 -3.1011745413717516e-09 0.004416294367619306</pose>
       <link name='link'>
         <inertial>
           <mass>0.050000000000000003</mass>
@@ -186,7 +186,7 @@
       <self_collide>false</self_collide>
     </model>
     <model name='blue_cube_2'>
-      <pose>0.1388409435749054 0.008061467669904232 0.02500247023999691 0.00012882542706815653 -0.00027851272989376025 0.49996313345547916</pose>
+      <pose>0.1388305127620697 0.007989262230694294 0.024999955669045448 3.0498667710515681e-07 5.4846338013620868e-10 0.5005827104859456</pose>
       <link name='link'>
         <inertial>
           <mass>0.050000000000000003</mass>
@@ -401,24 +401,5 @@
       </link>
       <self_collide>false</self_collide>
     </model>
-    <light name='directionallight' type='directional'>
-      <pose>0.321177854104301 -0.26703459464036244 2 0 0 0</pose>
-      <cast_shadows>true</cast_shadows>
-      <intensity>1</intensity>
-      <direction>0 0 -1</direction>
-      <diffuse>0.800000012 0.800000012 0.800000012 1</diffuse>
-      <specular>0.200000003 0.200000003 0.200000003 1</specular>
-      <attenuation>
-        <range>1000</range>
-        <linear>0.01</linear>
-        <constant>0.90000000000000002</constant>
-        <quadratic>0.001</quadratic>
-      </attenuation>
-      <spot>
-        <inner_angle>0</inner_angle>
-        <outer_angle>0</outer_angle>
-        <falloff>0</falloff>
-      </spot>
-    </light>
   </world>
 </sdf>

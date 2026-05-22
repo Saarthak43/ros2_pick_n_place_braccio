@@ -1,0 +1,24 @@
+[0.729s] Invoking command in '/home/sachin/ros2_pick_n_place/src/braccio_yolo_sorting': DEBUGINFOD_URLS=https://debuginfod.ubuntu.com PS1=(.ros2_venv) \[\e]0;\u@\h: \w\a\]${debian_chroot:+($debian_chroot)}\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]\$ PYTHONPATH=/home/sachin/ros2_pick_n_place/build/braccio_yolo_sorting/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/sachin/ros2_pick_n_place/install/braccio_yolo_sorting/lib/python3.12/site-packages:${PYTHONPATH} VIRTUAL_ENV_PROMPT=(.ros2_venv) /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py egg_info --egg-base ../../build/braccio_yolo_sorting build --build-base /home/sachin/ros2_pick_n_place/build/braccio_yolo_sorting/build install --record /home/sachin/ros2_pick_n_place/build/braccio_yolo_sorting/install.log --single-version-externally-managed install_data
+[0.919s] running egg_info
+[0.933s] writing ../../build/braccio_yolo_sorting/braccio_yolo_sorting.egg-info/PKG-INFO
+[0.933s] writing dependency_links to ../../build/braccio_yolo_sorting/braccio_yolo_sorting.egg-info/dependency_links.txt
+[0.933s] writing entry points to ../../build/braccio_yolo_sorting/braccio_yolo_sorting.egg-info/entry_points.txt
+[0.933s] writing requirements to ../../build/braccio_yolo_sorting/braccio_yolo_sorting.egg-info/requires.txt
+[0.933s] writing top-level names to ../../build/braccio_yolo_sorting/braccio_yolo_sorting.egg-info/top_level.txt
+[0.960s] reading manifest file '../../build/braccio_yolo_sorting/braccio_yolo_sorting.egg-info/SOURCES.txt'
+[0.960s] adding license file 'LICENSE'
+[0.961s] writing manifest file '../../build/braccio_yolo_sorting/braccio_yolo_sorting.egg-info/SOURCES.txt'
+[0.961s] running build
+[0.961s] running build_py
+[0.961s] running install
+[0.966s] running install_lib
+[0.981s] running install_data
+[0.981s] running install_egg_info
+[0.996s] removing '/home/sachin/ros2_pick_n_place/install/braccio_yolo_sorting/lib/python3.12/site-packages/braccio_yolo_sorting-0.1.0-py3.12.egg-info' (and everything under it)
+[0.997s] Copying ../../build/braccio_yolo_sorting/braccio_yolo_sorting.egg-info to /home/sachin/ros2_pick_n_place/install/braccio_yolo_sorting/lib/python3.12/site-packages/braccio_yolo_sorting-0.1.0-py3.12.egg-info
+[0.997s] running install_scripts
+[1.087s] Installing braccio_moveit_sorting_controller.py script to /home/sachin/ros2_pick_n_place/install/braccio_yolo_sorting/lib/braccio_yolo_sorting
+[1.087s] Installing braccio_sorting_controller.py script to /home/sachin/ros2_pick_n_place/install/braccio_yolo_sorting/lib/braccio_yolo_sorting
+[1.087s] Installing yolo_detector_node.py script to /home/sachin/ros2_pick_n_place/install/braccio_yolo_sorting/lib/braccio_yolo_sorting
+[1.087s] writing list of installed files to '/home/sachin/ros2_pick_n_place/build/braccio_yolo_sorting/install.log'
+[1.115s] Invoked command in '/home/sachin/ros2_pick_n_place/src/braccio_yolo_sorting' returned '0': DEBUGINFOD_URLS=https://debuginfod.ubuntu.com PS1=(.ros2_venv) \[\e]0;\u@\h: \w\a\]${debian_chroot:+($debian_chroot)}\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]\$ PYTHONPATH=/home/sachin/ros2_pick_n_place/build/braccio_yolo_sorting/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/sachin/ros2_pick_n_place/install/braccio_yolo_sorting/lib/python3.12/site-packages:${PYTHONPATH} VIRTUAL_ENV_PROMPT=(.ros2_venv) /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py egg_info --egg-base ../../build/braccio_yolo_sorting build --build-base /home/sachin/ros2_pick_n_place/build/braccio_yolo_sorting/build install --record /home/sachin/ros2_pick_n_place/build/braccio_yolo_sorting/install.log --single-version-externally-managed install_data

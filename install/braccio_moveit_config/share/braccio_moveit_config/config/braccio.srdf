@@ -22,23 +22,23 @@
     </group>
     <!--GROUP STATES: Purpose: Define a named state for a particular group, in terms of joint values. This is useful to define states like 'folded arms'-->
     <group_state name="home" group="arm">
-        <joint name="base_joint" value="2.5"/>
+        <joint name="base_joint" value="1.575"/>
         <joint name="elbow_joint" value="2.8"/>
         <joint name="shoulder_joint" value="2.8"/>
         <joint name="wrist_pitch_joint" value="2.8"/>
-        <joint name="wrist_roll_joint" value="2.6"/>
+        <joint name="wrist_roll_joint" value="2.8"/>
     </group_state>
     <group_state name="ready" group="arm">
         <joint name="base_joint" value="2.525"/>
         <joint name="elbow_joint" value="3.4464"/>
         <joint name="shoulder_joint" value="3.1646"/>
         <joint name="wrist_pitch_joint" value="3.3305"/>
-        <joint name="wrist_roll_joint" value="2.6"/>
+        <joint name="wrist_roll_joint" value="2.8"/>
     </group_state>
     <!--END EFFECTOR: Purpose: Represent information about an end effector.-->
     <end_effector name="gripper" parent_link="tool_tip" group="gripper" parent_group="arm"/>
     <!--VIRTUAL JOINT: Purpose: this element defines a virtual joint between a robot link and an external frame of reference (considered fixed with respect to the robot)-->
-    <virtual_joint name="virtual_joint" type="fixed" parent_frame="world" child_link="world"/>
+    <virtual_joint name="virtual_joint" type="fixed" parent_frame="world" child_link="base_link"/>
     <!--PASSIVE JOINT: Purpose: this element is used to mark joints that are not actuated-->
     <passive_joint name="sub_gripper_joint"/>
     <!--DISABLE COLLISIONS: By default it is assumed that any link of the robot could potentially come into collision with any other link in the robot. This tag disables collision checking between a specified pair of links. -->

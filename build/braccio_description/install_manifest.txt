@@ -9,6 +9,7 @@
 /home/sachin/ros2_pick_n_place/install/braccio_description/share/braccio_description/stl/braccio_right_gripper.stl
 /home/sachin/ros2_pick_n_place/install/braccio_description/share/braccio_description/config/braccio_controllers.yaml
 /home/sachin/ros2_pick_n_place/install/braccio_description/share/braccio_description/launch/display.launch.py
+/home/sachin/ros2_pick_n_place/install/braccio_description/share/braccio_description/rviz/braccio_with_camera.rviz
 /home/sachin/ros2_pick_n_place/install/braccio_description/share/braccio_description/rviz/moveit.rviz
 /home/sachin/ros2_pick_n_place/install/braccio_description/share/braccio_description/rviz/braccio.rviz
 /home/sachin/ros2_pick_n_place/install/braccio_description/share/braccio_description/rviz/urdf.rviz

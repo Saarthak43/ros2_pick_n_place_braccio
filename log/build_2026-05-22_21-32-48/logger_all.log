@@ -1,0 +1,313 @@
+[0.073s] DEBUG:colcon:Command line arguments: ['/usr/bin/colcon', 'build']
+[0.073s] DEBUG:colcon:Parsed command line arguments: Namespace(log_base=None, log_level=None, verb_name='build', build_base='build', install_base='install', merge_install=False, symlink_install=False, test_result_base=None, continue_on_error=False, executor='parallel', parallel_workers=12, event_handlers=None, ignore_user_meta=False, metas=['./colcon.meta'], base_paths=['.'], packages_ignore=None, packages_ignore_regex=None, paths=None, packages_up_to=None, packages_up_to_regex=None, packages_above=None, packages_above_and_dependencies=None, packages_above_depth=None, packages_select_by_dep=None, packages_skip_by_dep=None, packages_skip_up_to=None, packages_select_build_failed=False, packages_skip_build_finished=False, packages_select_test_failures=False, packages_skip_test_passed=False, packages_select=None, packages_skip=None, packages_select_regex=None, packages_skip_regex=None, packages_start=None, packages_end=None, allow_overriding=[], cmake_args=None, cmake_target=None, cmake_target_skip_unavailable=False, cmake_clean_cache=False, cmake_clean_first=False, cmake_force_configure=False, ament_cmake_args=None, catkin_cmake_args=None, catkin_skip_building_tests=False, mixin_files=None, mixin=None, verb_parser=<colcon_mixin.mixin.mixin_argument.MixinArgumentDecorator object at 0x7bf703895820>, verb_extension=<colcon_core.verb.build.BuildVerb object at 0x7bf704106510>, main=<bound method BuildVerb.main of <colcon_core.verb.build.BuildVerb object at 0x7bf704106510>>, mixin_verb=('build',))
+[0.100s] Level 1:colcon.colcon_core.package_discovery:discover_packages(colcon_meta) check parameters
+[0.100s] Level 1:colcon.colcon_core.package_discovery:discover_packages(recursive) check parameters
+[0.100s] Level 1:colcon.colcon_core.package_discovery:discover_packages(ignore) check parameters
+[0.100s] Level 1:colcon.colcon_core.package_discovery:discover_packages(path) check parameters
+[0.100s] Level 1:colcon.colcon_core.package_discovery:discover_packages(colcon_meta) discover
+[0.101s] Level 1:colcon.colcon_core.package_discovery:discover_packages(recursive) discover
+[0.101s] INFO:colcon.colcon_core.package_discovery:Crawling recursively for packages in '/home/sachin/ros2_pick_n_place'
+[0.101s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extensions ['ignore', 'ignore_ament_install']
+[0.101s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extension 'ignore'
+[0.101s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extension 'ignore_ament_install'
+[0.101s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extensions ['colcon_pkg']
+[0.101s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extension 'colcon_pkg'
+[0.101s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extensions ['colcon_meta']
+[0.101s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extension 'colcon_meta'
+[0.101s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extensions ['ros']
+[0.101s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extension 'ros'
+[0.120s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extensions ['cmake', 'python']
+[0.120s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extension 'cmake'
+[0.120s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extension 'python'
+[0.120s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extensions ['python_setup_py']
+[0.120s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extension 'python_setup_py'
+[0.120s] Level 1:colcon.colcon_core.package_identification:_identify(build) by extensions ['ignore', 'ignore_ament_install']
+[0.120s] Level 1:colcon.colcon_core.package_identification:_identify(build) by extension 'ignore'
+[0.120s] Level 1:colcon.colcon_core.package_identification:_identify(build) ignored
+[0.120s] Level 1:colcon.colcon_core.package_identification:_identify(install) by extensions ['ignore', 'ignore_ament_install']
+[0.120s] Level 1:colcon.colcon_core.package_identification:_identify(install) by extension 'ignore'
+[0.120s] Level 1:colcon.colcon_core.package_identification:_identify(install) ignored
+[0.121s] Level 1:colcon.colcon_core.package_identification:_identify(log) by extensions ['ignore', 'ignore_ament_install']
+[0.121s] Level 1:colcon.colcon_core.package_identification:_identify(log) by extension 'ignore'
+[0.121s] Level 1:colcon.colcon_core.package_identification:_identify(log) ignored
+[0.121s] Level 1:colcon.colcon_core.package_identification:_identify(src) by extensions ['ignore', 'ignore_ament_install']
+[0.121s] Level 1:colcon.colcon_core.package_identification:_identify(src) by extension 'ignore'
+[0.121s] Level 1:colcon.colcon_core.package_identification:_identify(src) by extension 'ignore_ament_install'
+[0.121s] Level 1:colcon.colcon_core.package_identification:_identify(src) by extensions ['colcon_pkg']
+[0.121s] Level 1:colcon.colcon_core.package_identification:_identify(src) by extension 'colcon_pkg'
+[0.121s] Level 1:colcon.colcon_core.package_identification:_identify(src) by extensions ['colcon_meta']
+[0.121s] Level 1:colcon.colcon_core.package_identification:_identify(src) by extension 'colcon_meta'
+[0.121s] Level 1:colcon.colcon_core.package_identification:_identify(src) by extensions ['ros']
+[0.121s] Level 1:colcon.colcon_core.package_identification:_identify(src) by extension 'ros'
+[0.121s] Level 1:colcon.colcon_core.package_identification:_identify(src) by extensions ['cmake', 'python']
+[0.121s] Level 1:colcon.colcon_core.package_identification:_identify(src) by extension 'cmake'
+[0.121s] Level 1:colcon.colcon_core.package_identification:_identify(src) by extension 'python'
+[0.121s] Level 1:colcon.colcon_core.package_identification:_identify(src) by extensions ['python_setup_py']
+[0.121s] Level 1:colcon.colcon_core.package_identification:_identify(src) by extension 'python_setup_py'
+[0.121s] Level 1:colcon.colcon_core.package_identification:_identify(src/braccio_description) by extensions ['ignore', 'ignore_ament_install']
+[0.121s] Level 1:colcon.colcon_core.package_identification:_identify(src/braccio_description) by extension 'ignore'
+[0.121s] Level 1:colcon.colcon_core.package_identification:_identify(src/braccio_description) by extension 'ignore_ament_install'
+[0.121s] Level 1:colcon.colcon_core.package_identification:_identify(src/braccio_description) by extensions ['colcon_pkg']
+[0.121s] Level 1:colcon.colcon_core.package_identification:_identify(src/braccio_description) by extension 'colcon_pkg'
+[0.121s] Level 1:colcon.colcon_core.package_identification:_identify(src/braccio_description) by extensions ['colcon_meta']
+[0.121s] Level 1:colcon.colcon_core.package_identification:_identify(src/braccio_description) by extension 'colcon_meta'
+[0.121s] Level 1:colcon.colcon_core.package_identification:_identify(src/braccio_description) by extensions ['ros']
+[0.121s] Level 1:colcon.colcon_core.package_identification:_identify(src/braccio_description) by extension 'ros'
+[0.123s] DEBUG:colcon.colcon_core.package_identification:Package 'src/braccio_description' with type 'ros.ament_cmake' and name 'braccio_description'
+[0.123s] Level 1:colcon.colcon_core.package_identification:_identify(src/braccio_gazebo) by extensions ['ignore', 'ignore_ament_install']
+[0.124s] Level 1:colcon.colcon_core.package_identification:_identify(src/braccio_gazebo) by extension 'ignore'
+[0.124s] Level 1:colcon.colcon_core.package_identification:_identify(src/braccio_gazebo) by extension 'ignore_ament_install'
+[0.124s] Level 1:colcon.colcon_core.package_identification:_identify(src/braccio_gazebo) by extensions ['colcon_pkg']
+[0.124s] Level 1:colcon.colcon_core.package_identification:_identify(src/braccio_gazebo) by extension 'colcon_pkg'
+[0.124s] Level 1:colcon.colcon_core.package_identification:_identify(src/braccio_gazebo) by extensions ['colcon_meta']
+[0.124s] Level 1:colcon.colcon_core.package_identification:_identify(src/braccio_gazebo) by extension 'colcon_meta'
+[0.124s] Level 1:colcon.colcon_core.package_identification:_identify(src/braccio_gazebo) by extensions ['ros']
+[0.124s] Level 1:colcon.colcon_core.package_identification:_identify(src/braccio_gazebo) by extension 'ros'
+[0.124s] DEBUG:colcon.colcon_core.package_identification:Package 'src/braccio_gazebo' with type 'ros.ament_cmake' and name 'braccio_gazebo'
+[0.124s] Level 1:colcon.colcon_core.package_identification:_identify(src/braccio_moveit_config) by extensions ['ignore', 'ignore_ament_install']
+[0.124s] Level 1:colcon.colcon_core.package_identification:_identify(src/braccio_moveit_config) by extension 'ignore'
+[0.124s] Level 1:colcon.colcon_core.package_identification:_identify(src/braccio_moveit_config) by extension 'ignore_ament_install'
+[0.124s] Level 1:colcon.colcon_core.package_identification:_identify(src/braccio_moveit_config) by extensions ['colcon_pkg']
+[0.124s] Level 1:colcon.colcon_core.package_identification:_identify(src/braccio_moveit_config) by extension 'colcon_pkg'
+[0.124s] Level 1:colcon.colcon_core.package_identification:_identify(src/braccio_moveit_config) by extensions ['colcon_meta']
+[0.124s] Level 1:colcon.colcon_core.package_identification:_identify(src/braccio_moveit_config) by extension 'colcon_meta'
+[0.125s] Level 1:colcon.colcon_core.package_identification:_identify(src/braccio_moveit_config) by extensions ['ros']
+[0.125s] Level 1:colcon.colcon_core.package_identification:_identify(src/braccio_moveit_config) by extension 'ros'
+[0.125s] DEBUG:colcon.colcon_core.package_identification:Package 'src/braccio_moveit_config' with type 'ros.ament_cmake' and name 'braccio_moveit_config'
+[0.125s] Level 1:colcon.colcon_core.package_identification:_identify(src/braccio_yolo_sorting) by extensions ['ignore', 'ignore_ament_install']
+[0.125s] Level 1:colcon.colcon_core.package_identification:_identify(src/braccio_yolo_sorting) by extension 'ignore'
+[0.125s] Level 1:colcon.colcon_core.package_identification:_identify(src/braccio_yolo_sorting) by extension 'ignore_ament_install'
+[0.125s] Level 1:colcon.colcon_core.package_identification:_identify(src/braccio_yolo_sorting) by extensions ['colcon_pkg']
+[0.125s] Level 1:colcon.colcon_core.package_identification:_identify(src/braccio_yolo_sorting) by extension 'colcon_pkg'
+[0.125s] Level 1:colcon.colcon_core.package_identification:_identify(src/braccio_yolo_sorting) by extensions ['colcon_meta']
+[0.125s] Level 1:colcon.colcon_core.package_identification:_identify(src/braccio_yolo_sorting) by extension 'colcon_meta'
+[0.125s] Level 1:colcon.colcon_core.package_identification:_identify(src/braccio_yolo_sorting) by extensions ['ros']
+[0.125s] Level 1:colcon.colcon_core.package_identification:_identify(src/braccio_yolo_sorting) by extension 'ros'
+[0.126s] DEBUG:colcon.colcon_core.package_identification:Package 'src/braccio_yolo_sorting' with type 'ros.ament_python' and name 'braccio_yolo_sorting'
+[0.126s] Level 1:colcon.colcon_core.package_discovery:discover_packages(recursive) using defaults
+[0.126s] Level 1:colcon.colcon_core.package_discovery:discover_packages(ignore) discover
+[0.126s] Level 1:colcon.colcon_core.package_discovery:discover_packages(ignore) using defaults
+[0.126s] Level 1:colcon.colcon_core.package_discovery:discover_packages(path) discover
+[0.126s] Level 1:colcon.colcon_core.package_discovery:discover_packages(path) using defaults
+[0.140s] Level 1:colcon.colcon_core.package_discovery:discover_packages(prefix_path) check parameters
+[0.140s] Level 1:colcon.colcon_core.package_discovery:discover_packages(prefix_path) discover
+[0.141s] DEBUG:colcon.colcon_installed_package_information.package_discovery:Found 4 installed packages in /home/sachin/ros2_pick_n_place/install
+[0.142s] DEBUG:colcon.colcon_installed_package_information.package_discovery:Found 541 installed packages in /opt/ros/jazzy
+[0.144s] Level 1:colcon.colcon_core.package_discovery:discover_packages(prefix_path) using defaults
+[0.203s] Level 5:colcon.colcon_core.verb:set package 'braccio_description' build argument 'cmake_args' from command line to 'None'
+[0.203s] Level 5:colcon.colcon_core.verb:set package 'braccio_description' build argument 'cmake_target' from command line to 'None'
+[0.203s] Level 5:colcon.colcon_core.verb:set package 'braccio_description' build argument 'cmake_target_skip_unavailable' from command line to 'False'
+[0.203s] Level 5:colcon.colcon_core.verb:set package 'braccio_description' build argument 'cmake_clean_cache' from command line to 'False'
+[0.203s] Level 5:colcon.colcon_core.verb:set package 'braccio_description' build argument 'cmake_clean_first' from command line to 'False'
+[0.203s] Level 5:colcon.colcon_core.verb:set package 'braccio_description' build argument 'cmake_force_configure' from command line to 'False'
+[0.203s] Level 5:colcon.colcon_core.verb:set package 'braccio_description' build argument 'ament_cmake_args' from command line to 'None'
+[0.203s] Level 5:colcon.colcon_core.verb:set package 'braccio_description' build argument 'catkin_cmake_args' from command line to 'None'
+[0.203s] Level 5:colcon.colcon_core.verb:set package 'braccio_description' build argument 'catkin_skip_building_tests' from command line to 'False'
+[0.203s] DEBUG:colcon.colcon_core.verb:Building package 'braccio_description' with the following arguments: {'ament_cmake_args': None, 'build_base': '/home/sachin/ros2_pick_n_place/build/braccio_description', 'catkin_cmake_args': None, 'catkin_skip_building_tests': False, 'cmake_args': None, 'cmake_clean_cache': False, 'cmake_clean_first': False, 'cmake_force_configure': False, 'cmake_target': None, 'cmake_target_skip_unavailable': False, 'install_base': '/home/sachin/ros2_pick_n_place/install/braccio_description', 'merge_install': False, 'path': '/home/sachin/ros2_pick_n_place/src/braccio_description', 'symlink_install': False, 'test_result_base': None}
+[0.203s] Level 5:colcon.colcon_core.verb:set package 'braccio_gazebo' build argument 'cmake_args' from command line to 'None'
+[0.204s] Level 5:colcon.colcon_core.verb:set package 'braccio_gazebo' build argument 'cmake_target' from command line to 'None'
+[0.204s] Level 5:colcon.colcon_core.verb:set package 'braccio_gazebo' build argument 'cmake_target_skip_unavailable' from command line to 'False'
+[0.204s] Level 5:colcon.colcon_core.verb:set package 'braccio_gazebo' build argument 'cmake_clean_cache' from command line to 'False'
+[0.204s] Level 5:colcon.colcon_core.verb:set package 'braccio_gazebo' build argument 'cmake_clean_first' from command line to 'False'
+[0.204s] Level 5:colcon.colcon_core.verb:set package 'braccio_gazebo' build argument 'cmake_force_configure' from command line to 'False'
+[0.204s] Level 5:colcon.colcon_core.verb:set package 'braccio_gazebo' build argument 'ament_cmake_args' from command line to 'None'
+[0.204s] Level 5:colcon.colcon_core.verb:set package 'braccio_gazebo' build argument 'catkin_cmake_args' from command line to 'None'
+[0.204s] Level 5:colcon.colcon_core.verb:set package 'braccio_gazebo' build argument 'catkin_skip_building_tests' from command line to 'False'
+[0.204s] DEBUG:colcon.colcon_core.verb:Building package 'braccio_gazebo' with the following arguments: {'ament_cmake_args': None, 'build_base': '/home/sachin/ros2_pick_n_place/build/braccio_gazebo', 'catkin_cmake_args': None, 'catkin_skip_building_tests': False, 'cmake_args': None, 'cmake_clean_cache': False, 'cmake_clean_first': False, 'cmake_force_configure': False, 'cmake_target': None, 'cmake_target_skip_unavailable': False, 'install_base': '/home/sachin/ros2_pick_n_place/install/braccio_gazebo', 'merge_install': False, 'path': '/home/sachin/ros2_pick_n_place/src/braccio_gazebo', 'symlink_install': False, 'test_result_base': None}
+[0.204s] Level 5:colcon.colcon_core.verb:set package 'braccio_moveit_config' build argument 'cmake_args' from command line to 'None'
+[0.204s] Level 5:colcon.colcon_core.verb:set package 'braccio_moveit_config' build argument 'cmake_target' from command line to 'None'
+[0.204s] Level 5:colcon.colcon_core.verb:set package 'braccio_moveit_config' build argument 'cmake_target_skip_unavailable' from command line to 'False'
+[0.204s] Level 5:colcon.colcon_core.verb:set package 'braccio_moveit_config' build argument 'cmake_clean_cache' from command line to 'False'
+[0.204s] Level 5:colcon.colcon_core.verb:set package 'braccio_moveit_config' build argument 'cmake_clean_first' from command line to 'False'
+[0.204s] Level 5:colcon.colcon_core.verb:set package 'braccio_moveit_config' build argument 'cmake_force_configure' from command line to 'False'
+[0.204s] Level 5:colcon.colcon_core.verb:set package 'braccio_moveit_config' build argument 'ament_cmake_args' from command line to 'None'
+[0.204s] Level 5:colcon.colcon_core.verb:set package 'braccio_moveit_config' build argument 'catkin_cmake_args' from command line to 'None'
+[0.204s] Level 5:colcon.colcon_core.verb:set package 'braccio_moveit_config' build argument 'catkin_skip_building_tests' from command line to 'False'
+[0.204s] DEBUG:colcon.colcon_core.verb:Building package 'braccio_moveit_config' with the following arguments: {'ament_cmake_args': None, 'build_base': '/home/sachin/ros2_pick_n_place/build/braccio_moveit_config', 'catkin_cmake_args': None, 'catkin_skip_building_tests': False, 'cmake_args': None, 'cmake_clean_cache': False, 'cmake_clean_first': False, 'cmake_force_configure': False, 'cmake_target': None, 'cmake_target_skip_unavailable': False, 'install_base': '/home/sachin/ros2_pick_n_place/install/braccio_moveit_config', 'merge_install': False, 'path': '/home/sachin/ros2_pick_n_place/src/braccio_moveit_config', 'symlink_install': False, 'test_result_base': None}
+[0.204s] Level 5:colcon.colcon_core.verb:set package 'braccio_yolo_sorting' build argument 'cmake_args' from command line to 'None'
+[0.204s] Level 5:colcon.colcon_core.verb:set package 'braccio_yolo_sorting' build argument 'cmake_target' from command line to 'None'
+[0.204s] Level 5:colcon.colcon_core.verb:set package 'braccio_yolo_sorting' build argument 'cmake_target_skip_unavailable' from command line to 'False'
+[0.204s] Level 5:colcon.colcon_core.verb:set package 'braccio_yolo_sorting' build argument 'cmake_clean_cache' from command line to 'False'
+[0.204s] Level 5:colcon.colcon_core.verb:set package 'braccio_yolo_sorting' build argument 'cmake_clean_first' from command line to 'False'
+[0.204s] Level 5:colcon.colcon_core.verb:set package 'braccio_yolo_sorting' build argument 'cmake_force_configure' from command line to 'False'
+[0.204s] Level 5:colcon.colcon_core.verb:set package 'braccio_yolo_sorting' build argument 'ament_cmake_args' from command line to 'None'
+[0.204s] Level 5:colcon.colcon_core.verb:set package 'braccio_yolo_sorting' build argument 'catkin_cmake_args' from command line to 'None'
+[0.204s] Level 5:colcon.colcon_core.verb:set package 'braccio_yolo_sorting' build argument 'catkin_skip_building_tests' from command line to 'False'
+[0.204s] DEBUG:colcon.colcon_core.verb:Building package 'braccio_yolo_sorting' with the following arguments: {'ament_cmake_args': None, 'build_base': '/home/sachin/ros2_pick_n_place/build/braccio_yolo_sorting', 'catkin_cmake_args': None, 'catkin_skip_building_tests': False, 'cmake_args': None, 'cmake_clean_cache': False, 'cmake_clean_first': False, 'cmake_force_configure': False, 'cmake_target': None, 'cmake_target_skip_unavailable': False, 'install_base': '/home/sachin/ros2_pick_n_place/install/braccio_yolo_sorting', 'merge_install': False, 'path': '/home/sachin/ros2_pick_n_place/src/braccio_yolo_sorting', 'symlink_install': False, 'test_result_base': None}
+[0.204s] INFO:colcon.colcon_core.executor:Executing jobs using 'parallel' executor
+[0.205s] DEBUG:colcon.colcon_parallel_executor.executor.parallel:run_until_complete
+[0.205s] INFO:colcon.colcon_ros.task.ament_cmake.build:Building ROS package in '/home/sachin/ros2_pick_n_place/src/braccio_description' with build type 'ament_cmake'
+[0.205s] INFO:colcon.colcon_cmake.task.cmake.build:Building CMake package in '/home/sachin/ros2_pick_n_place/src/braccio_description'
+[0.207s] INFO:colcon.colcon_core.plugin_system:Skipping extension 'colcon_core.shell.bat': Not used on non-Windows systems
+[0.207s] INFO:colcon.colcon_core.shell:Skip shell extension 'powershell' for command environment: Not usable outside of PowerShell
+[0.207s] DEBUG:colcon.colcon_core.shell:Skip shell extension 'dsv' for command environment
+[0.216s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoking command in '/home/sachin/ros2_pick_n_place/build/braccio_description': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/home/sachin/ros2_pick_n_place/install/braccio_yolo_sorting:/opt/ros/jazzy DEBUGINFOD_URLS=https://debuginfod.ubuntu.com PS1=(.ros2_venv) \[\e]0;\u@\h: \w\a\]${debian_chroot:+($debian_chroot)}\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]\$ VIRTUAL_ENV_PROMPT=(.ros2_venv) /usr/bin/cmake --build /home/sachin/ros2_pick_n_place/build/braccio_description -- -j12 -l12
+[0.257s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoked command in '/home/sachin/ros2_pick_n_place/build/braccio_description' returned '0': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/home/sachin/ros2_pick_n_place/install/braccio_yolo_sorting:/opt/ros/jazzy DEBUGINFOD_URLS=https://debuginfod.ubuntu.com PS1=(.ros2_venv) \[\e]0;\u@\h: \w\a\]${debian_chroot:+($debian_chroot)}\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]\$ VIRTUAL_ENV_PROMPT=(.ros2_venv) /usr/bin/cmake --build /home/sachin/ros2_pick_n_place/build/braccio_description -- -j12 -l12
+[0.265s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoking command in '/home/sachin/ros2_pick_n_place/build/braccio_description': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/home/sachin/ros2_pick_n_place/install/braccio_yolo_sorting:/opt/ros/jazzy DEBUGINFOD_URLS=https://debuginfod.ubuntu.com PS1=(.ros2_venv) \[\e]0;\u@\h: \w\a\]${debian_chroot:+($debian_chroot)}\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]\$ VIRTUAL_ENV_PROMPT=(.ros2_venv) /usr/bin/cmake --install /home/sachin/ros2_pick_n_place/build/braccio_description
+[0.276s] Level 1:colcon.colcon_core.environment:create_environment_scripts_only(braccio_description)
+[0.276s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoked command in '/home/sachin/ros2_pick_n_place/build/braccio_description' returned '0': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/home/sachin/ros2_pick_n_place/install/braccio_yolo_sorting:/opt/ros/jazzy DEBUGINFOD_URLS=https://debuginfod.ubuntu.com PS1=(.ros2_venv) \[\e]0;\u@\h: \w\a\]${debian_chroot:+($debian_chroot)}\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]\$ VIRTUAL_ENV_PROMPT=(.ros2_venv) /usr/bin/cmake --install /home/sachin/ros2_pick_n_place/build/braccio_description
+[0.278s] Level 1:colcon.colcon_core.environment:checking '/home/sachin/ros2_pick_n_place/install/braccio_description' for CMake module files
+[0.278s] Level 1:colcon.colcon_core.environment:checking '/home/sachin/ros2_pick_n_place/install/braccio_description' for CMake config files
+[0.279s] Level 1:colcon.colcon_core.shell:create_environment_hook('braccio_description', 'cmake_prefix_path')
+[0.279s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/sachin/ros2_pick_n_place/install/braccio_description/share/braccio_description/hook/cmake_prefix_path.ps1'
+[0.280s] INFO:colcon.colcon_core.shell:Creating environment descriptor '/home/sachin/ros2_pick_n_place/install/braccio_description/share/braccio_description/hook/cmake_prefix_path.dsv'
+[0.280s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/sachin/ros2_pick_n_place/install/braccio_description/share/braccio_description/hook/cmake_prefix_path.sh'
+[0.281s] Level 1:colcon.colcon_core.environment:checking '/home/sachin/ros2_pick_n_place/install/braccio_description/bin'
+[0.281s] Level 1:colcon.colcon_core.environment:checking '/home/sachin/ros2_pick_n_place/install/braccio_description/lib/pkgconfig/braccio_description.pc'
+[0.281s] Level 1:colcon.colcon_core.environment:checking '/home/sachin/ros2_pick_n_place/install/braccio_description/lib/python3.12/site-packages'
+[0.282s] Level 1:colcon.colcon_core.environment:checking '/home/sachin/ros2_pick_n_place/install/braccio_description/bin'
+[0.282s] INFO:colcon.colcon_core.shell:Creating package script '/home/sachin/ros2_pick_n_place/install/braccio_description/share/braccio_description/package.ps1'
+[0.283s] INFO:colcon.colcon_core.shell:Creating package descriptor '/home/sachin/ros2_pick_n_place/install/braccio_description/share/braccio_description/package.dsv'
+[0.283s] INFO:colcon.colcon_core.shell:Creating package script '/home/sachin/ros2_pick_n_place/install/braccio_description/share/braccio_description/package.sh'
+[0.283s] INFO:colcon.colcon_core.shell:Creating package script '/home/sachin/ros2_pick_n_place/install/braccio_description/share/braccio_description/package.bash'
+[0.284s] INFO:colcon.colcon_core.shell:Creating package script '/home/sachin/ros2_pick_n_place/install/braccio_description/share/braccio_description/package.zsh'
+[0.284s] Level 1:colcon.colcon_core.environment:create_file_with_runtime_dependencies(/home/sachin/ros2_pick_n_place/install/braccio_description/share/colcon-core/packages/braccio_description)
+[0.284s] Level 1:colcon.colcon_core.environment:create_environment_scripts_only(braccio_description)
+[0.284s] Level 1:colcon.colcon_core.environment:checking '/home/sachin/ros2_pick_n_place/install/braccio_description' for CMake module files
+[0.285s] Level 1:colcon.colcon_core.environment:checking '/home/sachin/ros2_pick_n_place/install/braccio_description' for CMake config files
+[0.285s] Level 1:colcon.colcon_core.shell:create_environment_hook('braccio_description', 'cmake_prefix_path')
+[0.285s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/sachin/ros2_pick_n_place/install/braccio_description/share/braccio_description/hook/cmake_prefix_path.ps1'
+[0.285s] INFO:colcon.colcon_core.shell:Creating environment descriptor '/home/sachin/ros2_pick_n_place/install/braccio_description/share/braccio_description/hook/cmake_prefix_path.dsv'
+[0.285s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/sachin/ros2_pick_n_place/install/braccio_description/share/braccio_description/hook/cmake_prefix_path.sh'
+[0.286s] Level 1:colcon.colcon_core.environment:checking '/home/sachin/ros2_pick_n_place/install/braccio_description/bin'
+[0.286s] Level 1:colcon.colcon_core.environment:checking '/home/sachin/ros2_pick_n_place/install/braccio_description/lib/pkgconfig/braccio_description.pc'
+[0.286s] Level 1:colcon.colcon_core.environment:checking '/home/sachin/ros2_pick_n_place/install/braccio_description/lib/python3.12/site-packages'
+[0.286s] Level 1:colcon.colcon_core.environment:checking '/home/sachin/ros2_pick_n_place/install/braccio_description/bin'
+[0.286s] INFO:colcon.colcon_core.shell:Creating package script '/home/sachin/ros2_pick_n_place/install/braccio_description/share/braccio_description/package.ps1'
+[0.287s] INFO:colcon.colcon_core.shell:Creating package descriptor '/home/sachin/ros2_pick_n_place/install/braccio_description/share/braccio_description/package.dsv'
+[0.287s] INFO:colcon.colcon_core.shell:Creating package script '/home/sachin/ros2_pick_n_place/install/braccio_description/share/braccio_description/package.sh'
+[0.288s] INFO:colcon.colcon_core.shell:Creating package script '/home/sachin/ros2_pick_n_place/install/braccio_description/share/braccio_description/package.bash'
+[0.288s] INFO:colcon.colcon_core.shell:Creating package script '/home/sachin/ros2_pick_n_place/install/braccio_description/share/braccio_description/package.zsh'
+[0.288s] Level 1:colcon.colcon_core.environment:create_file_with_runtime_dependencies(/home/sachin/ros2_pick_n_place/install/braccio_description/share/colcon-core/packages/braccio_description)
+[0.288s] INFO:colcon.colcon_ros.task.ament_cmake.build:Building ROS package in '/home/sachin/ros2_pick_n_place/src/braccio_gazebo' with build type 'ament_cmake'
+[0.288s] INFO:colcon.colcon_cmake.task.cmake.build:Building CMake package in '/home/sachin/ros2_pick_n_place/src/braccio_gazebo'
+[0.289s] INFO:colcon.colcon_core.shell:Skip shell extension 'powershell' for command environment: Not usable outside of PowerShell
+[0.289s] DEBUG:colcon.colcon_core.shell:Skip shell extension 'dsv' for command environment
+[0.294s] INFO:colcon.colcon_ros.task.ament_cmake.build:Building ROS package in '/home/sachin/ros2_pick_n_place/src/braccio_moveit_config' with build type 'ament_cmake'
+[0.295s] INFO:colcon.colcon_cmake.task.cmake.build:Building CMake package in '/home/sachin/ros2_pick_n_place/src/braccio_moveit_config'
+[0.295s] INFO:colcon.colcon_core.shell:Skip shell extension 'powershell' for command environment: Not usable outside of PowerShell
+[0.295s] DEBUG:colcon.colcon_core.shell:Skip shell extension 'dsv' for command environment
+[0.304s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoking command in '/home/sachin/ros2_pick_n_place/build/braccio_gazebo': CMAKE_PREFIX_PATH=/home/sachin/ros2_pick_n_place/install/braccio_description:/home/sachin/ros2_pick_n_place/install/braccio_moveit_config:/home/sachin/ros2_pick_n_place/install/braccio_gazebo:/opt/ros/jazzy/opt/gz_sim_vendor:/opt/ros/jazzy/opt/gz_sensors_vendor:/opt/ros/jazzy/opt/gz_physics_vendor:/opt/ros/jazzy/opt/sdformat_vendor:/opt/ros/jazzy/opt/gz_gui_vendor:/opt/ros/jazzy/opt/gz_transport_vendor:/opt/ros/jazzy/opt/gz_rendering_vendor:/opt/ros/jazzy/opt/gz_plugin_vendor:/opt/ros/jazzy/opt/gz_fuel_tools_vendor:/opt/ros/jazzy/opt/gz_msgs_vendor:/opt/ros/jazzy/opt/gz_common_vendor:/opt/ros/jazzy/opt/gz_math_vendor:/opt/ros/jazzy/opt/gz_utils_vendor:/opt/ros/jazzy/opt/gz_tools_vendor:/opt/ros/jazzy/opt/gz_ogre_next_vendor:/opt/ros/jazzy/opt/gz_dartsim_vendor:/opt/ros/jazzy/opt/gz_cmake_vendor:/home/sachin/ros2_pick_n_place/install/braccio_yolo_sorting:/opt/ros/jazzy DEBUGINFOD_URLS=https://debuginfod.ubuntu.com PS1=(.ros2_venv) \[\e]0;\u@\h: \w\a\]${debian_chroot:+($debian_chroot)}\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]\$ VIRTUAL_ENV_PROMPT=(.ros2_venv) /usr/bin/cmake --build /home/sachin/ros2_pick_n_place/build/braccio_gazebo -- -j12 -l12
+[0.307s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoking command in '/home/sachin/ros2_pick_n_place/build/braccio_moveit_config': CMAKE_PREFIX_PATH=/home/sachin/ros2_pick_n_place/install/braccio_description:/home/sachin/ros2_pick_n_place/install/braccio_moveit_config:/home/sachin/ros2_pick_n_place/install/braccio_gazebo:/opt/ros/jazzy/opt/gz_sim_vendor:/opt/ros/jazzy/opt/gz_sensors_vendor:/opt/ros/jazzy/opt/gz_physics_vendor:/opt/ros/jazzy/opt/sdformat_vendor:/opt/ros/jazzy/opt/gz_gui_vendor:/opt/ros/jazzy/opt/gz_transport_vendor:/opt/ros/jazzy/opt/gz_rendering_vendor:/opt/ros/jazzy/opt/gz_plugin_vendor:/opt/ros/jazzy/opt/gz_fuel_tools_vendor:/opt/ros/jazzy/opt/gz_msgs_vendor:/opt/ros/jazzy/opt/gz_common_vendor:/opt/ros/jazzy/opt/gz_math_vendor:/opt/ros/jazzy/opt/gz_utils_vendor:/opt/ros/jazzy/opt/gz_tools_vendor:/opt/ros/jazzy/opt/gz_ogre_next_vendor:/opt/ros/jazzy/opt/gz_dartsim_vendor:/opt/ros/jazzy/opt/gz_cmake_vendor:/home/sachin/ros2_pick_n_place/install/braccio_yolo_sorting:/opt/ros/jazzy DEBUGINFOD_URLS=https://debuginfod.ubuntu.com PS1=(.ros2_venv) \[\e]0;\u@\h: \w\a\]${debian_chroot:+($debian_chroot)}\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]\$ VIRTUAL_ENV_PROMPT=(.ros2_venv) /usr/bin/cmake --build /home/sachin/ros2_pick_n_place/build/braccio_moveit_config -- -j12 -l12
+[0.345s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoked command in '/home/sachin/ros2_pick_n_place/build/braccio_moveit_config' returned '0': CMAKE_PREFIX_PATH=/home/sachin/ros2_pick_n_place/install/braccio_description:/home/sachin/ros2_pick_n_place/install/braccio_moveit_config:/home/sachin/ros2_pick_n_place/install/braccio_gazebo:/opt/ros/jazzy/opt/gz_sim_vendor:/opt/ros/jazzy/opt/gz_sensors_vendor:/opt/ros/jazzy/opt/gz_physics_vendor:/opt/ros/jazzy/opt/sdformat_vendor:/opt/ros/jazzy/opt/gz_gui_vendor:/opt/ros/jazzy/opt/gz_transport_vendor:/opt/ros/jazzy/opt/gz_rendering_vendor:/opt/ros/jazzy/opt/gz_plugin_vendor:/opt/ros/jazzy/opt/gz_fuel_tools_vendor:/opt/ros/jazzy/opt/gz_msgs_vendor:/opt/ros/jazzy/opt/gz_common_vendor:/opt/ros/jazzy/opt/gz_math_vendor:/opt/ros/jazzy/opt/gz_utils_vendor:/opt/ros/jazzy/opt/gz_tools_vendor:/opt/ros/jazzy/opt/gz_ogre_next_vendor:/opt/ros/jazzy/opt/gz_dartsim_vendor:/opt/ros/jazzy/opt/gz_cmake_vendor:/home/sachin/ros2_pick_n_place/install/braccio_yolo_sorting:/opt/ros/jazzy DEBUGINFOD_URLS=https://debuginfod.ubuntu.com PS1=(.ros2_venv) \[\e]0;\u@\h: \w\a\]${debian_chroot:+($debian_chroot)}\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]\$ VIRTUAL_ENV_PROMPT=(.ros2_venv) /usr/bin/cmake --build /home/sachin/ros2_pick_n_place/build/braccio_moveit_config -- -j12 -l12
+[0.346s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoking command in '/home/sachin/ros2_pick_n_place/build/braccio_moveit_config': CMAKE_PREFIX_PATH=/home/sachin/ros2_pick_n_place/install/braccio_description:/home/sachin/ros2_pick_n_place/install/braccio_moveit_config:/home/sachin/ros2_pick_n_place/install/braccio_gazebo:/opt/ros/jazzy/opt/gz_sim_vendor:/opt/ros/jazzy/opt/gz_sensors_vendor:/opt/ros/jazzy/opt/gz_physics_vendor:/opt/ros/jazzy/opt/sdformat_vendor:/opt/ros/jazzy/opt/gz_gui_vendor:/opt/ros/jazzy/opt/gz_transport_vendor:/opt/ros/jazzy/opt/gz_rendering_vendor:/opt/ros/jazzy/opt/gz_plugin_vendor:/opt/ros/jazzy/opt/gz_fuel_tools_vendor:/opt/ros/jazzy/opt/gz_msgs_vendor:/opt/ros/jazzy/opt/gz_common_vendor:/opt/ros/jazzy/opt/gz_math_vendor:/opt/ros/jazzy/opt/gz_utils_vendor:/opt/ros/jazzy/opt/gz_tools_vendor:/opt/ros/jazzy/opt/gz_ogre_next_vendor:/opt/ros/jazzy/opt/gz_dartsim_vendor:/opt/ros/jazzy/opt/gz_cmake_vendor:/home/sachin/ros2_pick_n_place/install/braccio_yolo_sorting:/opt/ros/jazzy DEBUGINFOD_URLS=https://debuginfod.ubuntu.com PS1=(.ros2_venv) \[\e]0;\u@\h: \w\a\]${debian_chroot:+($debian_chroot)}\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]\$ VIRTUAL_ENV_PROMPT=(.ros2_venv) /usr/bin/cmake --install /home/sachin/ros2_pick_n_place/build/braccio_moveit_config
+[0.352s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoked command in '/home/sachin/ros2_pick_n_place/build/braccio_gazebo' returned '0': CMAKE_PREFIX_PATH=/home/sachin/ros2_pick_n_place/install/braccio_description:/home/sachin/ros2_pick_n_place/install/braccio_moveit_config:/home/sachin/ros2_pick_n_place/install/braccio_gazebo:/opt/ros/jazzy/opt/gz_sim_vendor:/opt/ros/jazzy/opt/gz_sensors_vendor:/opt/ros/jazzy/opt/gz_physics_vendor:/opt/ros/jazzy/opt/sdformat_vendor:/opt/ros/jazzy/opt/gz_gui_vendor:/opt/ros/jazzy/opt/gz_transport_vendor:/opt/ros/jazzy/opt/gz_rendering_vendor:/opt/ros/jazzy/opt/gz_plugin_vendor:/opt/ros/jazzy/opt/gz_fuel_tools_vendor:/opt/ros/jazzy/opt/gz_msgs_vendor:/opt/ros/jazzy/opt/gz_common_vendor:/opt/ros/jazzy/opt/gz_math_vendor:/opt/ros/jazzy/opt/gz_utils_vendor:/opt/ros/jazzy/opt/gz_tools_vendor:/opt/ros/jazzy/opt/gz_ogre_next_vendor:/opt/ros/jazzy/opt/gz_dartsim_vendor:/opt/ros/jazzy/opt/gz_cmake_vendor:/home/sachin/ros2_pick_n_place/install/braccio_yolo_sorting:/opt/ros/jazzy DEBUGINFOD_URLS=https://debuginfod.ubuntu.com PS1=(.ros2_venv) \[\e]0;\u@\h: \w\a\]${debian_chroot:+($debian_chroot)}\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]\$ VIRTUAL_ENV_PROMPT=(.ros2_venv) /usr/bin/cmake --build /home/sachin/ros2_pick_n_place/build/braccio_gazebo -- -j12 -l12
+[0.353s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoking command in '/home/sachin/ros2_pick_n_place/build/braccio_gazebo': CMAKE_PREFIX_PATH=/home/sachin/ros2_pick_n_place/install/braccio_description:/home/sachin/ros2_pick_n_place/install/braccio_moveit_config:/home/sachin/ros2_pick_n_place/install/braccio_gazebo:/opt/ros/jazzy/opt/gz_sim_vendor:/opt/ros/jazzy/opt/gz_sensors_vendor:/opt/ros/jazzy/opt/gz_physics_vendor:/opt/ros/jazzy/opt/sdformat_vendor:/opt/ros/jazzy/opt/gz_gui_vendor:/opt/ros/jazzy/opt/gz_transport_vendor:/opt/ros/jazzy/opt/gz_rendering_vendor:/opt/ros/jazzy/opt/gz_plugin_vendor:/opt/ros/jazzy/opt/gz_fuel_tools_vendor:/opt/ros/jazzy/opt/gz_msgs_vendor:/opt/ros/jazzy/opt/gz_common_vendor:/opt/ros/jazzy/opt/gz_math_vendor:/opt/ros/jazzy/opt/gz_utils_vendor:/opt/ros/jazzy/opt/gz_tools_vendor:/opt/ros/jazzy/opt/gz_ogre_next_vendor:/opt/ros/jazzy/opt/gz_dartsim_vendor:/opt/ros/jazzy/opt/gz_cmake_vendor:/home/sachin/ros2_pick_n_place/install/braccio_yolo_sorting:/opt/ros/jazzy DEBUGINFOD_URLS=https://debuginfod.ubuntu.com PS1=(.ros2_venv) \[\e]0;\u@\h: \w\a\]${debian_chroot:+($debian_chroot)}\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]\$ VIRTUAL_ENV_PROMPT=(.ros2_venv) /usr/bin/cmake --install /home/sachin/ros2_pick_n_place/build/braccio_gazebo
+[0.357s] Level 1:colcon.colcon_core.environment:create_environment_scripts_only(braccio_moveit_config)
+[0.358s] Level 1:colcon.colcon_core.environment:checking '/home/sachin/ros2_pick_n_place/install/braccio_moveit_config' for CMake module files
+[0.359s] Level 1:colcon.colcon_core.environment:checking '/home/sachin/ros2_pick_n_place/install/braccio_moveit_config' for CMake config files
+[0.360s] Level 1:colcon.colcon_core.shell:create_environment_hook('braccio_moveit_config', 'cmake_prefix_path')
+[0.360s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/sachin/ros2_pick_n_place/install/braccio_moveit_config/share/braccio_moveit_config/hook/cmake_prefix_path.ps1'
+[0.360s] INFO:colcon.colcon_core.shell:Creating environment descriptor '/home/sachin/ros2_pick_n_place/install/braccio_moveit_config/share/braccio_moveit_config/hook/cmake_prefix_path.dsv'
+[0.361s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/sachin/ros2_pick_n_place/install/braccio_moveit_config/share/braccio_moveit_config/hook/cmake_prefix_path.sh'
+[0.361s] Level 1:colcon.colcon_core.environment:checking '/home/sachin/ros2_pick_n_place/install/braccio_moveit_config/bin'
+[0.362s] Level 1:colcon.colcon_core.environment:checking '/home/sachin/ros2_pick_n_place/install/braccio_moveit_config/lib/pkgconfig/braccio_moveit_config.pc'
+[0.362s] Level 1:colcon.colcon_core.environment:checking '/home/sachin/ros2_pick_n_place/install/braccio_moveit_config/lib/python3.12/site-packages'
+[0.362s] Level 1:colcon.colcon_core.environment:checking '/home/sachin/ros2_pick_n_place/install/braccio_moveit_config/bin'
+[0.362s] INFO:colcon.colcon_core.shell:Creating package script '/home/sachin/ros2_pick_n_place/install/braccio_moveit_config/share/braccio_moveit_config/package.ps1'
+[0.363s] INFO:colcon.colcon_core.shell:Creating package descriptor '/home/sachin/ros2_pick_n_place/install/braccio_moveit_config/share/braccio_moveit_config/package.dsv'
+[0.365s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoked command in '/home/sachin/ros2_pick_n_place/build/braccio_moveit_config' returned '0': CMAKE_PREFIX_PATH=/home/sachin/ros2_pick_n_place/install/braccio_description:/home/sachin/ros2_pick_n_place/install/braccio_moveit_config:/home/sachin/ros2_pick_n_place/install/braccio_gazebo:/opt/ros/jazzy/opt/gz_sim_vendor:/opt/ros/jazzy/opt/gz_sensors_vendor:/opt/ros/jazzy/opt/gz_physics_vendor:/opt/ros/jazzy/opt/sdformat_vendor:/opt/ros/jazzy/opt/gz_gui_vendor:/opt/ros/jazzy/opt/gz_transport_vendor:/opt/ros/jazzy/opt/gz_rendering_vendor:/opt/ros/jazzy/opt/gz_plugin_vendor:/opt/ros/jazzy/opt/gz_fuel_tools_vendor:/opt/ros/jazzy/opt/gz_msgs_vendor:/opt/ros/jazzy/opt/gz_common_vendor:/opt/ros/jazzy/opt/gz_math_vendor:/opt/ros/jazzy/opt/gz_utils_vendor:/opt/ros/jazzy/opt/gz_tools_vendor:/opt/ros/jazzy/opt/gz_ogre_next_vendor:/opt/ros/jazzy/opt/gz_dartsim_vendor:/opt/ros/jazzy/opt/gz_cmake_vendor:/home/sachin/ros2_pick_n_place/install/braccio_yolo_sorting:/opt/ros/jazzy DEBUGINFOD_URLS=https://debuginfod.ubuntu.com PS1=(.ros2_venv) \[\e]0;\u@\h: \w\a\]${debian_chroot:+($debian_chroot)}\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]\$ VIRTUAL_ENV_PROMPT=(.ros2_venv) /usr/bin/cmake --install /home/sachin/ros2_pick_n_place/build/braccio_moveit_config
+[0.365s] INFO:colcon.colcon_core.shell:Creating package script '/home/sachin/ros2_pick_n_place/install/braccio_moveit_config/share/braccio_moveit_config/package.sh'
+[0.366s] INFO:colcon.colcon_core.shell:Creating package script '/home/sachin/ros2_pick_n_place/install/braccio_moveit_config/share/braccio_moveit_config/package.bash'
+[0.366s] INFO:colcon.colcon_core.shell:Creating package script '/home/sachin/ros2_pick_n_place/install/braccio_moveit_config/share/braccio_moveit_config/package.zsh'
+[0.367s] Level 1:colcon.colcon_core.environment:create_file_with_runtime_dependencies(/home/sachin/ros2_pick_n_place/install/braccio_moveit_config/share/colcon-core/packages/braccio_moveit_config)
+[0.367s] Level 1:colcon.colcon_core.environment:create_environment_scripts_only(braccio_moveit_config)
+[0.367s] Level 1:colcon.colcon_core.environment:checking '/home/sachin/ros2_pick_n_place/install/braccio_moveit_config' for CMake module files
+[0.367s] Level 1:colcon.colcon_core.environment:checking '/home/sachin/ros2_pick_n_place/install/braccio_moveit_config' for CMake config files
+[0.367s] Level 1:colcon.colcon_core.shell:create_environment_hook('braccio_moveit_config', 'cmake_prefix_path')
+[0.367s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/sachin/ros2_pick_n_place/install/braccio_moveit_config/share/braccio_moveit_config/hook/cmake_prefix_path.ps1'
+[0.368s] INFO:colcon.colcon_core.shell:Creating environment descriptor '/home/sachin/ros2_pick_n_place/install/braccio_moveit_config/share/braccio_moveit_config/hook/cmake_prefix_path.dsv'
+[0.368s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/sachin/ros2_pick_n_place/install/braccio_moveit_config/share/braccio_moveit_config/hook/cmake_prefix_path.sh'
+[0.368s] Level 1:colcon.colcon_core.environment:checking '/home/sachin/ros2_pick_n_place/install/braccio_moveit_config/bin'
+[0.368s] Level 1:colcon.colcon_core.environment:checking '/home/sachin/ros2_pick_n_place/install/braccio_moveit_config/lib/pkgconfig/braccio_moveit_config.pc'
+[0.369s] Level 1:colcon.colcon_core.environment:checking '/home/sachin/ros2_pick_n_place/install/braccio_moveit_config/lib/python3.12/site-packages'
+[0.369s] Level 1:colcon.colcon_core.environment:checking '/home/sachin/ros2_pick_n_place/install/braccio_moveit_config/bin'
+[0.369s] INFO:colcon.colcon_core.shell:Creating package script '/home/sachin/ros2_pick_n_place/install/braccio_moveit_config/share/braccio_moveit_config/package.ps1'
+[0.369s] INFO:colcon.colcon_core.shell:Creating package descriptor '/home/sachin/ros2_pick_n_place/install/braccio_moveit_config/share/braccio_moveit_config/package.dsv'
+[0.370s] INFO:colcon.colcon_core.shell:Creating package script '/home/sachin/ros2_pick_n_place/install/braccio_moveit_config/share/braccio_moveit_config/package.sh'
+[0.370s] INFO:colcon.colcon_core.shell:Creating package script '/home/sachin/ros2_pick_n_place/install/braccio_moveit_config/share/braccio_moveit_config/package.bash'
+[0.371s] INFO:colcon.colcon_core.shell:Creating package script '/home/sachin/ros2_pick_n_place/install/braccio_moveit_config/share/braccio_moveit_config/package.zsh'
+[0.371s] Level 1:colcon.colcon_core.environment:create_file_with_runtime_dependencies(/home/sachin/ros2_pick_n_place/install/braccio_moveit_config/share/colcon-core/packages/braccio_moveit_config)
+[0.372s] Level 1:colcon.colcon_core.environment:create_environment_scripts_only(braccio_gazebo)
+[0.372s] Level 1:colcon.colcon_core.environment:checking '/home/sachin/ros2_pick_n_place/install/braccio_gazebo' for CMake module files
+[0.373s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoked command in '/home/sachin/ros2_pick_n_place/build/braccio_gazebo' returned '0': CMAKE_PREFIX_PATH=/home/sachin/ros2_pick_n_place/install/braccio_description:/home/sachin/ros2_pick_n_place/install/braccio_moveit_config:/home/sachin/ros2_pick_n_place/install/braccio_gazebo:/opt/ros/jazzy/opt/gz_sim_vendor:/opt/ros/jazzy/opt/gz_sensors_vendor:/opt/ros/jazzy/opt/gz_physics_vendor:/opt/ros/jazzy/opt/sdformat_vendor:/opt/ros/jazzy/opt/gz_gui_vendor:/opt/ros/jazzy/opt/gz_transport_vendor:/opt/ros/jazzy/opt/gz_rendering_vendor:/opt/ros/jazzy/opt/gz_plugin_vendor:/opt/ros/jazzy/opt/gz_fuel_tools_vendor:/opt/ros/jazzy/opt/gz_msgs_vendor:/opt/ros/jazzy/opt/gz_common_vendor:/opt/ros/jazzy/opt/gz_math_vendor:/opt/ros/jazzy/opt/gz_utils_vendor:/opt/ros/jazzy/opt/gz_tools_vendor:/opt/ros/jazzy/opt/gz_ogre_next_vendor:/opt/ros/jazzy/opt/gz_dartsim_vendor:/opt/ros/jazzy/opt/gz_cmake_vendor:/home/sachin/ros2_pick_n_place/install/braccio_yolo_sorting:/opt/ros/jazzy DEBUGINFOD_URLS=https://debuginfod.ubuntu.com PS1=(.ros2_venv) \[\e]0;\u@\h: \w\a\]${debian_chroot:+($debian_chroot)}\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]\$ VIRTUAL_ENV_PROMPT=(.ros2_venv) /usr/bin/cmake --install /home/sachin/ros2_pick_n_place/build/braccio_gazebo
+[0.373s] Level 1:colcon.colcon_core.environment:checking '/home/sachin/ros2_pick_n_place/install/braccio_gazebo' for CMake config files
+[0.373s] Level 1:colcon.colcon_core.shell:create_environment_hook('braccio_gazebo', 'cmake_prefix_path')
+[0.373s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/sachin/ros2_pick_n_place/install/braccio_gazebo/share/braccio_gazebo/hook/cmake_prefix_path.ps1'
+[0.373s] INFO:colcon.colcon_core.shell:Creating environment descriptor '/home/sachin/ros2_pick_n_place/install/braccio_gazebo/share/braccio_gazebo/hook/cmake_prefix_path.dsv'
+[0.374s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/sachin/ros2_pick_n_place/install/braccio_gazebo/share/braccio_gazebo/hook/cmake_prefix_path.sh'
+[0.374s] Level 1:colcon.colcon_core.environment:checking '/home/sachin/ros2_pick_n_place/install/braccio_gazebo/bin'
+[0.374s] Level 1:colcon.colcon_core.environment:checking '/home/sachin/ros2_pick_n_place/install/braccio_gazebo/lib/pkgconfig/braccio_gazebo.pc'
+[0.374s] Level 1:colcon.colcon_core.environment:checking '/home/sachin/ros2_pick_n_place/install/braccio_gazebo/lib/python3.12/site-packages'
+[0.374s] Level 1:colcon.colcon_core.environment:checking '/home/sachin/ros2_pick_n_place/install/braccio_gazebo/bin'
+[0.374s] INFO:colcon.colcon_core.shell:Creating package script '/home/sachin/ros2_pick_n_place/install/braccio_gazebo/share/braccio_gazebo/package.ps1'
+[0.375s] INFO:colcon.colcon_core.shell:Creating package descriptor '/home/sachin/ros2_pick_n_place/install/braccio_gazebo/share/braccio_gazebo/package.dsv'
+[0.375s] INFO:colcon.colcon_core.shell:Creating package script '/home/sachin/ros2_pick_n_place/install/braccio_gazebo/share/braccio_gazebo/package.sh'
+[0.375s] INFO:colcon.colcon_core.shell:Creating package script '/home/sachin/ros2_pick_n_place/install/braccio_gazebo/share/braccio_gazebo/package.bash'
+[0.376s] INFO:colcon.colcon_core.shell:Creating package script '/home/sachin/ros2_pick_n_place/install/braccio_gazebo/share/braccio_gazebo/package.zsh'
+[0.376s] Level 1:colcon.colcon_core.environment:create_file_with_runtime_dependencies(/home/sachin/ros2_pick_n_place/install/braccio_gazebo/share/colcon-core/packages/braccio_gazebo)
+[0.376s] Level 1:colcon.colcon_core.environment:create_environment_scripts_only(braccio_gazebo)
+[0.376s] Level 1:colcon.colcon_core.environment:checking '/home/sachin/ros2_pick_n_place/install/braccio_gazebo' for CMake module files
+[0.376s] Level 1:colcon.colcon_core.environment:checking '/home/sachin/ros2_pick_n_place/install/braccio_gazebo' for CMake config files
+[0.377s] Level 1:colcon.colcon_core.shell:create_environment_hook('braccio_gazebo', 'cmake_prefix_path')
+[0.377s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/sachin/ros2_pick_n_place/install/braccio_gazebo/share/braccio_gazebo/hook/cmake_prefix_path.ps1'
+[0.377s] INFO:colcon.colcon_core.shell:Creating environment descriptor '/home/sachin/ros2_pick_n_place/install/braccio_gazebo/share/braccio_gazebo/hook/cmake_prefix_path.dsv'
+[0.377s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/sachin/ros2_pick_n_place/install/braccio_gazebo/share/braccio_gazebo/hook/cmake_prefix_path.sh'
+[0.378s] Level 1:colcon.colcon_core.environment:checking '/home/sachin/ros2_pick_n_place/install/braccio_gazebo/bin'
+[0.378s] Level 1:colcon.colcon_core.environment:checking '/home/sachin/ros2_pick_n_place/install/braccio_gazebo/lib/pkgconfig/braccio_gazebo.pc'
+[0.378s] Level 1:colcon.colcon_core.environment:checking '/home/sachin/ros2_pick_n_place/install/braccio_gazebo/lib/python3.12/site-packages'
+[0.379s] Level 1:colcon.colcon_core.environment:checking '/home/sachin/ros2_pick_n_place/install/braccio_gazebo/bin'
+[0.379s] INFO:colcon.colcon_core.shell:Creating package script '/home/sachin/ros2_pick_n_place/install/braccio_gazebo/share/braccio_gazebo/package.ps1'
+[0.379s] INFO:colcon.colcon_core.shell:Creating package descriptor '/home/sachin/ros2_pick_n_place/install/braccio_gazebo/share/braccio_gazebo/package.dsv'
+[0.380s] INFO:colcon.colcon_core.shell:Creating package script '/home/sachin/ros2_pick_n_place/install/braccio_gazebo/share/braccio_gazebo/package.sh'
+[0.380s] INFO:colcon.colcon_core.shell:Creating package script '/home/sachin/ros2_pick_n_place/install/braccio_gazebo/share/braccio_gazebo/package.bash'
+[0.380s] INFO:colcon.colcon_core.shell:Creating package script '/home/sachin/ros2_pick_n_place/install/braccio_gazebo/share/braccio_gazebo/package.zsh'
+[0.381s] Level 1:colcon.colcon_core.environment:create_file_with_runtime_dependencies(/home/sachin/ros2_pick_n_place/install/braccio_gazebo/share/colcon-core/packages/braccio_gazebo)
+[0.381s] INFO:colcon.colcon_ros.task.ament_python.build:Building ROS package in '/home/sachin/ros2_pick_n_place/src/braccio_yolo_sorting' with build type 'ament_python'
+[0.381s] Level 1:colcon.colcon_core.shell:create_environment_hook('braccio_yolo_sorting', 'ament_prefix_path')
+[0.381s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/sachin/ros2_pick_n_place/install/braccio_yolo_sorting/share/braccio_yolo_sorting/hook/ament_prefix_path.ps1'
+[0.382s] INFO:colcon.colcon_core.shell:Creating environment descriptor '/home/sachin/ros2_pick_n_place/install/braccio_yolo_sorting/share/braccio_yolo_sorting/hook/ament_prefix_path.dsv'
+[0.382s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/sachin/ros2_pick_n_place/install/braccio_yolo_sorting/share/braccio_yolo_sorting/hook/ament_prefix_path.sh'
+[0.382s] INFO:colcon.colcon_core.shell:Skip shell extension 'powershell' for command environment: Not usable outside of PowerShell
+[0.382s] DEBUG:colcon.colcon_core.shell:Skip shell extension 'dsv' for command environment
+[0.601s] INFO:colcon.colcon_core.task.python.build:Building Python package in '/home/sachin/ros2_pick_n_place/src/braccio_yolo_sorting'
+[0.602s] INFO:colcon.colcon_core.shell:Skip shell extension 'powershell' for command environment: Not usable outside of PowerShell
+[0.602s] DEBUG:colcon.colcon_core.shell:Skip shell extension 'dsv' for command environment
+[1.111s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoking command in '/home/sachin/ros2_pick_n_place/src/braccio_yolo_sorting': DEBUGINFOD_URLS=https://debuginfod.ubuntu.com PS1=(.ros2_venv) \[\e]0;\u@\h: \w\a\]${debian_chroot:+($debian_chroot)}\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]\$ PYTHONPATH=/home/sachin/ros2_pick_n_place/build/braccio_yolo_sorting/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/sachin/ros2_pick_n_place/install/braccio_yolo_sorting/lib/python3.12/site-packages:${PYTHONPATH} VIRTUAL_ENV_PROMPT=(.ros2_venv) /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py egg_info --egg-base ../../build/braccio_yolo_sorting build --build-base /home/sachin/ros2_pick_n_place/build/braccio_yolo_sorting/build install --record /home/sachin/ros2_pick_n_place/build/braccio_yolo_sorting/install.log --single-version-externally-managed install_data
+[1.496s] Level 1:colcon.colcon_core.environment:checking '/home/sachin/ros2_pick_n_place/install/braccio_yolo_sorting' for CMake module files
+[1.497s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoked command in '/home/sachin/ros2_pick_n_place/src/braccio_yolo_sorting' returned '0': DEBUGINFOD_URLS=https://debuginfod.ubuntu.com PS1=(.ros2_venv) \[\e]0;\u@\h: \w\a\]${debian_chroot:+($debian_chroot)}\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]\$ PYTHONPATH=/home/sachin/ros2_pick_n_place/build/braccio_yolo_sorting/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/sachin/ros2_pick_n_place/install/braccio_yolo_sorting/lib/python3.12/site-packages:${PYTHONPATH} VIRTUAL_ENV_PROMPT=(.ros2_venv) /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py egg_info --egg-base ../../build/braccio_yolo_sorting build --build-base /home/sachin/ros2_pick_n_place/build/braccio_yolo_sorting/build install --record /home/sachin/ros2_pick_n_place/build/braccio_yolo_sorting/install.log --single-version-externally-managed install_data
+[1.497s] Level 1:colcon.colcon_core.environment:checking '/home/sachin/ros2_pick_n_place/install/braccio_yolo_sorting' for CMake config files
+[1.497s] Level 1:colcon.colcon_core.environment:checking '/home/sachin/ros2_pick_n_place/install/braccio_yolo_sorting/lib'
+[1.498s] Level 1:colcon.colcon_core.environment:checking '/home/sachin/ros2_pick_n_place/install/braccio_yolo_sorting/bin'
+[1.498s] Level 1:colcon.colcon_core.environment:checking '/home/sachin/ros2_pick_n_place/install/braccio_yolo_sorting/lib/pkgconfig/braccio_yolo_sorting.pc'
+[1.498s] Level 1:colcon.colcon_core.environment:checking '/home/sachin/ros2_pick_n_place/install/braccio_yolo_sorting/lib/python3.12/site-packages'
+[1.498s] Level 1:colcon.colcon_core.shell:create_environment_hook('braccio_yolo_sorting', 'pythonpath')
+[1.498s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/sachin/ros2_pick_n_place/install/braccio_yolo_sorting/share/braccio_yolo_sorting/hook/pythonpath.ps1'
+[1.498s] INFO:colcon.colcon_core.shell:Creating environment descriptor '/home/sachin/ros2_pick_n_place/install/braccio_yolo_sorting/share/braccio_yolo_sorting/hook/pythonpath.dsv'
+[1.498s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/sachin/ros2_pick_n_place/install/braccio_yolo_sorting/share/braccio_yolo_sorting/hook/pythonpath.sh'
+[1.499s] Level 1:colcon.colcon_core.environment:checking '/home/sachin/ros2_pick_n_place/install/braccio_yolo_sorting/bin'
+[1.499s] Level 1:colcon.colcon_core.environment:create_environment_scripts_only(braccio_yolo_sorting)
+[1.499s] INFO:colcon.colcon_core.shell:Creating package script '/home/sachin/ros2_pick_n_place/install/braccio_yolo_sorting/share/braccio_yolo_sorting/package.ps1'
+[1.499s] INFO:colcon.colcon_core.shell:Creating package descriptor '/home/sachin/ros2_pick_n_place/install/braccio_yolo_sorting/share/braccio_yolo_sorting/package.dsv'
+[1.500s] INFO:colcon.colcon_core.shell:Creating package script '/home/sachin/ros2_pick_n_place/install/braccio_yolo_sorting/share/braccio_yolo_sorting/package.sh'
+[1.500s] INFO:colcon.colcon_core.shell:Creating package script '/home/sachin/ros2_pick_n_place/install/braccio_yolo_sorting/share/braccio_yolo_sorting/package.bash'
+[1.500s] INFO:colcon.colcon_core.shell:Creating package script '/home/sachin/ros2_pick_n_place/install/braccio_yolo_sorting/share/braccio_yolo_sorting/package.zsh'
+[1.500s] Level 1:colcon.colcon_core.environment:create_file_with_runtime_dependencies(/home/sachin/ros2_pick_n_place/install/braccio_yolo_sorting/share/colcon-core/packages/braccio_yolo_sorting)
+[1.501s] DEBUG:colcon.colcon_parallel_executor.executor.parallel:closing loop
+[1.501s] DEBUG:colcon.colcon_parallel_executor.executor.parallel:loop closed
+[1.501s] DEBUG:colcon.colcon_parallel_executor.executor.parallel:run_until_complete finished with '0'
+[1.501s] DEBUG:colcon.colcon_core.event_reactor:joining thread
+[1.505s] INFO:colcon.colcon_core.plugin_system:Skipping extension 'colcon_notification.desktop_notification.terminal_notifier': Not used on non-Darwin systems
+[1.505s] INFO:colcon.colcon_core.plugin_system:Skipping extension 'colcon_notification.desktop_notification.win32': Not used on non-Windows systems
+[1.505s] INFO:colcon.colcon_notification.desktop_notification:Sending desktop notification using 'notify2'
+[1.516s] DEBUG:colcon.colcon_core.event_reactor:joined thread
+[1.516s] INFO:colcon.colcon_core.shell:Creating prefix script '/home/sachin/ros2_pick_n_place/install/local_setup.ps1'
+[1.517s] INFO:colcon.colcon_core.shell:Creating prefix util module '/home/sachin/ros2_pick_n_place/install/_local_setup_util_ps1.py'
+[1.517s] INFO:colcon.colcon_core.shell:Creating prefix chain script '/home/sachin/ros2_pick_n_place/install/setup.ps1'
+[1.518s] INFO:colcon.colcon_core.shell:Creating prefix script '/home/sachin/ros2_pick_n_place/install/local_setup.sh'
+[1.519s] INFO:colcon.colcon_core.shell:Creating prefix util module '/home/sachin/ros2_pick_n_place/install/_local_setup_util_sh.py'
+[1.519s] INFO:colcon.colcon_core.shell:Creating prefix chain script '/home/sachin/ros2_pick_n_place/install/setup.sh'
+[1.520s] INFO:colcon.colcon_core.shell:Creating prefix script '/home/sachin/ros2_pick_n_place/install/local_setup.bash'
+[1.520s] INFO:colcon.colcon_core.shell:Creating prefix chain script '/home/sachin/ros2_pick_n_place/install/setup.bash'
+[1.521s] INFO:colcon.colcon_core.shell:Creating prefix script '/home/sachin/ros2_pick_n_place/install/local_setup.zsh'
+[1.521s] INFO:colcon.colcon_core.shell:Creating prefix chain script '/home/sachin/ros2_pick_n_place/install/setup.zsh'
