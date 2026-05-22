@@ -58,7 +58,7 @@ def generate_launch_description():
     
     # File paths
     urdf_file = os.path.join(pkg_braccio_description, 'urdf', 'braccio.urdf.xacro')
-    world_file = os.path.join(pkg_braccio_gazebo, 'worlds', 'braccio_sorting.sdf')
+    world_file = os.path.join(pkg_braccio_gazebo, 'worlds', 'braccio_sorting.world')
     
     # Launch arguments
     use_sim_time_arg = DeclareLaunchArgument(

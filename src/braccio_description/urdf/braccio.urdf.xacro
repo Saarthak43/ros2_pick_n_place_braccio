@@ -253,11 +253,11 @@
   </joint>
 
   <!-- ==================== GAZEBO ==================== -->
-  <gazebo>
+  <!-- <gazebo>
     <plugin filename="libgz-sim-sensors-system.so" name="gz::sim::systems::Sensors">
       <render_engine>ogre2</render_engine>
     </plugin>
-  </gazebo>
+  </gazebo> -->
 
   <!-- ROS2 Control -->
   <gazebo>
