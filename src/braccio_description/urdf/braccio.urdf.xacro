@@ -1,0 +1,303 @@
+<?xml version="1.0" ?>
+<robot name="braccio" xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+  <xacro:property name="damping_value" value="0.1"/>
+  <xacro:property name="friction_value" value="0.001"/>
+  <xacro:property name="mesh_scale" value="0.001 0.001 0.001"/>
+
+  <material name="gray"><color rgba="0.572 0.584 0.568 1.0"/></material>
+  <material name="white"><color rgba="0.8 0.8 0.8 1.0"/></material>
+  <material name="black"><color rgba="0 0 0 0.50"/></material>
+
+  <!-- ==================== MACROS ==================== -->
+
+  <xacro:macro name="braccio_link" params="name mesh_name color origin_xyz origin_rpy mass ixx iyy izz ixy ixz iyz">
+    <link name="${name}">
+      <visual>
+        <geometry>
+          <mesh filename="package://braccio_description/stl/${mesh_name}.stl" scale="${mesh_scale}"/>
+        </geometry>
+        <material name="${color}"/>
+        <origin rpy="${origin_rpy}" xyz="${origin_xyz}"/>
+      </visual>
+      <inertial>
+        <mass value="${mass}"/>
+        <origin rpy="0 0 0" xyz="${origin_xyz}"/>
+        <inertia ixx="${ixx}" ixy="${ixy}" ixz="${ixz}" iyy="${iyy}" iyz="${iyz}" izz="${izz}"/>
+      </inertial>
+      <collision>
+        <origin rpy="${origin_rpy}" xyz="${origin_xyz}"/>
+        <geometry>
+          <mesh filename="package://braccio_description/stl/${mesh_name}.stl" scale="${mesh_scale}"/>
+        </geometry>
+      </collision>
+    </link>
+  </xacro:macro>
+
+  <xacro:macro name="braccio_revolute_joint" params="name parent child axis_xyz limit_lower limit_upper origin_xyz origin_rpy">
+    <joint name="${name}" type="revolute">
+      <axis xyz="${axis_xyz}"/>
+      <limit effort="1000.0" lower="${limit_lower}" upper="${limit_upper}" velocity="4.0"/>
+      <origin rpy="${origin_rpy}" xyz="${origin_xyz}"/>
+      <parent link="${parent}"/>
+      <child link="${child}"/>
+      <dynamics damping="${damping_value}" friction="${friction_value}"/>
+    </joint>
+  </xacro:macro>
+
+  <xacro:macro name="braccio_ctrl_joint" params="name initial_value">
+    <joint name="${name}">
+      <command_interface name="position"/>
+      <state_interface name="position">
+        <param name="initial_value">${initial_value}</param>
+      </state_interface>
+      <state_interface name="velocity"/>
+    </joint>
+  </xacro:macro>
+
+  <!-- ==================== LINKS ==================== -->
+
+  <link name="world"/>
+
+  <!-- Base Link: flat cylinder r=0.053, h=0.01, m=0.5
+       Ixx = Iyy = (1/12)*m*(3r^2+h^2) = (1/12)*0.5*(3*0.053^2+0.01^2) = 0.000356
+       Izz = (1/2)*m*r^2 = 0.5*0.5*0.053^2 = 0.000702 -->
+  <link name="base_link">
+    <visual>
+      <geometry><cylinder length="0.01" radius="0.053"/></geometry>
+      <material name="black"/>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+    </visual>
+    <collision>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <geometry><cylinder length="0.01" radius="0.053"/></geometry>
+    </collision>
+    <inertial>
+      <mass value="0.5"/>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <inertia ixx="0.000356" ixy="0" ixz="0" iyy="0.000356" iyz="0" izz="0.000702"/>
+    </inertial>
+  </link>
+
+  <!-- Braccio Base: heavy base housing, approx cylinder r=0.04, h=0.07, m=2.0
+       Ixx = Iyy = (1/12)*2.0*(3*0.04^2+0.07^2) = 0.001617
+       Izz = (1/2)*2.0*0.04^2 = 0.0016 -->
+  <xacro:braccio_link name="braccio_base_link"
+    mesh_name="braccio_base" color="gray"
+    origin_xyz="0 0.004 0" origin_rpy="0 0 0"
+    mass="2.0"
+    ixx="0.001617" iyy="0.001617" izz="0.0016"
+    ixy="0" ixz="0" iyz="0"/>
+
+  <!-- Shoulder: approx box 0.04 x 0.04 x 0.125, m=0.1
+       Ixx = (1/12)*0.1*(0.04^2+0.125^2) = 0.000144
+       Iyy = (1/12)*0.1*(0.04^2+0.125^2) = 0.000144
+       Izz = (1/12)*0.1*(0.04^2+0.04^2)  = 0.0000267 -->
+  <xacro:braccio_link name="shoulder_link"
+    mesh_name="braccio_shoulder" color="gray"
+    origin_xyz="-0.0045 0.0055 -0.026" origin_rpy="0 0 0"
+    mass="0.1"
+    ixx="0.000144" iyy="0.000144" izz="0.0000267"
+    ixy="0" ixz="0" iyz="0"/>
+
+  <!-- Elbow: approx box 0.04 x 0.04 x 0.125, m=0.1 (same geometry as shoulder) -->
+  <xacro:braccio_link name="elbow_link"
+    mesh_name="braccio_elbow" color="gray"
+    origin_xyz="-0.0045 0.005 -0.025" origin_rpy="0 0 0"
+    mass="0.1"
+    ixx="0.000144" iyy="0.000144" izz="0.0000267"
+    ixy="0" ixz="0" iyz="0"/>
+
+  <!-- Wrist Pitch: approx box 0.03 x 0.03 x 0.06, m=0.1
+       Ixx = (1/12)*0.1*(0.03^2+0.06^2) = 0.0000375
+       Iyy = (1/12)*0.1*(0.03^2+0.06^2) = 0.0000375
+       Izz = (1/12)*0.1*(0.03^2+0.03^2) = 0.000015 -->
+  <xacro:braccio_link name="wrist_pitch_link"
+    mesh_name="braccio_wrist_pitch" color="gray"
+    origin_xyz="0.003 -0.0004 -0.024" origin_rpy="0 0 0"
+    mass="0.1"
+    ixx="0.0000375" iyy="0.0000375" izz="0.000015"
+    ixy="0" ixz="0" iyz="0"/>
+
+  <!-- Wrist Roll: approx cylinder r=0.02, h=0.03, m=0.1
+       Ixx = Iyy = (1/12)*0.1*(3*0.02^2+0.03^2) = 0.0000175
+       Izz = (1/2)*0.1*0.02^2 = 0.00002 -->
+  <xacro:braccio_link name="wrist_roll_link"
+    mesh_name="braccio_wrist_roll" color="white"
+    origin_xyz="0.006 0 0.0" origin_rpy="0 0 0"
+    mass="0.1"
+    ixx="0.0000175" iyy="0.0000175" izz="0.00002"
+    ixy="0" ixz="0" iyz="0"/>
+
+  <!-- Left Gripper: approx box 0.01 x 0.04 x 0.005, m=0.05
+       Ixx = (1/12)*0.05*(0.04^2+0.005^2) = 0.00000683
+       Iyy = (1/12)*0.05*(0.01^2+0.005^2) = 0.00000052
+       Izz = (1/12)*0.05*(0.01^2+0.04^2)  = 0.00000708 -->
+  <xacro:braccio_link name="left_gripper_link"
+    mesh_name="braccio_left_gripper" color="white"
+    origin_xyz="0 -0.012 0" origin_rpy="0 1.5708 0"
+    mass="0.05"
+    ixx="0.00000683" iyy="0.00000052" izz="0.00000708"
+    ixy="0" ixz="0" iyz="0"/>
+
+  <!-- Right Gripper: same geometry as left -->
+  <xacro:braccio_link name="right_gripper_link"
+    mesh_name="braccio_right_gripper" color="white"
+    origin_xyz="0 -0.012 0.010" origin_rpy="0 1.5708 0"
+    mass="0.05"
+    ixx="0.00000683" iyy="0.00000052" izz="0.00000708"
+    ixy="0" ixz="0" iyz="0"/>
+
+  <!-- Tool Tip: tiny sphere r=0.005, m=0.001
+       Ixx = Iyy = Izz = (2/5)*m*r^2 = 0.00000001 -->
+  <link name="tool_tip">
+    <visual>
+      <geometry><sphere radius="0.005"/></geometry>
+      <material name="white"/>
+    </visual>
+    <inertial>
+      <mass value="0.001"/>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <inertia ixx="1e-08" ixy="0" ixz="0" iyy="1e-08" iyz="0" izz="1e-08"/>
+    </inertial>
+  </link>
+
+  <!-- Camera: box 0.03 x 0.03 x 0.02, m=0.05
+       Ixx = (1/12)*0.05*(0.03^2+0.02^2) = 0.0000054
+       Iyy = (1/12)*0.05*(0.03^2+0.02^2) = 0.0000054
+       Izz = (1/12)*0.05*(0.03^2+0.03^2) = 0.0000075 -->
+  <link name="camera_link">
+    <visual>
+      <geometry><box size="0.03 0.03 0.02"/></geometry>
+      <material name="black"/>
+    </visual>
+    <collision>
+      <geometry><box size="0.03 0.03 0.02"/></geometry>
+    </collision>
+    <inertial>
+      <mass value="0.05"/>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <inertia ixx="0.0000054" ixy="0" ixz="0" iyy="0.0000054" iyz="0" izz="0.0000075"/>
+    </inertial>
+  </link>
+
+  <link name="camera_optical_link"/>
+
+  <!-- ==================== JOINTS ==================== -->
+
+  <joint name="world_joint" type="fixed">
+    <parent link="world"/>
+    <child link="base_link"/>
+  </joint>
+
+  <xacro:braccio_revolute_joint name="base_joint"
+    parent="base_link" child="braccio_base_link"
+    axis_xyz="0 0 1" limit_lower="0.05" limit_upper="5.0"
+    origin_xyz="0 0 0" origin_rpy="0 0 0.0628319"/>
+
+  <xacro:braccio_revolute_joint name="shoulder_joint"
+    parent="braccio_base_link" child="shoulder_link"
+    axis_xyz="1 0 0" limit_lower="1.6" limit_upper="4.0"
+    origin_xyz="0 -0.002 0.072" origin_rpy="-2.8 0 0"/>
+
+  <xacro:braccio_revolute_joint name="elbow_joint"
+    parent="shoulder_link" child="elbow_link"
+    axis_xyz="1 0 0" limit_lower="1.0" limit_upper="4.6"
+    origin_xyz="0 0 0.125" origin_rpy="-2.8 0 0"/>
+
+  <xacro:braccio_revolute_joint name="wrist_pitch_joint"
+    parent="elbow_link" child="wrist_pitch_link"
+    axis_xyz="1 0 0" limit_lower="0.77" limit_upper="4.8"
+    origin_xyz="0 0 0.125" origin_rpy="-2.8 0 0"/>
+
+  <xacro:braccio_revolute_joint name="wrist_roll_joint"
+    parent="wrist_pitch_link" child="wrist_roll_link"
+    axis_xyz="0 0 -1" limit_lower="0.2" limit_upper="5.0"
+    origin_xyz="0 0.0 0.06" origin_rpy="0 0 2.8"/>
+
+  <xacro:braccio_revolute_joint name="gripper_joint"
+    parent="wrist_roll_link" child="right_gripper_link"
+    axis_xyz="0 1 0" limit_lower="2.6" limit_upper="3.85"
+    origin_xyz="0.010 0 0.03" origin_rpy="0 2.095 0"/>
+
+  <joint name="sub_gripper_joint" type="revolute">
+    <axis xyz="0 -1 0"/>
+    <mimic joint="gripper_joint"/>
+    <limit effort="1000.0" lower="2.6" upper="3.85" velocity="4.0"/>
+    <origin rpy="0 1.0466 0" xyz="-0.010 0 0.03"/>
+    <parent link="wrist_roll_link"/>
+    <child link="left_gripper_link"/>
+    <dynamics damping="${damping_value}" friction="${friction_value}"/>
+  </joint>
+
+  <joint name="tool_tip_joint" type="fixed">
+    <origin rpy="0 0 0" xyz="0 0 0.035"/>
+    <parent link="wrist_roll_link"/>
+    <child link="tool_tip"/>
+  </joint>
+
+  <joint name="camera_joint" type="fixed">
+    <origin rpy="0 1.5708 0" xyz="0.30 0 0.60"/>
+    <parent link="world"/>
+    <child link="camera_link"/>
+  </joint>
+
+  <joint name="camera_optical_joint" type="fixed">
+    <origin rpy="-1.5708 0 -1.5708" xyz="0 0 0"/>
+    <parent link="camera_link"/>
+    <child link="camera_optical_link"/>
+  </joint>
+
+  <!-- ==================== GAZEBO ==================== -->
+
+  <gazebo>
+    <plugin filename="gz_ros2_control-system" name="gz_ros2_control::GazeboSimROS2ControlPlugin">
+      <robot_param>robot_description</robot_param>
+      <robot_param_node>robot_state_publisher</robot_param_node>
+      <parameters>$(find braccio_description)/config/braccio_controllers.yaml</parameters>
+    </plugin>
+  </gazebo>
+
+  <gazebo reference="camera_link">
+    <sensor name="workspace_camera" type="camera">
+      <always_on>true</always_on>
+      <update_rate>30</update_rate>
+      <camera>
+        <horizontal_fov>1.047</horizontal_fov>
+        <image><width>640</width><height>480</height><format>R8G8B8</format></image>
+        <clip><near>0.01</near><far>10.0</far></clip>
+      </camera>
+      <plugin filename="libgz-sim-camera-system.so" name="gz::sim::systems::Camera">
+        <ros>
+          <remapping>~/image_raw:=/camera/image_raw</remapping>
+          <remapping>~/camera_info:=/camera/camera_info</remapping>
+        </ros>
+        <frame_name>camera_optical_link</frame_name>
+      </plugin>
+    </sensor>
+  </gazebo>
+
+  <gazebo reference="braccio_base_link"><material>Gazebo/Gray</material></gazebo>
+  <gazebo reference="shoulder_link"><material>Gazebo/Gray</material></gazebo>
+  <gazebo reference="elbow_link"><material>Gazebo/Gray</material></gazebo>
+  <gazebo reference="wrist_pitch_link"><material>Gazebo/Gray</material></gazebo>
+  <gazebo reference="wrist_roll_link"><material>Gazebo/White</material></gazebo>
+  <gazebo reference="left_gripper_link"><material>Gazebo/White</material></gazebo>
+  <gazebo reference="right_gripper_link"><material>Gazebo/White</material></gazebo>
+
+  <!-- ==================== ROS2 CONTROL ==================== -->
+
+  <ros2_control name="GazeboSystem" type="system">
+    <hardware>
+      <plugin>gz_ros2_control/GazeboSimSystem</plugin>
+    </hardware>
+
+    <xacro:braccio_ctrl_joint name="base_joint" initial_value="2.5"/>
+    <xacro:braccio_ctrl_joint name="shoulder_joint" initial_value="2.8"/>
+    <xacro:braccio_ctrl_joint name="elbow_joint" initial_value="2.8"/>
+    <xacro:braccio_ctrl_joint name="wrist_pitch_joint" initial_value="2.8"/>
+    <xacro:braccio_ctrl_joint name="wrist_roll_joint" initial_value="2.6"/>
+    <xacro:braccio_ctrl_joint name="gripper_joint" initial_value="3.0"/>
+  </ros2_control>
+
+</robot>
