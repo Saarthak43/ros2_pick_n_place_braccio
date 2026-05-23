@@ -5,8 +5,11 @@ Panels:
       Expanded:
         - /Global Options1
         - /TF1
+        - /RobotModel1
+        - /CameraRaw1
+        - /CameraAnnotated1
       Splitter Ratio: 0.5
-    Tree Height: 400
+    Tree Height: 500
   - Class: rviz_common/Selection
     Name: Selection
   - Class: rviz_common/Views
@@ -14,7 +17,7 @@ Panels:
   - Class: rviz_common/Time
     Name: Time
     SyncMode: 0
-    SyncSource: Camera
+    SyncSource: CameraAnnotated
 
 Visualization Manager:
   Class: ""
@@ -37,7 +40,7 @@ Visualization Manager:
       Plane Cell Count: 20
       Reference Frame: world
       Value: true
-    
+
     - Class: rviz_default_plugins/TF
       Enabled: true
       Frame Timeout: 15
@@ -48,22 +51,9 @@ Visualization Manager:
       Show Arrows: true
       Show Axes: true
       Show Names: true
-      Tree:
-        world:
-          base_link:
-            braccio_base_link:
-              shoulder_link:
-                elbow_link:
-                  wrist_pitch_link:
-                    wrist_roll_link:
-                      left_gripper_link: {}
-                      right_gripper_link: {}
-                      tool_tip: {}
-          camera_link:
-            camera_optical_link: {}
       Update Interval: 0
       Value: true
-    
+
     - Alpha: 1
       Class: rviz_default_plugins/RobotModel
       Collision Enabled: false
@@ -79,13 +69,16 @@ Visualization Manager:
       Name: RobotModel
       Visual Enabled: true
       Value: true
-    
+
+    # IMPORTANT: image topics use Best Effort QoS because
+    # ros_gz_image's image_bridge publishes with sensor_data QoS.
+    # If you set Reliable here, RViz will silently show "No Image".
     - Class: rviz_default_plugins/Image
       Enabled: true
       Max Value: 1
       Median window: 5
       Min Value: 0
-      Name: Camera
+      Name: CameraRaw
       Normalize Range: true
       Topic:
         Depth: 5
@@ -93,6 +86,21 @@ Visualization Manager:
         History Policy: Keep Last
         Reliability Policy: Best Effort
         Value: /camera/image_raw
+      Value: true
+
+    - Class: rviz_default_plugins/Image
+      Enabled: true
+      Max Value: 1
+      Median window: 5
+      Min Value: 0
+      Name: CameraAnnotated
+      Normalize Range: true
+      Topic:
+        Depth: 5
+        Durability Policy: Volatile
+        History Policy: Keep Last
+        Reliability Policy: Best Effort
+        Value: /detections/annotated
       Value: true
 
   Enabled: true
@@ -111,7 +119,7 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz_default_plugins/Orbit
-      Distance: 1.0
+      Distance: 1.2
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.06
         Stereo Focal Distance: 1
@@ -120,7 +128,7 @@ Visualization Manager:
       Focal Point:
         X: 0.2
         Y: 0
-        Z: 0.2
+        Z: 0.1
       Focal Shape Fixed Size: true
       Focal Shape Size: 0.05
       Invert Z Axis: false
@@ -133,13 +141,15 @@ Visualization Manager:
     Saved: ~
 
 Window Geometry:
-  Camera:
+  CameraRaw:
+    collapsed: false
+  CameraAnnotated:
     collapsed: false
   Displays:
     collapsed: false
-  Height: 800
+  Height: 900
   Hide Left Dock: false
   Hide Right Dock: false
-  Width: 1200
-  X: 100
-  Y: 100
+  Width: 1600
+  X: 80
+  Y: 80

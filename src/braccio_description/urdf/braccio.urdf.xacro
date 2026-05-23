@@ -8,6 +8,9 @@
   <material name="gray"><color rgba="0.572 0.584 0.568 1.0"/></material>
   <material name="white"><color rgba="0.8 0.8 0.8 1.0"/></material>
   <material name="black"><color rgba="0 0 0 0.50"/></material>
+  <material name="red"><color rgba="0.8 0.0 0.0 1.0"/></material>
+  <material name="blue"><color rgba="0.0 0.0 0.8 1.0"/></material>
+  <material name="green"><color rgba="0.0 0.8 0.0 1.0"/></material>
 
   <!-- ==================== MACROS ==================== -->
 
@@ -174,7 +177,7 @@
   <link name="camera_link">
     <visual>
       <geometry><box size="0.03 0.03 0.02"/></geometry>
-      <material name="black"/>
+      <material name="red"/>
     </visual>
     <collision>
       <geometry><box size="0.03 0.03 0.02"/></geometry>
@@ -241,7 +244,7 @@
 
   <!-- CHANGED: Camera now attached to base_link instead of world -->
   <joint name="camera_joint" type="fixed">
-    <origin rpy="0 1.5708 0" xyz="0.30 0 0.59"/>
+    <origin rpy="0 1.5708 3.1416" xyz="0.30 0 0.59"/>
     <parent link="base_link"/>
     <child link="camera_link"/>
   </joint>

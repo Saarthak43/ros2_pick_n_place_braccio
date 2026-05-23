@@ -63,7 +63,7 @@
 
     <!-- Red Cube 1 -->
     <model name="red_cube_1">
-      <pose>0.15 0.10 0.025 0 0 0</pose>
+      <pose>0.20 0.15 0.025 0 0 0</pose>
       <link name="link">
         <inertial>
           <mass>0.05</mass>
@@ -75,12 +75,12 @@
         </inertial>
         <collision name="collision">
           <geometry>
-            <box><size>0.05 0.05 0.05</size></box>
+            <box><size>0.03 0.03 0.03</size></box>
           </geometry>
         </collision>
         <visual name="visual">
           <geometry>
-            <box><size>0.05 0.05 0.05</size></box>
+            <box><size>0.03 0.03 0.03</size></box>
           </geometry>
           <material>
             <ambient>1 0 0 1</ambient>
@@ -92,8 +92,8 @@
     </model>
 
     <!-- Red Cube 2 -->
-    <model name="red_cube_2">
-      <pose>0.12 0.15 0.025 0 0 0.3</pose>
+    <!-- <model name="red_cube_2">
+      <pose>0.10 0.20 0.025 0 0 0.3</pose>
       <link name="link">
         <inertial>
           <mass>0.05</mass>
@@ -105,12 +105,12 @@
         </inertial>
         <collision name="collision">
           <geometry>
-            <box><size>0.05 0.05 0.05</size></box>
+            <box><size>0.03 0.03 0.03</size></box>
           </geometry>
         </collision>
         <visual name="visual">
           <geometry>
-            <box><size>0.05 0.05 0.05</size></box>
+            <box><size>0.03 0.03 0.03</size></box>
           </geometry>
           <material>
             <ambient>1 0 0 1</ambient>
@@ -119,9 +119,9 @@
           </material>
         </visual>
       </link>
-    </model>
+    </model> -->
 
-    <!-- Blue Cube 1 -->
+    <!-- Blue Cube 1
     <model name="blue_cube_1">
       <pose>0.18 0.05 0.025 0 0 0</pose>
       <link name="link">
@@ -135,12 +135,12 @@
         </inertial>
         <collision name="collision">
           <geometry>
-            <box><size>0.05 0.05 0.05</size></box>
+            <box><size>0.03 0.03 0.03</size></box>
           </geometry>
         </collision>
         <visual name="visual">
           <geometry>
-            <box><size>0.05 0.05 0.05</size></box>
+            <box><size>0.03 0.03 0.03</size></box>
           </geometry>
           <material>
             <ambient>0 0 1 1</ambient>
@@ -149,11 +149,11 @@
           </material>
         </visual>
       </link>
-    </model>
+    </model> -->
 
     <!-- Blue Cube 2 -->
     <model name="blue_cube_2">
-      <pose>0.16 0.02 0.025 0 0 0.5</pose>
+      <pose>0.07 0.02 0.025 0 0 0.5</pose>
       <link name="link">
         <inertial>
           <mass>0.05</mass>
@@ -165,12 +165,12 @@
         </inertial>
         <collision name="collision">
           <geometry>
-            <box><size>0.05 0.05 0.05</size></box>
+            <box><size>0.03 0.03 0.03</size></box>
           </geometry>
         </collision>
         <visual name="visual">
           <geometry>
-            <box><size>0.05 0.05 0.05</size></box>
+            <box><size>0.03 0.03 0.03</size></box>
           </geometry>
           <material>
             <ambient>0 0 1 1</ambient>

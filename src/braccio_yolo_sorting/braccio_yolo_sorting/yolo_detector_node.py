@@ -77,6 +77,14 @@ class YOLODetectorNode(Node):
                                self.color_ranges['blue']['lower'],
                                self.color_ranges['blue']['upper'])
         
+        # Debug: log mask pixel counts every 60 frames
+        if self.frame_count % 60 == 1:
+            red_px = int(cv2.countNonZero(red_mask))
+            blue_px = int(cv2.countNonZero(blue_mask))
+            self.get_logger().info(
+                f'HSV debug: red_mask={red_px}px  blue_mask={blue_px}px'
+            )
+        
         # Process each color
         for color, mask in [('red', red_mask), ('blue', blue_mask)]:
             # Clean up mask
@@ -93,10 +101,39 @@ class YOLODetectorNode(Node):
                 
                 if area > 500:  # Minimum area
                     x, y, w, h = cv2.boundingRect(contour)
-                    
+                    center_y = y + h / 2.0
+                    img_h = image.shape[0]
+
+                    # Debug: log every detection before filtering
+                    if self.frame_count % 60 == 1:
+                        self.get_logger().info(
+                            f'  {color} contour: area={area:.0f} '
+                            f'bbox=({x},{y},{w},{h}) '
+                            f'center_y_pct={center_y/img_h*100:.0f}%'
+                        )
+
+                    # --- Filters to reject containers ---
+                    # From the logs, containers have area ~17000-18000 px²
+                    # and bbox widths of 130-142px.  Real cubes (5cm at
+                    # 0.59m) should be ~49x49px = ~2400 px².
+                    # Use a generous max of 8000 px² to catch cubes at
+                    # any angle while still rejecting containers.
+                    if area > 8000:
+                        continue
+                    if w > 100 or h > 100:
+                        continue
+
+                    # Cubes appear in the lower part of the image
+                    # (py ~340-420, which is 70-87%).  Containers appear
+                    # in the middle (py ~240, 50%) and at the very bottom
+                    # (py ~400+, 83%+).  Accept detections between
+                    # 50% and 90% of image height.
+                    if center_y < img_h * 0.50 or center_y > img_h * 0.92:
+                        continue
+
                     # Check aspect ratio
                     aspect_ratio = w / float(h)
-                    if 0.5 < aspect_ratio < 2.0:
+                    if 0.3 < aspect_ratio < 3.0:
                         detections.append({
                             'bbox': [x, y, x+w, y+h],
                             'color': color,
@@ -111,8 +148,16 @@ class YOLODetectorNode(Node):
         self.frame_count += 1
         
         try:
-            cv_image = self.bridge.imgmsg_to_cv2(msg, desired_encoding='bgr8')
-            
+            # ros_gz_image publishes as rgb8.  cv_bridge with
+            # desired_encoding='bgr8' should convert, but some
+            # versions silently pass through when the source is
+            # already 8UC3.  Handle both cases explicitly.
+            cv_image = self.bridge.imgmsg_to_cv2(msg, desired_encoding='passthrough')
+
+            # Convert to BGR if the source was RGB
+            if msg.encoding in ('rgb8', 'RGB8'):
+                cv_image = cv2.cvtColor(cv_image, cv2.COLOR_RGB2BGR)
+
             # Detect objects
             detections = self.detect_objects_hsv(cv_image)
             
@@ -142,16 +187,16 @@ class YOLODetectorNode(Node):
             # Publish detections
             self.detection_pub.publish(detection_array)
             
-            # Publish annotated image
-            if len(detection_array.detections) > 0:
-                annotated = self.draw_detections(cv_image, detection_array)
-                annotated_msg = self.bridge.cv2_to_imgmsg(annotated, encoding='bgr8')
-                annotated_msg.header = msg.header
-                self.annotated_pub.publish(annotated_msg)
+            # Publish annotated image (always, so RViz panel isn't blank)
+            annotated = self.draw_detections(cv_image, detection_array)
+            annotated_msg = self.bridge.cv2_to_imgmsg(annotated, encoding='bgr8')
+            annotated_msg.header = msg.header
+            self.annotated_pub.publish(annotated_msg)
             
             if self.frame_count % 30 == 0:
                 self.get_logger().info(
-                    f'Frame {self.frame_count}: {len(detection_array.detections)} objects'
+                    f'Frame {self.frame_count}: {len(detection_array.detections)} objects '
+                    f'(encoding={msg.encoding}, shape={cv_image.shape})'
                 )
         
         except Exception as e:

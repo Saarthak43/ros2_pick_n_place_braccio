@@ -27,8 +27,8 @@ setup(
     entry_points={
         'console_scripts': [
             'yolo_detector_node.py = braccio_yolo_sorting.yolo_detector_node:main',
-            'braccio_sorting_controller.py = braccio_yolo_sorting.braccio_sorting_controller:main',
             'braccio_moveit_sorting_controller.py = braccio_yolo_sorting.braccio_moveit_sorting_controller:main',
+    
         ],
     },
 )

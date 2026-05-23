@@ -2,19 +2,24 @@
 """
 Launch Braccio in Gazebo (gz-sim) with ROS 2 Control.
 
-Why this changed (camera was showing "No Image" in RViz):
-  * parameter_bridge from ros_gz_bridge publishes images with Reliable
-    QoS by default.  RViz's Image display defaults to Reliable too, but
-    this combination is widely known to mis-negotiate with gz_transport
-    images -- RViz silently shows "No Image".
-  * ros_gz_image's `image_bridge` uses image_transport, publishes with
-    sensor_data QoS, and is the recommended way to expose Gazebo images
-    to ROS.  rqt_image_view, RViz, and ros2 topic echo --qos-reliability
-    best_effort all see it correctly.
+This launch file:
+  * Sets GZ_SIM_RESOURCE_PATH so Gazebo can resolve `package://` URIs to the
+    braccio_description STL meshes.
+  * Spawns Gazebo with the sorting world.
+  * Spawns the robot from /robot_description.
+  * Bridges essential topics:
+      - /clock           (gz -> ros) so use_sim_time works for MoveIt etc.
+      - /camera          (gz -> ros) remapped to /camera/image_raw so the
+                         YOLO detector and RViz can subscribe to it.
+      - /camera_info     (gz -> ros) remapped to /camera/camera_info.
+  * Publishes a static transform world -> base_link.  MoveIt's SRDF declares
+    a virtual joint with parent_frame="world", so this transform MUST exist or
+    every MoveIt IK / planning call will fail with FRAME_TRANSFORM_FAILURE.
+  * Loads the joint_state_broadcaster, arm_controller and gripper_controller
+    sequentially AFTER the robot is spawned (so controller_manager exists).
+  * Opens RViz with the braccio_with_camera.rviz config.
 
-So we now use TWO bridges:
-  * parameter_bridge for /clock and /camera_info.
-  * image_bridge     for the camera image stream.
+To disable RViz pass `rviz:=false`.
 """
 
 import os
@@ -39,6 +44,7 @@ from launch_ros.substitutions import FindPackageShare
 
 def generate_launch_description():
 
+    # ---------------------------------------------------------------- paths
     pkg_braccio_description = get_package_share_directory('braccio_description')
     pkg_braccio_gazebo = get_package_share_directory('braccio_gazebo')
 
@@ -48,6 +54,8 @@ def generate_launch_description():
         pkg_braccio_description, 'rviz', 'braccio_with_camera.rviz'
     )
 
+    # GZ_SIM_RESOURCE_PATH: walk up to the workspace `share` directory so
+    # `package://braccio_description/stl/...` resolves correctly.
     install_share = os.path.dirname(pkg_braccio_description)
     if 'GZ_SIM_RESOURCE_PATH' in os.environ:
         gz_resource_path = os.environ['GZ_SIM_RESOURCE_PATH'] + ':' + install_share
@@ -61,6 +69,7 @@ def generate_launch_description():
         name='IGN_GAZEBO_RESOURCE_PATH', value=gz_resource_path
     )
 
+    # ------------------------------------------------------------ arguments
     use_sim_time_arg = DeclareLaunchArgument(
         'use_sim_time', default_value='true',
         description='Use /clock from Gazebo.'
@@ -76,6 +85,7 @@ def generate_launch_description():
 
     use_sim_time = LaunchConfiguration('use_sim_time')
 
+    # ------------------------------------------------------ robot description
     robot_description = ParameterValue(
         Command(['xacro ', urdf_file]),
         value_type=str,
@@ -93,6 +103,8 @@ def generate_launch_description():
         }],
     )
 
+    # MoveIt's SRDF uses `world` as the planning frame (virtual_joint parent),
+    # but our URDF root is `base_link`.  Publish the link so TF is complete.
     world_to_base = Node(
         package='tf2_ros',
         executable='static_transform_publisher',
@@ -101,6 +113,7 @@ def generate_launch_description():
         arguments=['0', '0', '0', '0', '0', '0', 'world', 'base_link'],
     )
 
+    # --------------------------------------------------------------- gazebo
     gazebo = IncludeLaunchDescription(
         PythonLaunchDescriptionSource([
             PathJoinSubstitution([
@@ -127,35 +140,26 @@ def generate_launch_description():
         ],
     )
 
-    # /clock + /camera_info via parameter_bridge.
-    param_bridge = Node(
+    # ------------------------------------------------------------- bridge
+    # clock + camera (gz -> ros) with remap so /camera becomes /camera/image_raw
+    gz_ros_bridge = Node(
         package='ros_gz_bridge',
         executable='parameter_bridge',
-        name='param_bridge',
+        name='gz_ros_bridge',
         output='screen',
         arguments=[
             '/clock@rosgraph_msgs/msg/Clock[gz.msgs.Clock',
+            '/camera@sensor_msgs/msg/Image[gz.msgs.Image',
             '/camera_info@sensor_msgs/msg/CameraInfo[gz.msgs.CameraInfo',
         ],
         remappings=[
+            ('/camera', '/camera/image_raw'),
             ('/camera_info', '/camera/camera_info'),
         ],
         parameters=[{'use_sim_time': use_sim_time}],
     )
 
-    # Image stream via ros_gz_image (uses image_transport, sensor_data QoS).
-    image_bridge = Node(
-        package='ros_gz_image',
-        executable='image_bridge',
-        name='image_bridge',
-        output='screen',
-        arguments=['/camera'],
-        remappings=[
-            ('/camera', '/camera/image_raw'),
-        ],
-        parameters=[{'use_sim_time': use_sim_time}],
-    )
-
+    # ------------------------------------------------------------ controllers
     load_jsb = ExecuteProcess(
         cmd=['ros2', 'control', 'load_controller',
              '--set-state', 'active', 'joint_state_broadcaster'],
@@ -172,6 +176,7 @@ def generate_launch_description():
         output='screen',
     )
 
+    # Sequence:  spawn -> jsb -> arm -> gripper
     after_spawn = RegisterEventHandler(
         OnProcessExit(target_action=spawn_robot, on_exit=[load_jsb])
     )
@@ -182,6 +187,7 @@ def generate_launch_description():
         OnProcessExit(target_action=load_arm, on_exit=[load_gripper])
     )
 
+    # ---------------------------------------------------------------- rviz
     rviz = Node(
         package='rviz2',
         executable='rviz2',
@@ -202,8 +208,7 @@ def generate_launch_description():
         world_to_base,
         gazebo,
         spawn_robot,
-        param_bridge,
-        image_bridge,
+        gz_ros_bridge,
         after_spawn,
         after_jsb,
         after_arm,
