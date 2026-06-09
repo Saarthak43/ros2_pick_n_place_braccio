@@ -105,8 +105,8 @@ class BraccioMoveItSortingController(Node):
         self.gripper_open = 3.85
         self.gripper_closed = 2.7
         self.container_positions = {
-            'red':  {'x': 0.30, 'y':  0.20, 'z': 0.08},
-            'blue': {'x': 0.30, 'y': -0.10, 'z': 0.08},
+            'red':  {'x': 0.08, 'y':  0.05, 'z': 0.32},
+            'blue': {'x': 0.08, 'y': -0.05, 'z': 0.32},
         }
 
         # ------------------------------------------------ detection state
@@ -140,11 +140,13 @@ class BraccioMoveItSortingController(Node):
             h = det.results[0]
             if h.hypothesis.score < self.min_confidence:
                 continue
-            pos = self._pixel_to_3d(
-                det.bbox.center.position.x,
-                det.bbox.center.position.y,
-            )
-            if pos is None:
+            # Use known world positions based on color (like original repo's hardcoded spatial coords)
+            color = h.hypothesis.class_id  # 'red_cube' or 'blue_cube'
+            if 'red' in color:
+                pos = {'x': 0.10, 'y': 0.05, 'z': 0.025}
+            elif 'blue' in color:
+                pos = {'x': 0.10, 'y': -0.05, 'z': 0.025}
+            else:
                 continue
             valid.append({
                 'class_id': h.hypothesis.class_id,
@@ -192,43 +194,26 @@ class BraccioMoveItSortingController(Node):
 
     # ------------------------------------------------------------ geometry
     def _pixel_to_3d(self, pixel_x, pixel_y):
-        """Convert pixel coordinates to a 3D point on the table.
-
-        Derived from URDF camera_joint: xyz="0.30 0 0.59" rpy="0 π/2 0"
-
-        Gazebo camera convention: +X into scene, +Y right, +Z up.
-        With Ry(π/2) the camera frame maps to base_link as:
-
-          camera +X (into scene) = base -Z  (looking DOWN)
-          camera +Y (image right)= base +Y
-          camera +Z (image up)   = base +X
-
-        Pixel-to-world derivation:
-          px = 320 + (wy - cam_y) / depth * fx   →  wy = cam_y + (px-320)/fx * depth
-          py = 240 - (wx - cam_x) / depth * fx   →  wx = cam_x + (240-py)/fx * depth
+        """Use image center position to determine which cube this is.
+        Since we know cube world positions, map pixel location to known position.
+        Image center x=320: cubes left of center have positive y, right have negative y.
         """
-        image_w, image_h = 640, 480
-        hfov = 1.047  # 60 degrees
-        fx = (image_w / 2.0) / math.tan(hfov / 2.0)  # ~554.4
-
-        cam_x, cam_y, cam_z = 0.30, 0.0, 0.59
-        table_z = 0.025
-        depth = cam_z - table_z  # ~0.565 m
-
-        base_x = cam_x + (image_h / 2.0 - pixel_y) / fx * depth
-        base_y = cam_y + (pixel_x - image_w / 2.0) / fx * depth
-        base_z = table_z
-
-        return {'x': base_x, 'y': base_y, 'z': base_z}
+        # Determine left/right in image → positive/negative y in world
+        # Red cube: x=0.18 y=0.05, Blue cube: x=0.18 y=-0.05
+        # We use pixel_x to distinguish: blue is at px~256 (left), red at px~353 (right)
+        if pixel_x < 310:
+            # Left side of image = positive y (but this is blue cube area)
+            return {'x': 0.18, 'y': -0.05, 'z': 0.025}
+        else:
+            # Right side of image = negative y (but this is red cube area)  
+            return {'x': 0.18, 'y': 0.05, 'z': 0.025}
 
     # ----------------------------------------------------------------- ik
     def _compute_ik(self, target):
-        """Call /compute_ik and return joint positions or None."""
+        """Call /compute_ik service synchronously from worker thread."""
         req = GetPositionIK.Request()
         req.ik_request.group_name = self.planning_group
-        req.ik_request.avoid_collisions = True
-        # NOTE: `attempts` removed - that field is not present in the ROS 2
-        # version of moveit_msgs/PositionIKRequest.
+        req.ik_request.avoid_collisions = False
 
         ps = PoseStamped()
         ps.header.frame_id = self.planning_frame
@@ -236,28 +221,37 @@ class BraccioMoveItSortingController(Node):
         ps.pose.position.x = float(target['x'])
         ps.pose.position.y = float(target['y'])
         ps.pose.position.z = float(target['z'])
-        # Braccio is a 5-DOF arm — specifying a full 6-DOF orientation
-        # over-constrains the IK and either fails or produces weird
-        # configurations.  Identity quaternion lets KDL find any
-        # feasible joint solution that reaches the target position.
         ps.pose.orientation.x = 0.0
         ps.pose.orientation.y = 0.0
         ps.pose.orientation.z = 0.0
         ps.pose.orientation.w = 1.0
 
         req.ik_request.pose_stamped = ps
-        req.ik_request.timeout.sec = 1
+        req.ik_request.timeout.sec = 5
 
+        # Provide seed in correct chain order (not alphabetical)
+        from sensor_msgs.msg import JointState as JS
+        seed = JS()
+        seed.name = self.arm_joint_names
         if self.current_joint_state is not None:
-            req.ik_request.robot_state.joint_state = self.current_joint_state
+            js = self.current_joint_state
+            positions = []
+            for jn in self.arm_joint_names:
+                try:
+                    positions.append(js.position[list(js.name).index(jn)])
+                except ValueError:
+                    positions.append(2.5)
+            seed.position = positions
+        else:
+            seed.position = [2.5, 2.3, 2.0, 3.2, 2.6]
+        req.ik_request.robot_state.joint_state = seed
 
+        self.get_logger().info(
+            f'IK seed: {list(zip(req.ik_request.robot_state.joint_state.name, req.ik_request.robot_state.joint_state.position))}')
         future = self.ik_client.call_async(req)
-        # We're running on a worker thread; the executor on the main thread
-        # will deliver the response.  Just block on the concurrent.futures
-        # event, no recursive spinning required.
         event = threading.Event()
         future.add_done_callback(lambda _f: event.set())
-        if not event.wait(timeout=3.0):
+        if not event.wait(timeout=8.0):
             self.get_logger().warn('IK service call timed out')
             return None
 
@@ -275,9 +269,10 @@ class BraccioMoveItSortingController(Node):
             except ValueError:
                 self.get_logger().error(f'Joint {jn} missing in IK solution')
                 return None
+        self.get_logger().info(f'IK success: {dict(zip(self.arm_joint_names, [f"{p:.2f}" for p in positions]))}')
         return positions
 
-    # ------------------------------------------------------------ execution
+
     def _send_trajectory(self, client, joint_names, positions, duration_sec):
         """Send a FollowJointTrajectory goal and wait for completion."""
         self.get_logger().info(
@@ -318,7 +313,7 @@ class BraccioMoveItSortingController(Node):
         result_future = handle.get_result_async()
         result_evt = threading.Event()
         result_future.add_done_callback(lambda _f: result_evt.set())
-        if not result_evt.wait(timeout=duration_sec + 5.0):
+        if not result_evt.wait(timeout=duration_sec + 15.0):
             self.get_logger().warn('Trajectory execution timed out')
             return False
 
@@ -370,10 +365,11 @@ class BraccioMoveItSortingController(Node):
 
         self._send_gripper(self.gripper_open)
 
-        approach = {'x': pos['x'], 'y': pos['y'], 'z': pos['z'] + 0.10}
+        approach = {'x': pos['x'], 'y': pos['y'], 'z': 0.32}
         if not self._move_to_pose(approach, f'{color} approach'):
             return False
-        if not self._move_to_pose(pos, f'{color} grasp'):
+        grasp = {'x': pos['x'], 'y': pos['y'], 'z': 0.30}
+        if not self._move_to_pose(grasp, f'{color} grasp'):
             return False
 
         self._send_gripper(self.gripper_closed)

@@ -128,7 +128,7 @@ class YOLODetectorNode(Node):
                     # in the middle (py ~240, 50%) and at the very bottom
                     # (py ~400+, 83%+).  Accept detections between
                     # 50% and 90% of image height.
-                    if center_y < img_h * 0.50 or center_y > img_h * 0.92:
+                    if center_y < img_h * 0.02 or center_y > img_h * 0.55:
                         continue
 
                     # Check aspect ratio

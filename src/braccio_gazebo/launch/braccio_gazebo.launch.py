@@ -172,15 +172,10 @@ def generate_launch_description():
         output='screen',
     )
 
-    after_spawn = RegisterEventHandler(
-        OnProcessExit(target_action=spawn_robot, on_exit=[load_jsb])
-    )
-    after_jsb = RegisterEventHandler(
-        OnProcessExit(target_action=load_jsb, on_exit=[load_arm])
-    )
-    after_arm = RegisterEventHandler(
-        OnProcessExit(target_action=load_arm, on_exit=[load_gripper])
-    )
+    from launch.actions import TimerAction as _TimerAction
+    after_spawn = _TimerAction(period=15.0, actions=[load_jsb])
+    after_jsb = _TimerAction(period=18.0, actions=[load_arm])
+    after_arm = _TimerAction(period=21.0, actions=[load_gripper])
 
     rviz = Node(
         package='rviz2',
