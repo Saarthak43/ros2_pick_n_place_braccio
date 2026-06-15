@@ -63,7 +63,7 @@
 
     <!-- Red Cube 1 -->
     <model name="red_cube_1">
-      <pose>0.10 0.05 0.025 0 0 0</pose>
+      <pose>0.10 0.05 0.27 0 0 0</pose>
       <link name="link">
         <inertial>
           <mass>0.05</mass>
@@ -153,7 +153,7 @@
 
     <!-- Blue Cube 2 -->
     <model name="blue_cube_2">
-      <pose>0.10 -0.05 0.025 0 0 0</pose>
+      <pose>0.10 -0.05 0.27 0 0 0</pose>
       <link name="link">
         <inertial>
           <mass>0.05</mass>

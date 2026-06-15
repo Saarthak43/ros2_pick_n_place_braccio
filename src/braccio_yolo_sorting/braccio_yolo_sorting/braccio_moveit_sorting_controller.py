@@ -233,17 +233,11 @@ class BraccioMoveItSortingController(Node):
         from sensor_msgs.msg import JointState as JS
         seed = JS()
         seed.name = self.arm_joint_names
-        if self.current_joint_state is not None:
-            js = self.current_joint_state
-            positions = []
-            for jn in self.arm_joint_names:
-                try:
-                    positions.append(js.position[list(js.name).index(jn)])
-                except ValueError:
-                    positions.append(2.5)
-            seed.position = positions
-        else:
-            seed.position = [2.5, 2.3, 2.0, 3.2, 2.6]
+        # Bias seed toward correct configuration - arm pointing toward target
+        base_target = 2.5 + math.atan2(target['y'], target['x'])
+        # Clamp base to forward-facing range [2.0, 3.0]
+        base_target = max(2.0, min(3.0, base_target))
+        seed.position = [base_target, 2.7, 4.3, 1.4, 2.6]
         req.ik_request.robot_state.joint_state = seed
 
         self.get_logger().info(
@@ -269,6 +263,16 @@ class BraccioMoveItSortingController(Node):
             except ValueError:
                 self.get_logger().error(f'Joint {jn} missing in IK solution')
                 return None
+        # Mirror base_joint if wrong side - 1.97 and 2.96 are symmetric around ~2.47
+        correct_base = 2.5 + math.atan2(target['y'], target['x'])
+        correct_base = max(2.0, min(3.0, correct_base))
+        if abs(positions[0] - correct_base) > 0.5:
+            positions[0] = correct_base
+        # Normalize wrist_roll to [2.0, 4.0] range - 4.83 means gripper is flipped
+        import math as _m2
+        while positions[4] > 4.0: positions[4] -= _m2.pi
+        while positions[4] < 1.0: positions[4] += _m2.pi
+
         self.get_logger().info(f'IK success: {dict(zip(self.arm_joint_names, [f"{p:.2f}" for p in positions]))}')
         return positions
 
