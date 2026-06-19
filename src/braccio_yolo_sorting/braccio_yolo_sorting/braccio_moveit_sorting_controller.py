@@ -101,12 +101,14 @@ class BraccioMoveItSortingController(Node):
         self.named_positions = {
             'home': [2.5, 2.8, 2.8, 2.8, 2.6],
             'scan': [2.5, 2.3, 2.0, 3.2, 2.6],
+            'drop_red':  [3.28, 2.5, 3.8, 1.8, 2.6],
+            'drop_blue': [1.72, 2.5, 3.8, 1.8, 2.6],
         }
         self.gripper_open = 3.85
         self.gripper_closed = 2.7
         self.container_positions = {
-            'red':  {'x': 0.08, 'y':  0.05, 'z': 0.32},
-            'blue': {'x': 0.08, 'y': -0.05, 'z': 0.32},
+            'red':  {'x': 0.20, 'y':  0.20, 'z': 0.15},
+            'blue': {'x': 0.20, 'y': -0.10, 'z': 0.15},
         }
 
         # ------------------------------------------------ detection state
@@ -143,9 +145,9 @@ class BraccioMoveItSortingController(Node):
             # Use known world positions based on color (like original repo's hardcoded spatial coords)
             color = h.hypothesis.class_id  # 'red_cube' or 'blue_cube'
             if 'red' in color:
-                pos = {'x': 0.10, 'y': 0.05, 'z': 0.025}
+                pos = {'x': 0.0966, 'y': -0.0563, 'z': 0.27}
             elif 'blue' in color:
-                pos = {'x': 0.10, 'y': -0.05, 'z': 0.025}
+                pos = {'x': 0.0130, 'y': -0.1110, 'z': 0.27}
             else:
                 continue
             valid.append({
@@ -237,7 +239,7 @@ class BraccioMoveItSortingController(Node):
         base_target = 2.5 + math.atan2(target['y'], target['x'])
         # Clamp base to forward-facing range [2.0, 3.0]
         base_target = max(2.0, min(3.0, base_target))
-        seed.position = [base_target, 2.7, 4.3, 1.4, 2.6]
+        seed.position = [base_target, 2.7, 2.5, 1.4, 2.6]
         req.ik_request.robot_state.joint_state = seed
 
         self.get_logger().info(
@@ -273,7 +275,8 @@ class BraccioMoveItSortingController(Node):
         while positions[4] > 4.0: positions[4] -= _m2.pi
         while positions[4] < 1.0: positions[4] += _m2.pi
 
-        self.get_logger().info(f'IK success: {dict(zip(self.arm_joint_names, [f"{p:.2f}" for p in positions]))}')
+
+        self.get_logger().info(f'IK success: base={positions[0]:.3f} shoulder={positions[1]:.3f} elbow={positions[2]:.3f} wrist_pitch={positions[3]:.3f} wrist_roll={positions[4]:.3f}')
         return positions
 
 
@@ -369,10 +372,10 @@ class BraccioMoveItSortingController(Node):
 
         self._send_gripper(self.gripper_open)
 
-        approach = {'x': pos['x'], 'y': pos['y'], 'z': 0.32}
+        approach = {"x": pos["x"], "y": pos["y"], "z": 0.31}
         if not self._move_to_pose(approach, f'{color} approach'):
             return False
-        grasp = {'x': pos['x'], 'y': pos['y'], 'z': 0.30}
+        grasp = {"x": pos["x"], "y": pos["y"], "z": 0.270}
         if not self._move_to_pose(grasp, f'{color} grasp'):
             return False
 
@@ -382,8 +385,7 @@ class BraccioMoveItSortingController(Node):
 
     def _place(self, color):
         self.get_logger().info(f'Placing in {color} container')
-        target = self.container_positions[color]
-        if not self._move_to_pose(target, f'{color} container'):
+        if not self._move_named(f'drop_{color}'):
             return False
         self._send_gripper(self.gripper_open)
         return True

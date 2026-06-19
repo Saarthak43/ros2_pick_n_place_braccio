@@ -118,9 +118,9 @@ class YOLODetectorNode(Node):
                     # 0.59m) should be ~49x49px = ~2400 px².
                     # Use a generous max of 8000 px² to catch cubes at
                     # any angle while still rejecting containers.
-                    if area > 8000:
+                    if area > 25000:
                         continue
-                    if w > 100 or h > 100:
+                    if w > 200 or h > 200:
                         continue
 
                     # Cubes appear in the lower part of the image
