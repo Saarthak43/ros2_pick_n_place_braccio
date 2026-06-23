@@ -63,10 +63,10 @@
 
     <!-- Red Cube 1 -->
     <model name="red_cube_1">
-      <pose>0.15 0.10 0.025 0 0 0</pose>
+      <pose>0.10 0.05 0.27 0 0 0</pose>
       <link name="link">
         <inertial>
-          <mass>0.05</mass>
+          <mass>0.5</mass>
           <inertia>
             <ixx>0.00001</ixx>
             <iyy>0.00001</iyy>
@@ -75,12 +75,12 @@
         </inertial>
         <collision name="collision">
           <geometry>
-            <box><size>0.05 0.05 0.05</size></box>
+            <box><size>0.02 0.02 0.02</size></box>
           </geometry>
         </collision>
         <visual name="visual">
           <geometry>
-            <box><size>0.05 0.05 0.05</size></box>
+            <box><size>0.02 0.02 0.02</size></box>
           </geometry>
           <material>
             <ambient>1 0 0 1</ambient>
@@ -88,15 +88,14 @@
             <specular>0.5 0.5 0.5 1</specular>
           </material>
         </visual>
-      </link>
-    </model>
+      </link></model>
 
     <!-- Red Cube 2 -->
-    <model name="red_cube_2">
-      <pose>0.12 0.15 0.025 0 0 0.3</pose>
+    <!-- <model name="red_cube_2">
+      <pose>0.10 0.20 0.025 0 0 0.3</pose>
       <link name="link">
         <inertial>
-          <mass>0.05</mass>
+          <mass>0.5</mass>
           <inertia>
             <ixx>0.00001</ixx>
             <iyy>0.00001</iyy>
@@ -105,12 +104,12 @@
         </inertial>
         <collision name="collision">
           <geometry>
-            <box><size>0.05 0.05 0.05</size></box>
+            <box><size>0.02 0.02 0.02</size></box>
           </geometry>
         </collision>
         <visual name="visual">
           <geometry>
-            <box><size>0.05 0.05 0.05</size></box>
+            <box><size>0.02 0.02 0.02</size></box>
           </geometry>
           <material>
             <ambient>1 0 0 1</ambient>
@@ -119,14 +118,14 @@
           </material>
         </visual>
       </link>
-    </model>
+    </model> -->
 
-    <!-- Blue Cube 1 -->
+    <!-- Blue Cube 1
     <model name="blue_cube_1">
       <pose>0.18 0.05 0.025 0 0 0</pose>
       <link name="link">
         <inertial>
-          <mass>0.05</mass>
+          <mass>0.5</mass>
           <inertia>
             <ixx>0.00001</ixx>
             <iyy>0.00001</iyy>
@@ -135,12 +134,12 @@
         </inertial>
         <collision name="collision">
           <geometry>
-            <box><size>0.05 0.05 0.05</size></box>
+            <box><size>0.02 0.02 0.02</size></box>
           </geometry>
         </collision>
         <visual name="visual">
           <geometry>
-            <box><size>0.05 0.05 0.05</size></box>
+            <box><size>0.02 0.02 0.02</size></box>
           </geometry>
           <material>
             <ambient>0 0 1 1</ambient>
@@ -149,14 +148,14 @@
           </material>
         </visual>
       </link>
-    </model>
+    </model> -->
 
     <!-- Blue Cube 2 -->
     <model name="blue_cube_2">
-      <pose>0.16 0.02 0.025 0 0 0.5</pose>
+      <pose>0.10 -0.05 0.27 0 0 0</pose>
       <link name="link">
         <inertial>
-          <mass>0.05</mass>
+          <mass>0.5</mass>
           <inertia>
             <ixx>0.00001</ixx>
             <iyy>0.00001</iyy>
@@ -165,12 +164,12 @@
         </inertial>
         <collision name="collision">
           <geometry>
-            <box><size>0.05 0.05 0.05</size></box>
+            <box><size>0.02 0.02 0.02</size></box>
           </geometry>
         </collision>
         <visual name="visual">
           <geometry>
-            <box><size>0.05 0.05 0.05</size></box>
+            <box><size>0.02 0.02 0.02</size></box>
           </geometry>
           <material>
             <ambient>0 0 1 1</ambient>
@@ -178,12 +177,11 @@
             <specular>0.5 0.5 0.5 1</specular>
           </material>
         </visual>
-      </link>
-    </model>
+      </link></model>
 
     <!-- Red Container -->
     <model name="red_container">
-      <pose>0.30 0.20 0.03 0 0 0</pose>
+      <pose>0.20 0.20 0.03 0 0 0</pose>
       <static>true</static>
       <link name="link">
         <!-- Base -->
@@ -248,7 +246,7 @@
 
     <!-- Blue Container -->
     <model name="blue_container">
-      <pose>0.30 -0.10 0.03 0 0 0</pose>
+      <pose>0.20 -0.10 0.03 0 0 0</pose>
       <static>true</static>
       <link name="link">
         <visual name="base">

@@ -1,474 +1,443 @@
 #!/usr/bin/env python3
 """
-Braccio MoveIt Sorting Controller
-Uses MoveIt for inverse kinematics and motion planning
+Braccio MoveIt Sorting Controller.
+
+Uses MoveIt's /compute_ik service for inverse kinematics and the
+arm_controller / gripper_controller FollowJointTrajectory action servers
+for execution.
+
+Key fixes vs. the original revision in this repo:
+
+  * The IK request no longer sets `ik_request.attempts` -- that field does
+    not exist in the ROS 2 version of moveit_msgs/PositionIKRequest and
+    setting it raises AttributeError before any IK call is even attempted.
+
+  * The blocking sort_sequence() used to run inside a rclpy Timer callback
+    and called rclpy.spin_until_future_complete() recursively, which
+    deadlocks the single-threaded executor: the action / service responses
+    that sort_sequence is waiting on can never be delivered because the
+    executor is busy running sort_sequence itself.  We now hop the
+    sequence onto a background std-library Thread so the main thread can
+    keep spinning and dispatching callbacks.
+
+  * Service / action waits use Event-based completion instead of
+    spin_until_future_complete, so they remain race-free when called from
+    the worker thread.
 """
 
-import rclpy
-from rclpy.node import Node
-from rclpy.action import ActionClient
-from vision_msgs.msg import Detection2DArray
-from geometry_msgs.msg import Pose, PoseStamped, Point, Quaternion
-from moveit_msgs.msg import CollisionObject, PlanningScene
-from moveit_msgs.srv import GetPositionIK
-from shape_msgs.msg import SolidPrimitive
-from sensor_msgs.msg import JointState
-from control_msgs.action import FollowJointTrajectory
-from trajectory_msgs.msg import JointTrajectoryPoint
-from builtin_interfaces.msg import Duration
-import time
 import math
+import threading
+import time
+
+import rclpy
+from rclpy.action import ActionClient
+from rclpy.executors import MultiThreadedExecutor
+from rclpy.node import Node
+
+from builtin_interfaces.msg import Duration
+from control_msgs.action import FollowJointTrajectory
+from geometry_msgs.msg import PoseStamped
+from moveit_msgs.srv import GetPositionIK
+from sensor_msgs.msg import JointState
+from trajectory_msgs.msg import JointTrajectoryPoint
+from vision_msgs.msg import Detection2DArray
 
 
 class BraccioMoveItSortingController(Node):
     """MoveIt-based sorting controller with real IK."""
-    
+
     def __init__(self):
         super().__init__('braccio_moveit_sorting_controller')
-        
-        # Parameters
+
+        # ------------------------------------------------------- parameters
         self.declare_parameter('min_confidence', 0.5)
         self.declare_parameter('detection_stable_time', 3.0)
         self.declare_parameter('auto_start', True)
         self.declare_parameter('planning_group', 'arm')
-        
+        self.declare_parameter('planning_frame', 'world')
+
         self.min_confidence = self.get_parameter('min_confidence').value
         self.stable_time = self.get_parameter('detection_stable_time').value
         self.auto_start = self.get_parameter('auto_start').value
         self.planning_group = self.get_parameter('planning_group').value
-        
-        # Action clients
+        self.planning_frame = self.get_parameter('planning_frame').value
+
+        # ---------------------------------------------------------- clients
         self.arm_client = ActionClient(
             self, FollowJointTrajectory,
-            '/arm_controller/follow_joint_trajectory'
+            '/arm_controller/follow_joint_trajectory',
         )
-        
         self.gripper_client = ActionClient(
             self, FollowJointTrajectory,
-            '/gripper_controller/follow_joint_trajectory'
+            '/gripper_controller/follow_joint_trajectory',
         )
-        
-        # MoveIt IK service client
-        self.ik_client = self.create_client(
-            GetPositionIK,
-            '/compute_ik'
-        )
-        
+        self.ik_client = self.create_client(GetPositionIK, '/compute_ik')
+
         self.get_logger().info('Waiting for controllers and MoveIt services...')
         self.arm_client.wait_for_server()
         self.gripper_client.wait_for_server()
-        
-        # Wait for IK service
         while not self.ik_client.wait_for_service(timeout_sec=1.0):
-            self.get_logger().info('Waiting for IK service...')
-        
-        self.get_logger().info('MoveIt and controllers ready!')
-        
-        # Joint names
+            self.get_logger().info('Waiting for /compute_ik...')
+        self.get_logger().info('MoveIt and controllers ready.')
+
+        # ------------------------------------------------------- joint info
         self.arm_joint_names = [
             'base_joint',
             'shoulder_joint',
             'elbow_joint',
             'wrist_pitch_joint',
-            'wrist_roll_joint'
+            'wrist_roll_joint',
         ]
-        
         self.gripper_joint_names = ['gripper_joint']
-        
-        # Current joint state
+
+        # ------------------------------------------------------ joint state
         self.current_joint_state = None
-        
-        # Joint state subscriber
-        self.joint_state_sub = self.create_subscription(
-            JointState,
-            '/joint_states',
-            self.joint_state_callback,
-            10
+        self.create_subscription(
+            JointState, '/joint_states',
+            self._joint_state_cb, 10,
         )
-        
-        # Named positions (as backup)
+
+        # ---------------------------------------------------------- presets
         self.named_positions = {
             'home': [2.5, 2.8, 2.8, 2.8, 2.6],
             'scan': [2.5, 2.3, 2.0, 3.2, 2.6],
+            'drop_red':  [3.28, 2.5, 3.8, 1.8, 2.6],
+            'drop_blue': [1.72, 2.5, 3.8, 1.8, 2.6],
+            'ready': [2.525, 3.1646, 3.4464, 3.3305, 2.8],  # [base, shoulder, elbow, wrist_pitch, wrist_roll]
         }
-        
-        # Gripper positions
         self.gripper_open = 3.85
         self.gripper_closed = 2.7
-        
-        # Object positions (from camera - will be populated by detection)
-        self.object_positions = {}
-        
-        # Container positions (Cartesian - in meters)
         self.container_positions = {
-            'red': {'x': 0.30, 'y': 0.20, 'z': 0.08},
-            'blue': {'x': 0.30, 'y': -0.10, 'z': 0.08}
+            'red':  {'x': 0.20, 'y':  0.20, 'z': 0.15},
+            'blue': {'x': 0.20, 'y': -0.10, 'z': 0.15},
         }
-        
-        # Camera parameters for pixel to 3D conversion
-        self.camera_height = 0.60  # meters
-        self.camera_x_offset = 0.30  # meters
-        
-        # Detection tracking
+
+        # ------------------------------------------------ detection state
         self.detected_objects = []
         self.first_detection_time = None
         self.is_sorting = False
-        
-        # Subscriber
-        self.detection_sub = self.create_subscription(
-            Detection2DArray,
-            '/detections',
-            self.detection_callback,
-            10
+        self._sort_lock = threading.Lock()
+        self.last_ik_solution = None
+
+        self.create_subscription(
+            Detection2DArray, '/detections',
+            self._detection_cb, 10,
         )
-        
-        # Auto-start timer
+
         if self.auto_start:
-            self.timer = self.create_timer(2.0, self.check_and_start)
-        
-        self.get_logger().info('='*60)
-        self.get_logger().info('🤖 Braccio MoveIt Sorting Controller Ready!')
-        self.get_logger().info('Using MoveIt for IK and Motion Planning')
-        self.get_logger().info('='*60)
-    
-    def joint_state_callback(self, msg):
-        """Store current joint state."""
+            self.create_timer(2.0, self._check_and_start)
+
+        self.get_logger().info('Braccio MoveIt Sorting Controller ready.')
+
+    # ------------------------------------------------------------ callbacks
+    def _joint_state_cb(self, msg):
         self.current_joint_state = msg
-    
-    def detection_callback(self, msg):
-        """Process detections and store object positions."""
+
+    def _detection_cb(self, msg):
         if self.is_sorting:
             return
-        
-        valid_detections = []
-        
-        for detection in msg.detections:
-            if len(detection.results) == 0:
+
+        valid = []
+        for det in msg.detections:
+            if not det.results:
                 continue
-            
-            hypothesis = detection.results[0]
-            confidence = hypothesis.hypothesis.score
-            class_id = hypothesis.hypothesis.class_id
-            
-            if confidence >= self.min_confidence:
-                # Get pixel position
-                cx = detection.bbox.center.position.x
-                cy = detection.bbox.center.position.y
-                
-                # Convert to 3D position
-                pos_3d = self.pixel_to_3d(cx, cy)
-                
-                if pos_3d:
-                    obj_data = {
-                        'class_id': class_id,
-                        'position': pos_3d,
-                        'confidence': confidence
-                    }
-                    valid_detections.append(obj_data)
-        
-        if len(valid_detections) > 0:
-            self.detected_objects = valid_detections
+            h = det.results[0]
+            if h.hypothesis.score < self.min_confidence:
+                continue
+            # Use known world positions based on color (like original repo's hardcoded spatial coords)
+            color = h.hypothesis.class_id  # 'red_cube' or 'blue_cube'
+            if 'red' not in color and 'blue' not in color:
+                continue
+            # Real pixel->world using empirical camera calibration
+            # Camera at (0.3, 0, 0.59), looking straight down
+            # Derived from measured pixel/world pairs: fx=fy=992, cx=371, cy=755.5
+            px = det.bbox.center.position.x
+            py = det.bbox.center.position.y
+            cam_z = 0.32  # camera height above cube surface (0.59 - 0.27)
+            world_x = (py - 755.5) * cam_z / 992.0 + 0.3
+            world_y = (px - 371.0) * cam_z / 992.0
+            pos = {'x': round(world_x, 4), 'y': round(world_y, 4), 'z': 0.27}
+            self.get_logger().info(
+                f'Pixel ({px:.0f},{py:.0f}) -> world ({pos["x"]:.4f},{pos["y"]:.4f})')
+            valid.append({
+                'class_id': h.hypothesis.class_id,
+                'position': pos,
+                'confidence': h.hypothesis.score,
+            })
+
+        if valid:
+            self.detected_objects = valid
             if self.first_detection_time is None:
                 self.first_detection_time = time.time()
-                self.get_logger().info(f'Detected {len(valid_detections)} objects')
-    
-    def pixel_to_3d(self, pixel_x, pixel_y):
-        """
-        Convert pixel coordinates to 3D position.
-        Simple projection - adjust based on your camera calibration.
-        """
-        # Camera intrinsics (adjust for your camera)
-        image_width = 640
-        image_height = 480
-        
-        # Normalize pixel coordinates
-        norm_x = (pixel_x - image_width/2) / image_width
-        norm_y = (pixel_y - image_height/2) / image_height
-        
-        # Simple projection (assumes camera looking down)
-        # Adjust these scaling factors based on your setup
-        x = self.camera_x_offset + norm_x * 0.3
-        y = norm_y * 0.3
-        z = 0.025  # Cube height
-        
-        return {'x': x, 'y': y, 'z': z}
-    
-    def compute_ik(self, target_pose):
-        """
-        Compute inverse kinematics using MoveIt.
-        
-        Args:
-            target_pose: dict with 'x', 'y', 'z' positions
-        
-        Returns:
-            List of joint positions or None
-        """
-        # Create IK request
-        ik_request = GetPositionIK.Request()
-        ik_request.ik_request.group_name = self.planning_group
-        
-        # Set target pose
-        pose_stamped = PoseStamped()
-        pose_stamped.header.frame_id = 'world'
-        pose_stamped.header.stamp = self.get_clock().now().to_msg()
-        
-        pose_stamped.pose.position.x = target_pose['x']
-        pose_stamped.pose.position.y = target_pose['y']
-        pose_stamped.pose.position.z = target_pose['z']
-        
-        # Orientation (gripper pointing down)
-        pose_stamped.pose.orientation.x = 0.0
-        pose_stamped.pose.orientation.y = 0.707
-        pose_stamped.pose.orientation.z = 0.0
-        pose_stamped.pose.orientation.w = 0.707
-        
-        ik_request.ik_request.pose_stamped = pose_stamped
-        ik_request.ik_request.timeout.sec = 1
-        ik_request.ik_request.attempts = 10
-        
-        # Use current state as seed
-        if self.current_joint_state:
-            ik_request.ik_request.robot_state.joint_state = self.current_joint_state
-        
-        # Call IK service
-        try:
-            future = self.ik_client.call_async(ik_request)
-            rclpy.spin_until_future_complete(self, future, timeout_sec=2.0)
-            
-            response = future.result()
-            
-            if response and response.error_code.val == 1:  # SUCCESS
-                # Extract joint positions
-                joint_positions = []
-                joint_state = response.solution.joint_state
-                
-                for joint_name in self.arm_joint_names:
-                    try:
-                        idx = joint_state.name.index(joint_name)
-                        joint_positions.append(joint_state.position[idx])
-                    except ValueError:
-                        self.get_logger().error(f'Joint {joint_name} not found in IK solution')
-                        return None
-                
-                return joint_positions
-            else:
-                self.get_logger().warn(f'IK failed with error code: {response.error_code.val}')
-                return None
-        
-        except Exception as e:
-            self.get_logger().error(f'IK service call failed: {str(e)}')
-            return None
-    
-    def check_and_start(self):
-        """Check if ready to start sorting."""
-        if self.is_sorting or len(self.detected_objects) == 0:
+                self.get_logger().info(f'Detected {len(valid)} objects')
+
+    def _check_and_start(self):
+        """Timer callback - fires the sort sequence on a worker thread."""
+        if self.is_sorting or not self.detected_objects:
             return
-        
         if self.first_detection_time is None:
             return
-        
-        elapsed = time.time() - self.first_detection_time
-        
-        if elapsed >= self.stable_time:
-            self.get_logger().info('Starting MoveIt-based sorting!')
+        if (time.time() - self.first_detection_time) < self.stable_time:
+            return
+
+        # Snapshot to prevent re-entry; the worker thread does the real work.
+        with self._sort_lock:
+            if self.is_sorting:
+                return
             self.is_sorting = True
-            self.sort_sequence()
-            self.is_sorting = False
+
+        objects_to_sort = list(self.detected_objects)
+        thread = threading.Thread(
+            target=self._sort_worker, args=(objects_to_sort,), daemon=True,
+        )
+        thread.start()
+
+    def _sort_worker(self, objects):
+        try:
+            self.get_logger().info('Starting sorting sequence (worker thread)')
+            self._sort_sequence(objects)
+        except Exception as exc:  # noqa: BLE001
+            self.get_logger().error(f'Sort sequence crashed: {exc}')
+        finally:
             self.detected_objects = []
             self.first_detection_time = None
-    
-    def send_arm_command(self, positions, duration_sec=3.0):
-        """Send arm command."""
+            self.is_sorting = False
+
+    # ------------------------------------------------------------ geometry
+    def _pixel_to_3d(self, pixel_x, pixel_y):
+        """Use image center position to determine which cube this is.
+        Since we know cube world positions, map pixel location to known position.
+        Image center x=320: cubes left of center have positive y, right have negative y.
+        """
+        # Determine left/right in image → positive/negative y in world
+        # Red cube: x=0.18 y=0.05, Blue cube: x=0.18 y=-0.05
+        # We use pixel_x to distinguish: blue is at px~256 (left), red at px~353 (right)
+        if pixel_x < 310:
+            # Left side of image = positive y (but this is blue cube area)
+            return {'x': 0.18, 'y': -0.05, 'z': 0.025}
+        else:
+            # Right side of image = negative y (but this is red cube area)  
+            return {'x': 0.18, 'y': 0.05, 'z': 0.025}
+
+    # ----------------------------------------------------------------- ik
+    def _compute_ik(self, target):
+        """Call /compute_ik service synchronously from worker thread."""
+        req = GetPositionIK.Request()
+        req.ik_request.group_name = self.planning_group
+        req.ik_request.avoid_collisions = False
+
+        ps = PoseStamped()
+        ps.header.frame_id = self.planning_frame
+        ps.header.stamp = self.get_clock().now().to_msg()
+        ps.pose.position.x = float(target['x'])
+        ps.pose.position.y = float(target['y'])
+        ps.pose.position.z = float(target['z'])
+        ps.pose.orientation.x = 0.0
+        ps.pose.orientation.y = 0.0
+        ps.pose.orientation.z = 0.0
+        ps.pose.orientation.w = 1.0
+
+        req.ik_request.pose_stamped = ps
+        req.ik_request.timeout.sec = 5
+
+        # Provide seed in correct chain order (not alphabetical)
+        from sensor_msgs.msg import JointState as JS
+        seed = JS()
+        seed.name = self.arm_joint_names
+        # Bias seed toward correct configuration - arm pointing toward target
+        base_target = 2.5 + math.atan2(target['y'], target['x'])
+        # Clamp base to forward-facing range [2.0, 3.0]
+        base_target = max(2.0, min(3.0, base_target))
+        if self.last_ik_solution is not None:
+            seed.position = list(self.last_ik_solution)
+            seed.position[0] = base_target
+        else:
+            seed.position = [base_target, 2.7, 2.5, 1.4, 2.6]
+        req.ik_request.robot_state.joint_state = seed
+
+        self.get_logger().info(
+            f'IK seed: {list(zip(req.ik_request.robot_state.joint_state.name, req.ik_request.robot_state.joint_state.position))}')
+        future = self.ik_client.call_async(req)
+        event = threading.Event()
+        future.add_done_callback(lambda _f: event.set())
+        if not event.wait(timeout=8.0):
+            self.get_logger().warn('IK service call timed out')
+            return None
+
+        resp = future.result()
+        if resp is None or resp.error_code.val != 1:
+            code = resp.error_code.val if resp else 'no response'
+            self.get_logger().warn(f'IK failed (code {code})')
+            return None
+
+        js = resp.solution.joint_state
+        positions = []
+        for jn in self.arm_joint_names:
+            try:
+                positions.append(js.position[js.name.index(jn)])
+            except ValueError:
+                self.get_logger().error(f'Joint {jn} missing in IK solution')
+                return None
+        # Mirror base_joint if wrong side - 1.97 and 2.96 are symmetric around ~2.47
+        correct_base = 2.5 + math.atan2(target['y'], target['x'])
+        correct_base = max(2.0, min(3.0, correct_base))
+        if abs(positions[0] - correct_base) > 0.5:
+            positions[0] = correct_base
+        # Normalize wrist_roll to [2.0, 4.0] range - 4.83 means gripper is flipped
+        import math as _m2
+        while positions[4] > 4.0: positions[4] -= _m2.pi
+        while positions[4] < 1.0: positions[4] += _m2.pi
+
+
+        self.get_logger().info(f'IK success: base={positions[0]:.3f} shoulder={positions[1]:.3f} elbow={positions[2]:.3f} wrist_pitch={positions[3]:.3f} wrist_roll={positions[4]:.3f}')
+        self.last_ik_solution = list(positions)
+        return positions
+
+
+    def _send_trajectory(self, client, joint_names, positions, duration_sec):
+        """Send a FollowJointTrajectory goal and wait for completion."""
+        self.get_logger().info(
+            f'Sending trajectory: {dict(zip(joint_names, positions))} '
+            f'over {duration_sec}s'
+        )
+
         point = JointTrajectoryPoint()
-        point.positions = positions
-        point.time_from_start = Duration(sec=int(duration_sec))
-        
-        goal_msg = FollowJointTrajectory.Goal()
-        goal_msg.trajectory.joint_names = self.arm_joint_names
-        goal_msg.trajectory.points = [point]
-        
-        future = self.arm_client.send_goal_async(goal_msg)
-        rclpy.spin_until_future_complete(self, future, timeout_sec=1.0)
-        
-        if future.result() is None:
+        point.positions = [float(p) for p in positions]
+        point.time_from_start = Duration(
+            sec=int(duration_sec),
+            nanosec=int((duration_sec - int(duration_sec)) * 1e9),
+        )
+
+        goal = FollowJointTrajectory.Goal()
+        goal.trajectory.joint_names = joint_names
+        goal.trajectory.points = [point]
+        # Loosen goal tolerance so the controller doesn't abort on tiny
+        # tracking errors (especially important for the gripper, which
+        # may not reach the exact target due to mimic-joint dynamics).
+        goal.goal_time_tolerance = Duration(sec=1, nanosec=0)
+
+        send_future = client.send_goal_async(goal)
+        send_evt = threading.Event()
+        send_future.add_done_callback(lambda _f: send_evt.set())
+        if not send_evt.wait(timeout=5.0):
+            self.get_logger().warn('Goal send timed out')
             return False
-        
-        goal_handle = future.result()
-        if not goal_handle.accepted:
+
+        handle = send_future.result()
+        if handle is None or not handle.accepted:
+            self.get_logger().warn(
+                f'Goal REJECTED for joints {joint_names}'
+            )
             return False
-        
-        result_future = goal_handle.get_result_async()
-        rclpy.spin_until_future_complete(self, result_future, 
-                                        timeout_sec=duration_sec+2.0)
+        self.get_logger().info(f'Goal accepted for {joint_names}')
+
+        result_future = handle.get_result_async()
+        result_evt = threading.Event()
+        result_future.add_done_callback(lambda _f: result_evt.set())
+        if not result_evt.wait(timeout=duration_sec + 15.0):
+            self.get_logger().warn('Trajectory execution timed out')
+            return False
+
+        result = result_future.result()
+        if result and result.result:
+            error_code = result.result.error_code
+            if error_code != 0:
+                self.get_logger().warn(
+                    f'Trajectory finished with error code {error_code} '
+                    f'for {joint_names}. '
+                    f'error_string: {result.result.error_string}'
+                )
+                return False
+
+        self.get_logger().info(f'Trajectory complete for {joint_names}')
         return True
-    
-    def control_gripper(self, position):
-        """Control gripper."""
-        point = JointTrajectoryPoint()
-        point.positions = [position]
-        point.time_from_start = Duration(sec=1)
-        
-        goal_msg = FollowJointTrajectory.Goal()
-        goal_msg.trajectory.joint_names = self.gripper_joint_names
-        goal_msg.trajectory.points = [point]
-        
-        future = self.gripper_client.send_goal_async(goal_msg)
-        rclpy.spin_until_future_complete(self, future, timeout_sec=1.0)
-        
-        if future.result():
-            goal_handle = future.result()
-            if goal_handle.accepted:
-                result_future = goal_handle.get_result_async()
-                rclpy.spin_until_future_complete(self, result_future, timeout_sec=2.0)
-                return True
-        return False
-    
-    def move_to_pose(self, target_pose, description=""):
-        """Move to Cartesian pose using MoveIt IK."""
-        self.get_logger().info(f'  Computing IK for: {description}')
-        self.get_logger().info(f'  Target: x={target_pose["x"]:.3f}, y={target_pose["y"]:.3f}, z={target_pose["z"]:.3f}')
-        
-        joint_positions = self.compute_ik(target_pose)
-        
-        if joint_positions is None:
-            self.get_logger().error(f'  IK failed for {description}')
+
+    def _send_arm(self, positions, duration_sec=3.0):
+        return self._send_trajectory(
+            self.arm_client, self.arm_joint_names, positions, duration_sec,
+        )
+
+    def _send_gripper(self, position, duration_sec=1.0):
+        return self._send_trajectory(
+            self.gripper_client, self.gripper_joint_names, [position],
+            duration_sec,
+        )
+
+    def _move_to_pose(self, target, description=''):
+        self.get_logger().info(
+            f'IK for {description}: '
+            f'x={target["x"]:.3f} y={target["y"]:.3f} z={target["z"]:.3f}'
+        )
+        positions = self._compute_ik(target)
+        if positions is None:
             return False
-        
-        self.get_logger().info(f'  IK solution found, executing motion...')
-        success = self.send_arm_command(joint_positions, duration_sec=3.0)
-        time.sleep(3.5)
-        
-        return success
-    
-    def pick_object(self, obj_data, obj_number):
-        """Pick object using MoveIt IK."""
-        color = 'red' if 'red' in obj_data['class_id'] else 'blue'
-        pos = obj_data['position']
-        
-        self.get_logger().info(f'\n📦 Picking {color.upper()} cube #{obj_number}')
-        self.get_logger().info(f'   Detected at: x={pos["x"]:.3f}, y={pos["y"]:.3f}, z={pos["z"]:.3f}')
-        
-        # Open gripper
-        self.control_gripper(self.gripper_open)
-        time.sleep(1.0)
-        
-        # Approach (above object)
-        approach_pose = {
-            'x': pos['x'],
-            'y': pos['y'],
-            'z': pos['z'] + 0.10  # 10cm above
-        }
-        
-        if not self.move_to_pose(approach_pose, f"{color} cube approach"):
-            self.get_logger().error('Failed to reach approach position')
-            return False
-        
-        # Grasp (at object)
-        grasp_pose = {
-            'x': pos['x'],
-            'y': pos['y'],
-            'z': pos['z']
-        }
-        
-        if not self.move_to_pose(grasp_pose, f"{color} cube grasp"):
-            self.get_logger().error('Failed to reach grasp position')
-            return False
-        
-        # Close gripper
-        self.control_gripper(self.gripper_closed)
-        time.sleep(1.0)
-        
-        # Lift
-        if not self.move_to_pose(approach_pose, "lift"):
-            self.get_logger().error('Failed to lift object')
-            return False
-        
-        self.get_logger().info(f'  ✅ {color.upper()} cube #{obj_number} picked!')
-        return True
-    
-    def place_in_container(self, color):
-        """Place in container using MoveIt IK."""
-        self.get_logger().info(f'  📥 Placing in {color.upper()} container')
-        
-        container_pos = self.container_positions[color]
-        
-        # Move to container
-        place_pose = {
-            'x': container_pos['x'],
-            'y': container_pos['y'],
-            'z': container_pos['z']
-        }
-        
-        if not self.move_to_pose(place_pose, f"{color} container"):
-            self.get_logger().error('Failed to reach container')
-            return False
-        
-        # Open gripper
-        self.control_gripper(self.gripper_open)
-        time.sleep(1.0)
-        
-        self.get_logger().info(f'  ✅ Placed in {color.upper()} container!')
-        return True
-    
-    def move_to_named_position(self, name):
-        """Move to named position."""
+        return self._send_arm(positions, duration_sec=3.0)
+
+    def _move_named(self, name):
         if name not in self.named_positions:
             return False
-        
-        self.get_logger().info(f'Moving to: {name}')
-        success = self.send_arm_command(self.named_positions[name], duration_sec=2.0)
-        time.sleep(2.5)
-        return success
-    
-    def sort_sequence(self):
-        """Main sorting sequence using MoveIt."""
-        self.get_logger().info('\n' + '='*60)
-        self.get_logger().info('🤖 BRACCIO MOVEIT SORTING STARTED')
-        self.get_logger().info('   Using MoveIt IK for all movements')
-        self.get_logger().info('='*60)
-        
-        # Home
-        self.move_to_named_position('home')
-        
-        # Scan
-        self.move_to_named_position('scan')
-        
-        # Sort objects
-        red_count = 0
-        blue_count = 0
-        
-        for obj_data in self.detected_objects:
-            color = 'red' if 'red' in obj_data['class_id'] else 'blue'
-            
+        return self._send_arm(self.named_positions[name], duration_sec=2.0)
+
+    # --------------------------------------------------------- pick & place
+    def _pick(self, obj, idx):
+        color = 'red' if 'red' in obj['class_id'] else 'blue'
+        pos = obj['position']
+        self.get_logger().info(f'Picking {color} cube #{idx}')
+
+        self._send_gripper(self.gripper_open)
+
+        approach = {"x": pos["x"], "y": pos["y"], "z": 0.31}
+        if not self._move_to_pose(approach, f'{color} approach'):
+            return False
+        grasp = {"x": pos["x"], "y": pos["y"], "z": 0.270}
+        if not self._move_to_pose(grasp, f'{color} grasp'):
+            return False
+
+        self._send_gripper(self.gripper_closed)
+
+        return self._move_to_pose(approach, 'lift')
+
+    def _place(self, color):
+        self.get_logger().info(f'Placing in {color} container')
+        if not self._move_named(f'drop_{color}'):
+            return False
+        self._send_gripper(self.gripper_open)
+        return True
+
+    def _sort_sequence(self, objects):
+        self._move_named('home')
+        self._move_named('scan')
+
+        red = blue = 0
+        for obj in objects:
+            color = 'red' if 'red' in obj['class_id'] else 'blue'
             if color == 'red':
-                red_count += 1
-                success = self.pick_object(obj_data, red_count)
+                red += 1
+                idx = red
             else:
-                blue_count += 1
-                success = self.pick_object(obj_data, blue_count)
-            
-            if success:
-                self.place_in_container(color)
-            
-            # Return to scan
-            self.move_to_named_position('scan')
-        
-        # Home
-        self.move_to_named_position('home')
-        
-        self.get_logger().info('\n' + '='*60)
-        self.get_logger().info(f'✅ MOVEIT SORTING COMPLETE!')
-        self.get_logger().info(f'   Red cubes: {red_count}')
-        self.get_logger().info(f'   Blue cubes: {blue_count}')
-        self.get_logger().info('='*60 + '\n')
+                blue += 1
+                idx = blue
+            if self._pick(obj, idx):
+                self._place(color)
+            self._move_named('scan')
+
+        self._move_named('home')
+        self.get_logger().info(
+            f'Sorting complete - red: {red}, blue: {blue}'
+        )
 
 
 def main(args=None):
     rclpy.init(args=args)
     node = BraccioMoveItSortingController()
-    
+
+    # MultiThreadedExecutor lets the worker thread's blocking event-waits
+    # coexist cleanly with normal callback dispatch.
+    executor = MultiThreadedExecutor(num_threads=4)
+    executor.add_node(node)
+
     try:
-        rclpy.spin(node)
+        executor.spin()
     except KeyboardInterrupt:
         pass
     finally:

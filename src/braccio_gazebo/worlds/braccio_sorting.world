@@ -88,8 +88,7 @@
             <specular>0.5 0.5 0.5 1</specular>
           </material>
         </visual>
-      </link>
-    </model>
+      </link></model>
 
     <!-- Red Cube 2 -->
     <!-- <model name="red_cube_2">
@@ -178,8 +177,7 @@
             <specular>0.5 0.5 0.5 1</specular>
           </material>
         </visual>
-      </link>
-    </model>
+      </link></model>
 
     <!-- Red Container -->
     <model name="red_container">

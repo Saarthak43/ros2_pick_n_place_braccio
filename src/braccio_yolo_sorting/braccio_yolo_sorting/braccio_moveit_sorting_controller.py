@@ -103,6 +103,7 @@ class BraccioMoveItSortingController(Node):
             'scan': [2.5, 2.3, 2.0, 3.2, 2.6],
             'drop_red':  [3.28, 2.5, 3.8, 1.8, 2.6],
             'drop_blue': [1.72, 2.5, 3.8, 1.8, 2.6],
+            'ready': [2.525, 3.1646, 3.4464, 3.3305, 2.8],  # [base, shoulder, elbow, wrist_pitch, wrist_roll]
         }
         self.gripper_open = 3.85
         self.gripper_closed = 2.7
@@ -116,6 +117,7 @@ class BraccioMoveItSortingController(Node):
         self.first_detection_time = None
         self.is_sorting = False
         self._sort_lock = threading.Lock()
+        self.last_ik_solution = None
 
         self.create_subscription(
             Detection2DArray, '/detections',
@@ -144,12 +146,19 @@ class BraccioMoveItSortingController(Node):
                 continue
             # Use known world positions based on color (like original repo's hardcoded spatial coords)
             color = h.hypothesis.class_id  # 'red_cube' or 'blue_cube'
-            if 'red' in color:
-                pos = {'x': 0.0966, 'y': -0.0563, 'z': 0.27}
-            elif 'blue' in color:
-                pos = {'x': 0.0130, 'y': -0.1110, 'z': 0.27}
-            else:
+            if 'red' not in color and 'blue' not in color:
                 continue
+            # Real pixel->world using empirical camera calibration
+            # Camera at (0.3, 0, 0.59), looking straight down
+            # Derived from measured pixel/world pairs: fx=fy=992, cx=371, cy=755.5
+            px = det.bbox.center.position.x
+            py = det.bbox.center.position.y
+            cam_z = 0.32  # camera height above cube surface (0.59 - 0.27)
+            world_x = (py - 755.5) * cam_z / 992.0 + 0.3
+            world_y = (px - 371.0) * cam_z / 992.0
+            pos = {'x': round(world_x, 4), 'y': round(world_y, 4), 'z': 0.27}
+            self.get_logger().info(
+                f'Pixel ({px:.0f},{py:.0f}) -> world ({pos["x"]:.4f},{pos["y"]:.4f})')
             valid.append({
                 'class_id': h.hypothesis.class_id,
                 'position': pos,
@@ -239,7 +248,11 @@ class BraccioMoveItSortingController(Node):
         base_target = 2.5 + math.atan2(target['y'], target['x'])
         # Clamp base to forward-facing range [2.0, 3.0]
         base_target = max(2.0, min(3.0, base_target))
-        seed.position = [base_target, 2.7, 2.5, 1.4, 2.6]
+        if self.last_ik_solution is not None:
+            seed.position = list(self.last_ik_solution)
+            seed.position[0] = base_target
+        else:
+            seed.position = [base_target, 2.7, 2.5, 1.4, 2.6]
         req.ik_request.robot_state.joint_state = seed
 
         self.get_logger().info(
@@ -277,6 +290,7 @@ class BraccioMoveItSortingController(Node):
 
 
         self.get_logger().info(f'IK success: base={positions[0]:.3f} shoulder={positions[1]:.3f} elbow={positions[2]:.3f} wrist_pitch={positions[3]:.3f} wrist_roll={positions[4]:.3f}')
+        self.last_ik_solution = list(positions)
         return positions
 
 

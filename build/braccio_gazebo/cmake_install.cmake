@@ -1,8 +1,8 @@
-# Install script for directory: /home/sachin/ros2_pick_n_place/src/braccio_gazebo
+# Install script for directory: /home/ubuntu/my_workspace/src/ros2_pick_n_place/src/braccio_gazebo
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
-  set(CMAKE_INSTALL_PREFIX "/home/sachin/ros2_pick_n_place/install/braccio_gazebo")
+  set(CMAKE_INSTALL_PREFIX "/home/ubuntu/my_workspace/src/ros2_pick_n_place/install/braccio_gazebo")
 endif()
 string(REGEX REPLACE "/$" "" CMAKE_INSTALL_PREFIX "${CMAKE_INSTALL_PREFIX}")
 
@@ -44,17 +44,17 @@ endif()
 
 if(CMAKE_INSTALL_COMPONENT STREQUAL "Unspecified" OR NOT CMAKE_INSTALL_COMPONENT)
   file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/braccio_gazebo" TYPE DIRECTORY FILES
-    "/home/sachin/ros2_pick_n_place/src/braccio_gazebo/worlds"
-    "/home/sachin/ros2_pick_n_place/src/braccio_gazebo/launch"
+    "/home/ubuntu/my_workspace/src/ros2_pick_n_place/src/braccio_gazebo/worlds"
+    "/home/ubuntu/my_workspace/src/ros2_pick_n_place/src/braccio_gazebo/launch"
     )
 endif()
 
 if(CMAKE_INSTALL_COMPONENT STREQUAL "Unspecified" OR NOT CMAKE_INSTALL_COMPONENT)
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/ament_index/resource_index/package_run_dependencies" TYPE FILE FILES "/home/sachin/ros2_pick_n_place/build/braccio_gazebo/ament_cmake_index/share/ament_index/resource_index/package_run_dependencies/braccio_gazebo")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/ament_index/resource_index/package_run_dependencies" TYPE FILE FILES "/home/ubuntu/my_workspace/src/ros2_pick_n_place/build/braccio_gazebo/ament_cmake_index/share/ament_index/resource_index/package_run_dependencies/braccio_gazebo")
 endif()
 
 if(CMAKE_INSTALL_COMPONENT STREQUAL "Unspecified" OR NOT CMAKE_INSTALL_COMPONENT)
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/ament_index/resource_index/parent_prefix_path" TYPE FILE FILES "/home/sachin/ros2_pick_n_place/build/braccio_gazebo/ament_cmake_index/share/ament_index/resource_index/parent_prefix_path/braccio_gazebo")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/ament_index/resource_index/parent_prefix_path" TYPE FILE FILES "/home/ubuntu/my_workspace/src/ros2_pick_n_place/build/braccio_gazebo/ament_cmake_index/share/ament_index/resource_index/parent_prefix_path/braccio_gazebo")
 endif()
 
 if(CMAKE_INSTALL_COMPONENT STREQUAL "Unspecified" OR NOT CMAKE_INSTALL_COMPONENT)
@@ -62,7 +62,7 @@ if(CMAKE_INSTALL_COMPONENT STREQUAL "Unspecified" OR NOT CMAKE_INSTALL_COMPONENT
 endif()
 
 if(CMAKE_INSTALL_COMPONENT STREQUAL "Unspecified" OR NOT CMAKE_INSTALL_COMPONENT)
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/braccio_gazebo/environment" TYPE FILE FILES "/home/sachin/ros2_pick_n_place/build/braccio_gazebo/ament_cmake_environment_hooks/ament_prefix_path.dsv")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/braccio_gazebo/environment" TYPE FILE FILES "/home/ubuntu/my_workspace/src/ros2_pick_n_place/build/braccio_gazebo/ament_cmake_environment_hooks/ament_prefix_path.dsv")
 endif()
 
 if(CMAKE_INSTALL_COMPONENT STREQUAL "Unspecified" OR NOT CMAKE_INSTALL_COMPONENT)
@@ -70,42 +70,42 @@ if(CMAKE_INSTALL_COMPONENT STREQUAL "Unspecified" OR NOT CMAKE_INSTALL_COMPONENT
 endif()
 
 if(CMAKE_INSTALL_COMPONENT STREQUAL "Unspecified" OR NOT CMAKE_INSTALL_COMPONENT)
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/braccio_gazebo/environment" TYPE FILE FILES "/home/sachin/ros2_pick_n_place/build/braccio_gazebo/ament_cmake_environment_hooks/path.dsv")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/braccio_gazebo/environment" TYPE FILE FILES "/home/ubuntu/my_workspace/src/ros2_pick_n_place/build/braccio_gazebo/ament_cmake_environment_hooks/path.dsv")
 endif()
 
 if(CMAKE_INSTALL_COMPONENT STREQUAL "Unspecified" OR NOT CMAKE_INSTALL_COMPONENT)
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/braccio_gazebo" TYPE FILE FILES "/home/sachin/ros2_pick_n_place/build/braccio_gazebo/ament_cmake_environment_hooks/local_setup.bash")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/braccio_gazebo" TYPE FILE FILES "/home/ubuntu/my_workspace/src/ros2_pick_n_place/build/braccio_gazebo/ament_cmake_environment_hooks/local_setup.bash")
 endif()
 
 if(CMAKE_INSTALL_COMPONENT STREQUAL "Unspecified" OR NOT CMAKE_INSTALL_COMPONENT)
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/braccio_gazebo" TYPE FILE FILES "/home/sachin/ros2_pick_n_place/build/braccio_gazebo/ament_cmake_environment_hooks/local_setup.sh")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/braccio_gazebo" TYPE FILE FILES "/home/ubuntu/my_workspace/src/ros2_pick_n_place/build/braccio_gazebo/ament_cmake_environment_hooks/local_setup.sh")
 endif()
 
 if(CMAKE_INSTALL_COMPONENT STREQUAL "Unspecified" OR NOT CMAKE_INSTALL_COMPONENT)
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/braccio_gazebo" TYPE FILE FILES "/home/sachin/ros2_pick_n_place/build/braccio_gazebo/ament_cmake_environment_hooks/local_setup.zsh")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/braccio_gazebo" TYPE FILE FILES "/home/ubuntu/my_workspace/src/ros2_pick_n_place/build/braccio_gazebo/ament_cmake_environment_hooks/local_setup.zsh")
 endif()
 
 if(CMAKE_INSTALL_COMPONENT STREQUAL "Unspecified" OR NOT CMAKE_INSTALL_COMPONENT)
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/braccio_gazebo" TYPE FILE FILES "/home/sachin/ros2_pick_n_place/build/braccio_gazebo/ament_cmake_environment_hooks/local_setup.dsv")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/braccio_gazebo" TYPE FILE FILES "/home/ubuntu/my_workspace/src/ros2_pick_n_place/build/braccio_gazebo/ament_cmake_environment_hooks/local_setup.dsv")
 endif()
 
 if(CMAKE_INSTALL_COMPONENT STREQUAL "Unspecified" OR NOT CMAKE_INSTALL_COMPONENT)
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/braccio_gazebo" TYPE FILE FILES "/home/sachin/ros2_pick_n_place/build/braccio_gazebo/ament_cmake_environment_hooks/package.dsv")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/braccio_gazebo" TYPE FILE FILES "/home/ubuntu/my_workspace/src/ros2_pick_n_place/build/braccio_gazebo/ament_cmake_environment_hooks/package.dsv")
 endif()
 
 if(CMAKE_INSTALL_COMPONENT STREQUAL "Unspecified" OR NOT CMAKE_INSTALL_COMPONENT)
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/ament_index/resource_index/packages" TYPE FILE FILES "/home/sachin/ros2_pick_n_place/build/braccio_gazebo/ament_cmake_index/share/ament_index/resource_index/packages/braccio_gazebo")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/ament_index/resource_index/packages" TYPE FILE FILES "/home/ubuntu/my_workspace/src/ros2_pick_n_place/build/braccio_gazebo/ament_cmake_index/share/ament_index/resource_index/packages/braccio_gazebo")
 endif()
 
 if(CMAKE_INSTALL_COMPONENT STREQUAL "Unspecified" OR NOT CMAKE_INSTALL_COMPONENT)
   file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/braccio_gazebo/cmake" TYPE FILE FILES
-    "/home/sachin/ros2_pick_n_place/build/braccio_gazebo/ament_cmake_core/braccio_gazeboConfig.cmake"
-    "/home/sachin/ros2_pick_n_place/build/braccio_gazebo/ament_cmake_core/braccio_gazeboConfig-version.cmake"
+    "/home/ubuntu/my_workspace/src/ros2_pick_n_place/build/braccio_gazebo/ament_cmake_core/braccio_gazeboConfig.cmake"
+    "/home/ubuntu/my_workspace/src/ros2_pick_n_place/build/braccio_gazebo/ament_cmake_core/braccio_gazeboConfig-version.cmake"
     )
 endif()
 
 if(CMAKE_INSTALL_COMPONENT STREQUAL "Unspecified" OR NOT CMAKE_INSTALL_COMPONENT)
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/braccio_gazebo" TYPE FILE FILES "/home/sachin/ros2_pick_n_place/src/braccio_gazebo/package.xml")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/braccio_gazebo" TYPE FILE FILES "/home/ubuntu/my_workspace/src/ros2_pick_n_place/src/braccio_gazebo/package.xml")
 endif()
 
 if(CMAKE_INSTALL_COMPONENT)
@@ -116,5 +116,5 @@ endif()
 
 string(REPLACE ";" "\n" CMAKE_INSTALL_MANIFEST_CONTENT
        "${CMAKE_INSTALL_MANIFEST_FILES}")
-file(WRITE "/home/sachin/ros2_pick_n_place/build/braccio_gazebo/${CMAKE_INSTALL_MANIFEST}"
+file(WRITE "/home/ubuntu/my_workspace/src/ros2_pick_n_place/build/braccio_gazebo/${CMAKE_INSTALL_MANIFEST}"
      "${CMAKE_INSTALL_MANIFEST_CONTENT}")

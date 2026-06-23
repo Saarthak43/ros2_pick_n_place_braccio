@@ -53,10 +53,10 @@ RM = /usr/bin/cmake -E rm -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /home/sachin/ros2_pick_n_place/src/braccio_moveit_config
+CMAKE_SOURCE_DIR = /home/ubuntu/my_workspace/src/ros2_pick_n_place/src/braccio_moveit_config
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /home/sachin/ros2_pick_n_place/build/braccio_moveit_config
+CMAKE_BINARY_DIR = /home/ubuntu/my_workspace/src/ros2_pick_n_place/build/braccio_moveit_config
 
 # Utility rule file for braccio_moveit_config_uninstall.
 
@@ -67,7 +67,7 @@ include CMakeFiles/braccio_moveit_config_uninstall.dir/compiler_depend.make
 include CMakeFiles/braccio_moveit_config_uninstall.dir/progress.make
 
 CMakeFiles/braccio_moveit_config_uninstall:
-	/usr/bin/cmake -P /home/sachin/ros2_pick_n_place/build/braccio_moveit_config/ament_cmake_uninstall_target/ament_cmake_uninstall_target.cmake
+	/usr/bin/cmake -P /home/ubuntu/my_workspace/src/ros2_pick_n_place/build/braccio_moveit_config/ament_cmake_uninstall_target/ament_cmake_uninstall_target.cmake
 
 braccio_moveit_config_uninstall: CMakeFiles/braccio_moveit_config_uninstall
 braccio_moveit_config_uninstall: CMakeFiles/braccio_moveit_config_uninstall.dir/build.make
@@ -82,6 +82,6 @@ CMakeFiles/braccio_moveit_config_uninstall.dir/clean:
 .PHONY : CMakeFiles/braccio_moveit_config_uninstall.dir/clean
 
 CMakeFiles/braccio_moveit_config_uninstall.dir/depend:
-	cd /home/sachin/ros2_pick_n_place/build/braccio_moveit_config && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /home/sachin/ros2_pick_n_place/src/braccio_moveit_config /home/sachin/ros2_pick_n_place/src/braccio_moveit_config /home/sachin/ros2_pick_n_place/build/braccio_moveit_config /home/sachin/ros2_pick_n_place/build/braccio_moveit_config /home/sachin/ros2_pick_n_place/build/braccio_moveit_config/CMakeFiles/braccio_moveit_config_uninstall.dir/DependInfo.cmake "--color=$(COLOR)"
+	cd /home/ubuntu/my_workspace/src/ros2_pick_n_place/build/braccio_moveit_config && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /home/ubuntu/my_workspace/src/ros2_pick_n_place/src/braccio_moveit_config /home/ubuntu/my_workspace/src/ros2_pick_n_place/src/braccio_moveit_config /home/ubuntu/my_workspace/src/ros2_pick_n_place/build/braccio_moveit_config /home/ubuntu/my_workspace/src/ros2_pick_n_place/build/braccio_moveit_config /home/ubuntu/my_workspace/src/ros2_pick_n_place/build/braccio_moveit_config/CMakeFiles/braccio_moveit_config_uninstall.dir/DependInfo.cmake "--color=$(COLOR)"
 .PHONY : CMakeFiles/braccio_moveit_config_uninstall.dir/depend
 

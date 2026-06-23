@@ -53,10 +53,10 @@ RM = /usr/bin/cmake -E rm -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /home/sachin/ros2_pick_n_place/src/braccio_description
+CMAKE_SOURCE_DIR = /home/ubuntu/my_workspace/src/ros2_pick_n_place/src/braccio_description
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /home/sachin/ros2_pick_n_place/build/braccio_description
+CMAKE_BINARY_DIR = /home/ubuntu/my_workspace/src/ros2_pick_n_place/build/braccio_description
 
 # Utility rule file for braccio_description_uninstall.
 
@@ -67,7 +67,7 @@ include CMakeFiles/braccio_description_uninstall.dir/compiler_depend.make
 include CMakeFiles/braccio_description_uninstall.dir/progress.make
 
 CMakeFiles/braccio_description_uninstall:
-	/usr/bin/cmake -P /home/sachin/ros2_pick_n_place/build/braccio_description/ament_cmake_uninstall_target/ament_cmake_uninstall_target.cmake
+	/usr/bin/cmake -P /home/ubuntu/my_workspace/src/ros2_pick_n_place/build/braccio_description/ament_cmake_uninstall_target/ament_cmake_uninstall_target.cmake
 
 braccio_description_uninstall: CMakeFiles/braccio_description_uninstall
 braccio_description_uninstall: CMakeFiles/braccio_description_uninstall.dir/build.make
@@ -82,6 +82,6 @@ CMakeFiles/braccio_description_uninstall.dir/clean:
 .PHONY : CMakeFiles/braccio_description_uninstall.dir/clean
 
 CMakeFiles/braccio_description_uninstall.dir/depend:
-	cd /home/sachin/ros2_pick_n_place/build/braccio_description && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /home/sachin/ros2_pick_n_place/src/braccio_description /home/sachin/ros2_pick_n_place/src/braccio_description /home/sachin/ros2_pick_n_place/build/braccio_description /home/sachin/ros2_pick_n_place/build/braccio_description /home/sachin/ros2_pick_n_place/build/braccio_description/CMakeFiles/braccio_description_uninstall.dir/DependInfo.cmake "--color=$(COLOR)"
+	cd /home/ubuntu/my_workspace/src/ros2_pick_n_place/build/braccio_description && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /home/ubuntu/my_workspace/src/ros2_pick_n_place/src/braccio_description /home/ubuntu/my_workspace/src/ros2_pick_n_place/src/braccio_description /home/ubuntu/my_workspace/src/ros2_pick_n_place/build/braccio_description /home/ubuntu/my_workspace/src/ros2_pick_n_place/build/braccio_description /home/ubuntu/my_workspace/src/ros2_pick_n_place/build/braccio_description/CMakeFiles/braccio_description_uninstall.dir/DependInfo.cmake "--color=$(COLOR)"
 .PHONY : CMakeFiles/braccio_description_uninstall.dir/depend
 

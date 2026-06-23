@@ -208,7 +208,7 @@
 
   <xacro:braccio_revolute_joint name="elbow_joint"
     parent="shoulder_link" child="elbow_link"
-    axis_xyz="1 0 0" limit_lower="1.0" limit_upper="4.6"
+    axis_xyz="1 0 0" limit_lower="1.0" limit_upper="5.0"
     origin_xyz="0 0 0.125" origin_rpy="-2.8 0 0"/>
 
   <xacro:braccio_revolute_joint name="wrist_pitch_joint"
