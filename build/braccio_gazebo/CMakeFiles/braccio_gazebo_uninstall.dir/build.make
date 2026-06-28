@@ -53,10 +53,10 @@ RM = /usr/bin/cmake -E rm -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /home/ubuntu/my_workspace/src/ros2_pick_n_place/src/braccio_gazebo
+CMAKE_SOURCE_DIR = /home/ubuntu/project1/src/ros2_pick_n_place_braccio/src/braccio_gazebo
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /home/ubuntu/my_workspace/src/ros2_pick_n_place/build/braccio_gazebo
+CMAKE_BINARY_DIR = /home/ubuntu/project1/src/ros2_pick_n_place_braccio/build/braccio_gazebo
 
 # Utility rule file for braccio_gazebo_uninstall.
 
@@ -67,7 +67,7 @@ include CMakeFiles/braccio_gazebo_uninstall.dir/compiler_depend.make
 include CMakeFiles/braccio_gazebo_uninstall.dir/progress.make
 
 CMakeFiles/braccio_gazebo_uninstall:
-	/usr/bin/cmake -P /home/ubuntu/my_workspace/src/ros2_pick_n_place/build/braccio_gazebo/ament_cmake_uninstall_target/ament_cmake_uninstall_target.cmake
+	/usr/bin/cmake -P /home/ubuntu/project1/src/ros2_pick_n_place_braccio/build/braccio_gazebo/ament_cmake_uninstall_target/ament_cmake_uninstall_target.cmake
 
 braccio_gazebo_uninstall: CMakeFiles/braccio_gazebo_uninstall
 braccio_gazebo_uninstall: CMakeFiles/braccio_gazebo_uninstall.dir/build.make
@@ -82,6 +82,6 @@ CMakeFiles/braccio_gazebo_uninstall.dir/clean:
 .PHONY : CMakeFiles/braccio_gazebo_uninstall.dir/clean
 
 CMakeFiles/braccio_gazebo_uninstall.dir/depend:
-	cd /home/ubuntu/my_workspace/src/ros2_pick_n_place/build/braccio_gazebo && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /home/ubuntu/my_workspace/src/ros2_pick_n_place/src/braccio_gazebo /home/ubuntu/my_workspace/src/ros2_pick_n_place/src/braccio_gazebo /home/ubuntu/my_workspace/src/ros2_pick_n_place/build/braccio_gazebo /home/ubuntu/my_workspace/src/ros2_pick_n_place/build/braccio_gazebo /home/ubuntu/my_workspace/src/ros2_pick_n_place/build/braccio_gazebo/CMakeFiles/braccio_gazebo_uninstall.dir/DependInfo.cmake "--color=$(COLOR)"
+	cd /home/ubuntu/project1/src/ros2_pick_n_place_braccio/build/braccio_gazebo && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /home/ubuntu/project1/src/ros2_pick_n_place_braccio/src/braccio_gazebo /home/ubuntu/project1/src/ros2_pick_n_place_braccio/src/braccio_gazebo /home/ubuntu/project1/src/ros2_pick_n_place_braccio/build/braccio_gazebo /home/ubuntu/project1/src/ros2_pick_n_place_braccio/build/braccio_gazebo /home/ubuntu/project1/src/ros2_pick_n_place_braccio/build/braccio_gazebo/CMakeFiles/braccio_gazebo_uninstall.dir/DependInfo.cmake "--color=$(COLOR)"
 .PHONY : CMakeFiles/braccio_gazebo_uninstall.dir/depend
 

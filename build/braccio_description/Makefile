@@ -57,10 +57,10 @@ RM = /usr/bin/cmake -E rm -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /home/ubuntu/my_workspace/src/ros2_pick_n_place/src/braccio_description
+CMAKE_SOURCE_DIR = /home/ubuntu/project1/src/ros2_pick_n_place_braccio/src/braccio_description
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /home/ubuntu/my_workspace/src/ros2_pick_n_place/build/braccio_description
+CMAKE_BINARY_DIR = /home/ubuntu/project1/src/ros2_pick_n_place_braccio/build/braccio_description
 
 #=============================================================================
 # Targets provided globally by CMake.
@@ -142,9 +142,9 @@ install/strip/fast: preinstall/fast
 
 # The main all target
 all: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/ubuntu/my_workspace/src/ros2_pick_n_place/build/braccio_description/CMakeFiles /home/ubuntu/my_workspace/src/ros2_pick_n_place/build/braccio_description//CMakeFiles/progress.marks
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/ubuntu/project1/src/ros2_pick_n_place_braccio/build/braccio_description/CMakeFiles /home/ubuntu/project1/src/ros2_pick_n_place_braccio/build/braccio_description//CMakeFiles/progress.marks
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 all
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/ubuntu/my_workspace/src/ros2_pick_n_place/build/braccio_description/CMakeFiles 0
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/ubuntu/project1/src/ros2_pick_n_place_braccio/build/braccio_description/CMakeFiles 0
 .PHONY : all
 
 # The main clean target

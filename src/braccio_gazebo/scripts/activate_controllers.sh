@@ -1,6 +1,13 @@
 #!/bin/bash
 source /opt/ros/jazzy/setup.bash
-source ~/my_workspace/install/setup.bash
+# Source the workspace setup if it exists next to this script's install dir
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+WORKSPACE_INSTALL="$(realpath "$SCRIPT_DIR/../../../../install/setup.bash" 2>/dev/null)"
+if [ -f "$WORKSPACE_INSTALL" ]; then
+    source "$WORKSPACE_INSTALL"
+else
+    echo "Warning: Could not find workspace install/setup.bash. Controllers may not be on PATH."
+fi
 
 echo "Waiting for arm_controller to be loaded..."
 for i in $(seq 1 60); do

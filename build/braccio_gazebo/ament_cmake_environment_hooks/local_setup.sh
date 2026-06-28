@@ -2,7 +2,7 @@
 
 # since this file is sourced use either the provided AMENT_CURRENT_PREFIX
 # or fall back to the destination set at configure time
-: ${AMENT_CURRENT_PREFIX:="/home/ubuntu/my_workspace/src/ros2_pick_n_place/install/braccio_gazebo"}
+: ${AMENT_CURRENT_PREFIX:="/home/ubuntu/project1/src/ros2_pick_n_place_braccio/install/braccio_gazebo"}
 if [ ! -d "$AMENT_CURRENT_PREFIX" ]; then
   if [ -z "$COLCON_CURRENT_PREFIX" ]; then
     echo "The compile time prefix path '$AMENT_CURRENT_PREFIX' doesn't " \
