@@ -1,9 +1,0 @@
-# Default initial positions for braccio's ros2_control fake system
-
-initial_positions:
-  base_joint: 1.6
-  elbow_joint: 2.8
-  gripper_joint: 3.2
-  shoulder_joint: 2.8
-  wrist_pitch_joint: 2.8
-  wrist_roll_joint: 2.6

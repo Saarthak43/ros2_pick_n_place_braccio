@@ -18,22 +18,39 @@ a point on a flat surface at known world Z is:
     world_y = camera_world_y + (u - cx) * depth / fx
 
 where (u, v) is the pixel centroid of the detected bounding box and
-(fx, fy, cx, cy) are derived from the URDF sensor tag:
+(fx, fy, cx, cy) are the empirically derived camera parameters.
 
-    HFOV = 1.047 rad, image 640×480
-    fx = fy = (320) / tan(1.047/2) ≈ 554.4
-    cx = 320.0, cy = 240.0
+NOTE: fx=fy must be set to 304 (empirical) via the launch file parameter
+override.  The declare_parameter default of 554.4 is wrong for this
+simulated camera at this resolution.
 
-All camera parameters are exposed as ROS parameters so they can be
-overridden from the launch file without touching the source.
+Key fixes applied (see individual BUG FIX comments)
+-----------------------------------------------------
+* B  — Pixel→world positions are now median-stabilised over the last
+       N frames per colour before being committed, preventing a single
+       noisy detection from corrupting the IK target.
+* C  — fx=fy corrected to 304 (empirical) in the launch file.
+* D  — IK target orientation changed from identity (w=1, horizontal
+       gripper) to 90° about world X (x=0.707, w=0.707) for top-down
+       grasp.  This was the root cause of TRAC-IK returning no solution.
+* E  — Pre-grasp approach clearance raised from 40 mm to 100 mm above
+       cube top to avoid table/gripper collision during descent.
+* G  — IK seed base_joint clamp widened from [2.0, 3.0] to [0.5, 4.5]
+       to match the URDF joint limit [0.05, 5.0] and allow exploration
+       of the full arm workspace.
 
-Key fixes vs earlier revisions
---------------------------------
+Operational note (Bug H)
+------------------------
+colcon build does NOT propagate edits to installed Python files unless
+you built with --symlink-install.  After every source edit either:
+  a) rebuild with:  colcon build --symlink-install --packages-select braccio_yolo_sorting
+  b) or patch the installed copy at:
+       install/braccio_yolo_sorting/lib/python3.*/site-packages/braccio_yolo_sorting/
+
 * No ik_request.attempts — field does not exist in ROS 2 moveit_msgs.
 * Sort sequence runs on a worker thread to avoid single-threaded executor
   deadlock.
 * Event-based waits for service / action responses.
-* Dead _pixel_to_3d helper (which used hardcoded cube positions) removed.
 """
 
 import math
@@ -75,8 +92,8 @@ class BraccioMoveItSortingController(Node):
         self.declare_parameter('camera_cy', 240.0)
 
         # Camera world pose (from URDF camera_joint xyz).
-        self.declare_parameter('camera_world_x', 0.30)
-        self.declare_parameter('camera_world_y', 0.00)
+        self.declare_parameter('camera_world_x', 0.05)
+        self.declare_parameter('camera_world_y', -0.15)
         self.declare_parameter('camera_world_z', 0.59)
 
         # Known height of the surface the cubes rest on (world Z).
@@ -156,6 +173,13 @@ class BraccioMoveItSortingController(Node):
         self._sort_lock            = threading.Lock()
         self.last_ik_solution      = None
 
+        # BUG FIX B: position history buffer for median stabilisation.
+        # Accumulate last N world-position readings per colour before
+        # committing.  This prevents a single noisy frame from passing
+        # a wrong XY into IK right before the sort fires.
+        self._pos_history: dict = {'red': [], 'blue': []}
+        self._pos_history_len = 10   # median window (frames)
+
         self.create_subscription(
             Detection2DArray, '/detections',
             self._detection_cb, 10,
@@ -201,7 +225,10 @@ class BraccioMoveItSortingController(Node):
         if self.is_sorting:
             return
 
-        valid = []
+        # BUG FIX B: accumulate per-colour position history, then build
+        # detected_objects from the per-colour median position so that a
+        # single noisy frame cannot corrupt the IK target.
+        seen_colors = set()
         for det in msg.detections:
             if not det.results:
                 continue
@@ -209,22 +236,46 @@ class BraccioMoveItSortingController(Node):
             if h.hypothesis.score < self.min_confidence:
                 continue
             color_id = h.hypothesis.class_id   # 'red_cube' or 'blue_cube'
-            if 'red' not in color_id and 'blue' not in color_id:
+            color = None
+            if 'red' in color_id:
+                color = 'red'
+            elif 'blue' in color_id:
+                color = 'blue'
+            if color is None:
                 continue
 
-            # --- Pixel → World (live from what the camera actually sees) ---
-            u = det.bbox.center.position.x   # column (horizontal)
-            v = det.bbox.center.position.y   # row    (vertical)
+            u = det.bbox.center.position.x
+            v = det.bbox.center.position.y
             pos = self._pixel_to_world(u, v)
 
+            # Append to rolling history
+            hist = self._pos_history[color]
+            hist.append((pos['x'], pos['y']))
+            if len(hist) > self._pos_history_len:
+                hist.pop(0)
+
+            seen_colors.add((color, color_id, h.hypothesis.score))
+
+        # Rebuild detected_objects from median of accumulated history
+        valid = []
+        for color, color_id, score in seen_colors:
+            hist = self._pos_history[color]
+            if len(hist) < 3:          # need at least 3 readings
+                continue
+            xs = sorted(p[0] for p in hist)
+            ys = sorted(p[1] for p in hist)
+            mid = len(xs) // 2
+            med_x = xs[mid]
+            med_y = ys[mid]
+            pos = {'x': round(med_x, 4), 'y': round(med_y, 4), 'z': self.cube_z}
             self.get_logger().info(
-                f'Detected {color_id} at pixel ({u:.0f},{v:.0f}) '
-                f'→ world ({pos["x"]:.4f}, {pos["y"]:.4f}, {pos["z"]:.3f})'
+                f'Stable {color_id}: median world ({pos["x"]:.4f}, {pos["y"]:.4f}) '
+                f'over {len(hist)} frames'
             )
             valid.append({
                 'class_id': color_id,
                 'position': pos,
-                'confidence': h.hypothesis.score,
+                'confidence': score,
             })
 
         if valid:
@@ -287,7 +338,10 @@ class BraccioMoveItSortingController(Node):
         seed = JS()
         seed.name = self.arm_joint_names
         base_target = 2.5 + math.atan2(target['y'], target['x'])
-        base_target = max(2.0, min(3.0, base_target))
+        # BUG FIX G: was clamped to [2.0, 3.0] which is far narrower than
+        # the URDF limit [0.05, 5.0].  That restricted IK exploration to a
+        # fraction of the real workspace and caused failures on wider poses.
+        base_target = max(0.5, min(4.5, base_target))
         if self.last_ik_solution is not None:
             seed.position = list(self.last_ik_solution)
             seed.position[0] = base_target
@@ -303,7 +357,7 @@ class BraccioMoveItSortingController(Node):
         future = self.ik_client.call_async(req)
         event  = threading.Event()
         future.add_done_callback(lambda _f: event.set())
-        if not event.wait(timeout=8.0):
+        if not event.wait(timeout=20.0):
             self.get_logger().warn('IK service call timed out')
             return None
 
@@ -324,7 +378,7 @@ class BraccioMoveItSortingController(Node):
 
         # Correct base_joint if IK returned the mirror solution
         correct_base = 2.5 + math.atan2(target['y'], target['x'])
-        correct_base = max(2.0, min(3.0, correct_base))
+        correct_base = max(0.5, min(4.5, correct_base))
         if abs(positions[0] - correct_base) > 0.5:
             positions[0] = correct_base
 
@@ -429,8 +483,11 @@ class BraccioMoveItSortingController(Node):
 
         self._send_gripper(self.gripper_open)
 
-        # Approach 40 mm above cube, then descend to grasp height
-        approach = {'x': pos['x'], 'y': pos['y'], 'z': pos['z'] + 0.04}
+        # BUG FIX E: approach was cube_z + 0.04 (only 4 cm above cube top).
+        # At that height gripper links collide with the table before the arm
+        # can achieve the descend posture.  10 cm is the practical minimum
+        # for this geometry (cube top = 0.28 m → approach at 0.38 m).
+        approach = {'x': pos['x'], 'y': pos['y'], 'z': pos['z'] + 0.10}
         if not self._move_to_pose(approach, f'{color} approach'):
             return False
 
@@ -451,28 +508,42 @@ class BraccioMoveItSortingController(Node):
         return True
 
     def _sort_sequence(self, objects):
-        self._move_named('home')
-        self._move_named('scan')
+      self._move_named('home')
+      self._move_named('scan')
 
-        red = blue = 0
-        for obj in objects:
-            color = 'red' if 'red' in obj['class_id'] else 'blue'
-            if color == 'red':
-                red  += 1
-                idx   = red
-            else:
-                blue += 1
-                idx   = blue
+      red = blue = 0
+      red_failed = blue_failed = 0
+      for obj in objects:
+         color = 'red' if 'red' in obj['class_id'] else 'blue'
+         attempt_idx = (red + red_failed + 1) if color == 'red' else (blue + blue_failed + 1)
 
-            if self._pick(obj, idx):
-                self._place(color)
-            self._move_named('scan')
+         picked = self._pick(obj, attempt_idx)
+         placed = False
+         if picked:
+             placed = self._place(color)
+         else:
+             self.get_logger().warn(
+                 f'Pick FAILED for {color} cube #{attempt_idx} — skipping place'
+            )
 
-        self._move_named('home')
-        self.get_logger().info(
-            f'Sorting complete — red: {red}, blue: {blue}'
-        )
+         if picked and placed:
+             if color == 'red':
+                 red += 1
+             else:
+                 blue += 1
+         else:
+             if color == 'red':
+                 red_failed += 1
+             else:
+                 blue_failed += 1
 
+         self._move_named('scan')
+
+      self._move_named('home')
+      self.get_logger().info(
+         f'Sorting complete — red: {red} succeeded / {red_failed} failed, '
+         f'blue: {blue} succeeded / {blue_failed} failed'
+      )
 
 def main(args=None):
     rclpy.init(args=args)

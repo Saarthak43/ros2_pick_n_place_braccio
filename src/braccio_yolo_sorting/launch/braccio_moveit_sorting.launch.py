@@ -91,6 +91,11 @@ def generate_launch_description():
                     'auto_start': True,
                     'planning_group': 'arm',
                     'planning_frame': 'world',
+                    # BUG FIX C: default 554.4 (HFOV formula) was wrong.
+                    # Empirically derived from Gazebo ground truth: fx=fy=304.
+                    # Wrong value caused ~55 mm XY error in pixel→world.
+                    'camera_fx': 304.0,
+                    'camera_fy': 304.0,
                 }],
             )
         ],

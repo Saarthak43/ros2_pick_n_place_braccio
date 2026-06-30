@@ -56,26 +56,24 @@
       ╔══════════════════════════════════════════════════════════════╗
       ║  CUBE TABLE                                                  ║
       ║                                                              ║
-      ║  Supports cubes at z=0.27 without disabling gravity.        ║
+      ║         ║
       ║                                                              ║
       ║  Cube size:       0.02 x 0.02 x 0.02 m                     ║
       ║  Cube bottom:     z = 0.27 - 0.01 = 0.26 m                 ║
       ║  Table top:       z = 0.26 m                                ║
       ║  Table thickness: 0.01 m  →  table centre z = 0.255 m      ║
-      ║  Table centre xy: (0.18, 0.00)                              ║
-      ║  Table size xy:   0.10 x 0.22 m                            ║
-      ║  (covers x=[0.13,0.23] y=[-0.11,0.11] with margin)         ║
+      ║          ║
       ╚══════════════════════════════════════════════════════════════╝
     -->
     <model name="cube_table">
       <static>true</static>
-      <pose>0.18 0.00 0.255 0 0 0</pose>
+      <pose>0.05 -0.15 0.255 0 0 0</pose>
       <link name="link">
         <collision name="collision">
-          <geometry><box><size>0.10 0.22 0.01</size></box></geometry>
+          <geometry><box><size>0.10 0.18 0.01</size></box></geometry>
         </collision>
         <visual name="visual">
-          <geometry><box><size>0.10 0.22 0.01</size></box></geometry>
+          <geometry><box><size>0.10 0.18 0.01</size></box></geometry>
           <material>
             <ambient>0.55 0.37 0.18 1</ambient>
             <diffuse>0.55 0.37 0.18 1</diffuse>
@@ -88,13 +86,13 @@
     <!--
       ╔══════════════════════════════════════════════════════════════╗
       ║  RED CUBE                                                    ║
-      ║  World:  x=0.18  y=+0.08  z=0.27                           ║
+      ║                          ║
       ║  Pixel:  u=181   v=448    (inside 640x480 FOV)             ║
       ║  Radius from base: 0.197 m  (IK-safe zone)                 ║
       ╚══════════════════════════════════════════════════════════════╝
     -->
     <model name="red_cube_1">
-      <pose>0.18 0.08 0.27 0 0 0</pose>
+      <pose>0.05 -0.10 0.27 0 0 0</pose>
       <link name="link">
         <inertial>
           <mass>0.05</mass>
@@ -119,13 +117,13 @@
     <!--
       ╔══════════════════════════════════════════════════════════════╗
       ║  BLUE CUBE                                                   ║
-      ║  World:  x=0.18  y=-0.08  z=0.27                           ║
+      ║ ║
       ║  Pixel:  u=459   v=448    (inside 640x480 FOV)             ║
       ║  Radius from base: 0.197 m  (IK-safe zone)                 ║
       ╚══════════════════════════════════════════════════════════════╝
     -->
     <model name="blue_cube_2">
-      <pose>0.18 -0.08 0.27 0 0 0</pose>
+      <pose>0.05 -0.20 0.27 0 0 0</pose>
       <link name="link">
         <inertial>
           <mass>0.05</mass>
