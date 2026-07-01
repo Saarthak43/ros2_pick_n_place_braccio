@@ -1,7 +1,30 @@
-arm:
-  kinematics_solver: trac_ik_kinematics_plugin/TRAC_IKKinematicsPlugin
-  kinematics_solver_search_resolution: 0.005
-  kinematics_solver_timeout: 5.0
-  kinematics_solver_attempts: 10
-  position_only_ik: true
+# ================================================================
+# TODO (Part 7 — Inverse-Kinematics Configuration):
+# Configure the kinematics solver for the MoveIt planning group
+# named "arm".
+#
+# Requirements:
+#   1. Use the TRAC-IK MoveIt kinematics plugin.
+#   2. Configure a search resolution.
+#   3. Configure a solver timeout.
+#   4. Configure the number of solver attempts.
+#   5. Enable position-only inverse kinematics.
+#
+# Position-only IK is required because the sorting controller
+# primarily asks MoveIt to reach an XYZ tool position.
+# ================================================================
 
+# ── YOUR CONFIGURATION HERE ──────────────────────────────────────
+arm: {}
+# ─────────────────────────────────────────────────────────────────
+```
+
+## Student completion condition
+
+MoveIt must not print:
+
+```text
+No kinematics plugins defined
+```
+
+for the `arm` planning group.
