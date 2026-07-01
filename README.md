@@ -60,6 +60,7 @@ The system must:
 
 
 ## The Pipeline 
+```text
 src
 ├── braccio_description
 │   ├── CMakeLists.txt
@@ -139,3 +140,5 @@ src
         ├── test_copyright.py
         ├── test_flake8.py
         └── test_pep257.py
+```
+
