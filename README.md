@@ -142,3 +142,84 @@ src
         └── test_pep257.py
 ```
 
+## System Overview 
+
+
+The project consists of six major components.
+
+### 1. Braccio Robot Model
+
+The complete robot structure is defined in `braccio_description/urdf/braccio.urdf.xacro`, including the arm links, revolute joints, gripper fingers, collision geometry, visual meshes, joint limits, and Gazebo control interfaces.
+
+The controller configuration in `braccio_description/config/braccio_controllers.yaml` connects the simulated arm and gripper joints to ROS 2 trajectory controllers, allowing both manipulators to receive executable joint commands.
+
+### 2. Gazebo Sorting Environment
+
+`braccio_gazebo/worlds/braccio_sorting.world` creates the simulated sorting cell containing the worktable, coloured cubes, destination containers, lighting, physics, and the overhead RGB camera used to observe the workspace.
+
+`braccio_gazebo/launch/braccio_gazebo.launch.py` starts Gazebo, spawns the Braccio model, activates the arm and gripper controllers, and bridges the simulated camera feed into ROS 2.
+
+### 3. Vision-Based Object Detection
+
+`braccio_yolo_sorting/braccio_yolo_sorting/yolo_detector_node.py` processes images from the overhead camera and identifies red and blue objects using HSV colour segmentation, morphological filtering, contour detection, and bounding-box validation.
+
+The centre of every accepted bounding box is published as a `Detection2DArray`, providing the object class and its position within the camera image.
+
+### 4. MoveIt Kinematics Configuration
+
+The `braccio_moveit_config` package describes how MoveIt understands and controls the arm.
+
+`braccio.srdf` defines the arm and gripper planning groups, while `kinematics.yaml` configures the inverse-kinematics solver. `joint_limits.yaml`, `moveit_controllers.yaml`, and `ros2_controllers.yaml` define the motion limits and controller interfaces used during execution.
+
+Together, these files allow the system to convert a requested end-effector position into a reachable Braccio joint configuration.
+
+### 5. Autonomous Pick-and-Place Controller
+
+`braccio_yolo_sorting/braccio_yolo_sorting/braccio_moveit_sorting_controller.py` coordinates the complete sorting operation.
+
+It stabilizes incoming detections, converts image centroids into estimated world coordinates, requests inverse-kinematics solutions from MoveIt, and sends joint trajectories to the arm and gripper controllers.
+
+The node then executes the full sequence:
+
+```text
+Detect Object
+      ↓
+Estimate World Position
+      ↓
+Move Above Object
+      ↓
+Open and Lower Gripper
+      ↓
+Grasp and Lift Object
+      ↓
+Move to Colour-Specific Container
+      ↓
+Release Object
+      ↓
+Return to Scanning Position
+```
+
+Red objects are transported to the red destination, while blue objects are transported to the blue destination.
+
+### 6. Complete System Bringup
+
+`braccio_yolo_sorting/launch/braccio_moveit_sorting.launch.py` acts as the main system launcher.
+
+It brings together:
+
+* The Braccio robot description
+* Gazebo and the sorting world
+* ROS 2 arm and gripper controllers
+* The camera image bridge
+* MoveIt and its inverse-kinematics service
+* `yolo_detector_node.py`
+* `braccio_moveit_sorting_controller.py`
+* RViz visualization
+
+This launch file connects perception, kinematics, simulation, and manipulation into one autonomous vision-guided sorting pipeline.
+
+```bash 
+ros2 launch braccio_yolo_sorting braccio_moveit_sorting.launch.py
+```
+
+
