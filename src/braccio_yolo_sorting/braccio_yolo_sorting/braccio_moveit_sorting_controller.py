@@ -1,57 +1,37 @@
 #!/usr/bin/env python3
 """
-Braccio MoveIt Sorting Controller.
+Braccio MoveIt Sorting Controller — Assignment Skeleton
+========================================================
+Your task is to implement the three core functions marked TODO below:
 
-Uses MoveIt's /compute_ik service for inverse kinematics and the
-arm_controller / gripper_controller FollowJointTrajectory action servers
-for execution.
+  1. _pixel_to_world()  — convert a detected pixel centroid to a 3-D world
+                          position using the known camera intrinsics and pose.
 
-Pixel → World projection
-------------------------
-The camera in braccio.urdf.xacro is mounted at world (0.30, 0.00, 0.59)
-and looks straight down.  With the ROS optical-frame convention (Z forward,
-X right, Y down) and the camera_optical_joint transform, the projection for
-a point on a flat surface at known world Z is:
+  2. _compute_ik()      — call MoveIt's /compute_ik service to find joint
+                          angles that place the gripper at a target pose,
+                          and return them as a list of 5 floats.
 
-    depth   = camera_world_z - cube_world_z          # 0.59 - 0.27 = 0.32 m
-    world_x = camera_world_x + (v - cy) * depth / fy
-    world_y = camera_world_y + (u - cx) * depth / fx
+  3. _sort_sequence()   — implement the full pick-and-place loop: for each
+                          detected object, pick it up and drop it in the
+                          correct colour container.
 
-where (u, v) is the pixel centroid of the detected bounding box and
-(fx, fy, cx, cy) are the empirically derived camera parameters.
+Helper functions already implemented (do NOT modify):
+  _send_trajectory()    — sends a joint trajectory to a controller
+  _send_arm()           — wrapper: sends to arm_controller
+  _send_gripper()       — wrapper: sends to gripper_controller
+  _move_to_pose()       — calls _compute_ik then _send_arm
+  _move_named()         — moves to a named joint preset
+  _pick()               — full pick sequence using _move_to_pose
+  _place()              — moves to drop preset and opens gripper
 
-NOTE: fx=fy must be set to 304 (empirical) via the launch file parameter
-override.  The declare_parameter default of 554.4 is wrong for this
-simulated camera at this resolution.
-
-Key fixes applied (see individual BUG FIX comments)
------------------------------------------------------
-* B  — Pixel→world positions are now median-stabilised over the last
-       N frames per colour before being committed, preventing a single
-       noisy detection from corrupting the IK target.
-* C  — fx=fy corrected to 304 (empirical) in the launch file.
-* D  — IK target orientation changed from identity (w=1, horizontal
-       gripper) to 90° about world X (x=0.707, w=0.707) for top-down
-       grasp.  This was the root cause of TRAC-IK returning no solution.
-* E  — Pre-grasp approach clearance raised from 40 mm to 100 mm above
-       cube top to avoid table/gripper collision during descent.
-* G  — IK seed base_joint clamp widened from [2.0, 3.0] to [0.5, 4.5]
-       to match the URDF joint limit [0.05, 5.0] and allow exploration
-       of the full arm workspace.
-
-Operational note (Bug H)
-------------------------
-colcon build does NOT propagate edits to installed Python files unless
-you built with --symlink-install.  After every source edit either:
-  a) rebuild with:  colcon build --symlink-install --packages-select braccio_yolo_sorting
-  b) or patch the installed copy at:
-       install/braccio_yolo_sorting/lib/python3.*/site-packages/braccio_yolo_sorting/
-
-* No ik_request.attempts — field does not exist in ROS 2 moveit_msgs.
-* Sort sequence runs on a worker thread to avoid single-threaded executor
-  deadlock.
-* Event-based waits for service / action responses.
-"""
+ROS infrastructure (do NOT modify):
+  __init__()            — parameters, clients, subscriptions
+  _joint_state_cb()     — stores latest joint state
+  _detection_cb()       — receives detections, calls _pixel_to_world,
+                          builds self.detected_objects
+  _check_and_start()    — timer that fires _sort_sequence when detections
+                          are stable
+  _sort_worker()        — runs _sort_sequence on a background thread
 
 import math
 import threading
@@ -69,7 +49,7 @@ from moveit_msgs.srv import GetPositionIK
 from sensor_msgs.msg import JointState
 from trajectory_msgs.msg import JointTrajectoryPoint
 from vision_msgs.msg import Detection2DArray
-
+"""
 
 class BraccioMoveItSortingController(Node):
     """MoveIt-based sorting controller with real IK and live pixel→world."""
