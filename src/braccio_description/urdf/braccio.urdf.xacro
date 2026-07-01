@@ -248,7 +248,7 @@
 
   <!-- CHANGED: Camera now attached to base_link instead of world -->
   <joint name="camera_joint" type="fixed">
-    <origin rpy="0 1.5708 3.1416" xyz="0.05 -0.15 0.59"/>
+    <origin rpy="0 1.5708 3.1416" xyz="0.20 0.00 0.59"/>
     <parent link="base_link"/>
     <child link="camera_link"/>
   </joint>
