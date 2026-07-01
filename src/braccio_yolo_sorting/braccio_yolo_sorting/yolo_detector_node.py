@@ -103,62 +103,57 @@ The periodic debug output must report non-zero mask-pixel counts when the corres
                 f'HSV debug: red_mask={red_px}px  blue_mask={blue_px}px'
             )
         
-        # Process each color
-        for color, mask in [('red', red_mask), ('blue', blue_mask)]:
-            # Clean up mask
-            kernel = np.ones((5,5), np.uint8)
-            mask = cv2.morphologyEx(mask, cv2.MORPH_CLOSE, kernel)
-            mask = cv2.morphologyEx(mask, cv2.MORPH_OPEN, kernel)
-            
-            # Find contours
-            contours, _ = cv2.findContours(mask, cv2.RETR_EXTERNAL, 
-                                          cv2.CHAIN_APPROX_SIMPLE)
-            
-            for contour in contours:
-                area = cv2.contourArea(contour)
-                
-                if area > 500:  # Minimum area
-                    x, y, w, h = cv2.boundingRect(contour)
-                    center_y = y + h / 2.0
-                    img_h = image.shape[0]
+        # ============================================================
+        # TODO (Part 9 — Contour-Based Object Detection):
+        # Convert the red and blue masks into valid cube detections.
+        #
+        # For each colour:
+        #
+        # Step A — Clean the mask
+        #   1. Create a 5×5 uint8 morphology kernel.
+        #   2. Apply MORPH_CLOSE to fill small holes.
+        #   3. Apply MORPH_OPEN to remove isolated noise.
+        #
+        # Step B — Extract contours
+        #   1. Find external contours only.
+        #   2. Compute each contour's area.
+        #   3. Reject contours below the minimum useful area.
+        #
+        # Step C — Build and filter bounding boxes
+        #   1. Compute x, y, width, and height.
+        #   2. Compute the vertical centre of the box.
+        #   3. Reject very large regions belonging to the coloured
+        #      destination containers.
+        #   4. Reject boxes with excessive width or height.
+        #   5. Reject boxes outside the useful image-height region.
+        #   6. Reject implausible aspect ratios.
+        #
+        # Step D — Append accepted detections
+        # Append a dictionary with exactly:
+        #
+        #   {
+        #       'bbox': [x_min, y_min, x_max, y_max],
+        #       'color': color,
+        #       'confidence': confidence
+        #   }
+        #
+        # Use a high fixed confidence for accepted simulation
+        # detections, then return the complete `detections` list.
+        #
+        # Available variables:
+        #   image
+        #   red_mask
+        #   blue_mask
+        #   detections
+        #   self.frame_count
+        #   self.get_logger()
+        # ============================================================
 
-                    # Debug: log every detection before filtering
-                    if self.frame_count % 60 == 1:
-                        self.get_logger().info(
-                            f'  {color} contour: area={area:.0f} '
-                            f'bbox=({x},{y},{w},{h}) '
-                            f'center_y_pct={center_y/img_h*100:.0f}%'
-                        )
-
-                    # --- Filters to reject containers ---
-                    # From the logs, containers have area ~17000-18000 px²
-                    # and bbox widths of 130-142px.  Real cubes (5cm at
-                    # 0.59m) should be ~49x49px = ~2400 px².
-                    # Use a generous max of 8000 px² to catch cubes at
-                    # any angle while still rejecting containers.
-                    if area > 25000:
-                        continue
-                    if w > 200 or h > 200:
-                        continue
-
-                    # Cubes appear in the lower part of the image
-                    # (py ~340-420, which is 70-87%).  Containers appear
-                    # in the middle (py ~240, 50%) and at the very bottom
-                    # (py ~400+, 83%+).  Accept detections between
-                    # 50% and 90% of image height.
-                    if center_y < img_h * 0.02 or center_y > img_h * 0.90:
-                        continue
-
-                    # Check aspect ratio
-                    aspect_ratio = w / float(h)
-                    if 0.3 < aspect_ratio < 3.0:
-                        detections.append({
-                            'bbox': [x, y, x+w, y+h],
-                            'color': color,
-                            'confidence': 0.95
-                        })
-        
-        return detections
+        # ── YOUR CODE HERE ──────────────────────────────────────────
+        raise NotImplementedError(
+            'Contour filtering and detection creation are not implemented yet'
+        )
+        # ─────────────────────────────────────────────────────────────
     
     def image_callback(self, msg):
         """Process incoming images."""
