@@ -29,101 +29,93 @@ from launch_ros.substitutions import FindPackageShare
 
 def generate_launch_description():
 
-    # 1. Gazebo + bridges + controllers (RViz disabled - we open our own).
-    gazebo_launch = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource([
-            PathJoinSubstitution([
-                FindPackageShare('braccio_gazebo'),
-                'launch', 'braccio_gazebo.launch.py',
-            ])
-        ]),
-        launch_arguments={'rviz': 'false'}.items(),
-    )
+ # ================================================================
+    # TODO (Part 10 — Complete System Bringup):
+    # Launch and connect the complete autonomous sorting stack.
+    #
+    # Create the following five launch actions:
+    #
+    # 1. gazebo_launch
+    #    - Include braccio_gazebo/launch/braccio_gazebo.launch.py.
+    #    - Pass rviz:=false because this launch file starts its own
+    #      sorting-specific RViz instance.
+    #
+    # 2. moveit_launch
+    #    - Include braccio_moveit_config/launch/move_group.launch.py.
+    #    - Enable simulation time.
+    #    - Start it after Gazebo, TF, and the controllers have had
+    #      enough time to initialize.
+    #
+    # 3. yolo_detector
+    #    - Start yolo_detector_node.py.
+    #    - Enable simulation time.
+    #    - Set image_topic to /camera/image_raw.
+    #    - Pass the confidence-threshold parameter.
+    #    - Start it after the camera bridge is publishing images.
+    #
+    # 4. moveit_sorting_controller
+    #    - Start braccio_moveit_sorting_controller.py.
+    #    - Enable simulation time.
+    #    - Configure:
+    #        min_confidence
+    #        detection_stable_time
+    #        auto_start
+    #        planning_group = arm
+    #        planning_frame = world
+    #        camera_fx
+    #        camera_fy
+    #    - Use the calibrated focal values required by the current
+    #      simulation camera.
+    #    - Start it only after MoveIt's /compute_ik service exists.
+    #
+    # 5. rviz
+    #    - Load braccio_description/rviz/braccio_sorting.rviz.
+    #    - Enable simulation time.
+    #
+    # Recommended startup order:
+    #
+    #   Gazebo immediately
+    #        ↓
+    #   RViz after a short delay
+    #        ↓
+    #   MoveIt
+    #        ↓
+    #   HSV detector
+    #        ↓
+    #   sorting controller
+    #
+    # Return one LaunchDescription containing all five actions.
+    #
+    # Required variable names:
+    #   gazebo_launch
+    #   moveit_launch
+    #   yolo_detector
+    #   moveit_sorting_controller
+    #   rviz
+    # ================================================================
 
-    # 2. MoveIt move_group.
-    moveit_launch = TimerAction(
-        period=5.0,
-        actions=[
-            IncludeLaunchDescription(
-                PythonLaunchDescriptionSource([
-                    PathJoinSubstitution([
-                        FindPackageShare('braccio_moveit_config'),
-                        'launch', 'move_group.launch.py',
-                    ])
-                ]),
-                launch_arguments={'use_sim_time': 'true'}.items(),
-            )
-        ],
+    # ── YOUR CODE HERE ──────────────────────────────────────────────
+    raise NotImplementedError(
+        'Complete Braccio sorting bringup is not implemented yet'
     )
+    # ─────────────────────────────────────────────────────────────────
+```
 
-    # 3. YOLO HSV detector.  Explicitly bound to /camera/image_raw -- the
-    #    name the gazebo launch's bridge remaps the gz `camera` topic to.
-    yolo_detector = TimerAction(
-        period=10.0,
-        actions=[
-            Node(
-                package='braccio_yolo_sorting',
-                executable='yolo_detector_node.py',
-                name='yolo_detector',
-                output='screen',
-                parameters=[{
-                    'use_sim_time': True,
-                    'confidence_threshold': 0.4,
-                    'image_topic': '/camera/image_raw',
-                }],
-            )
-        ],
-    )
+## Student completion condition
 
-    # 4. MoveIt sorting controller.
-    moveit_sorting_controller = TimerAction(
-        period=15.0,
-        actions=[
-            Node(
-                package='braccio_yolo_sorting',
-                executable='braccio_moveit_sorting_controller.py',
-                name='moveit_sorting_controller',
-                output='screen',
-                parameters=[{
-                    'use_sim_time': True,
-                    'min_confidence': 0.5,
-                    'detection_stable_time': 3.0,
-                    'auto_start': True,
-                    'planning_group': 'arm',
-                    'planning_frame': 'world',
-                    # BUG FIX C: default 554.4 (HFOV formula) was wrong.
-                    # Empirically derived from Gazebo ground truth: fx=fy=304.
-                    # Wrong value caused ~55 mm XY error in pixel→world.
-                    'camera_fx': 304.0,
-                    'camera_fy': 304.0,
-                }],
-            )
-        ],
-    )
+The following command must bring up the complete system:
 
-    # 5. RViz with the sorting layout (raw camera + annotated detections).
-    rviz_config = PathJoinSubstitution([
-        FindPackageShare('braccio_description'),
-        'rviz', 'braccio_sorting.rviz',
-    ])
-    rviz = TimerAction(
-        period=4.0,
-        actions=[
-            Node(
-                package='rviz2',
-                executable='rviz2',
-                name='rviz2',
-                output='screen',
-                arguments=['-d', rviz_config],
-                parameters=[{'use_sim_time': True}],
-            )
-        ],
-    )
+```bash
+ros2 launch braccio_yolo_sorting braccio_moveit_sorting.launch.py
+```
 
-    return LaunchDescription([
-        gazebo_launch,
-        moveit_launch,
-        yolo_detector,
-        moveit_sorting_controller,
-        rviz,
-    ])
+A correct implementation should start:
+
+- Gazebo and the sorting world
+- the Braccio robot
+- camera bridges
+- arm and gripper controllers
+- MoveIt `move_group`
+- the HSV detector
+- the autonomous sorting controller
+- sorting RViz
