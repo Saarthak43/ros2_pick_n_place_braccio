@@ -307,8 +307,7 @@ rosdep update
 
 ```bash
 cd ~
-git clone -b initial \
-  https://github.com/Saarthak43/ros2_pick_n_place_braccio.git
+git clone https://github.com/Saarthak43/ros2_pick_n_place_braccio.git
 
 cd ros2_pick_n_place_braccio
 ```
