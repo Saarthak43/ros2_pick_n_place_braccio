@@ -63,20 +63,38 @@ class YOLODetectorNode(Node):
         detections = []
         hsv = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
         
-        # Red detection
-        red_mask1 = cv2.inRange(hsv, 
-                               self.color_ranges['red']['lower1'],
-                               self.color_ranges['red']['upper1'])
-        red_mask2 = cv2.inRange(hsv,
-                               self.color_ranges['red']['lower2'],
-                               self.color_ranges['red']['upper2'])
-        red_mask = cv2.bitwise_or(red_mask1, red_mask2)
-        
-        # Blue detection
-        blue_mask = cv2.inRange(hsv,
-                               self.color_ranges['blue']['lower'],
-                               self.color_ranges['blue']['upper'])
-        
+        # ============================================================
+        # TODO (Part 8 — HSV Mask Generation):
+        # Generate binary masks for the red and blue cubes.
+        #
+        # Red wraps around the ends of OpenCV's HSV hue range, so
+        # it must be detected using two separate intervals.
+        #
+        # Steps:
+        #   1. Create red_mask1 using red lower1/upper1.
+        #   2. Create red_mask2 using red lower2/upper2.
+        #   3. Combine them into red_mask using a bitwise OR.
+        #   4. Create blue_mask using the blue lower/upper range.
+        #
+        # Available data:
+        #   hsv
+        #   self.color_ranges
+        #
+        # Required output variables:
+        #   red_mask
+        #   blue_mask
+        #
+        # The debugging code immediately below this TODO uses both
+        # variables, so preserve those exact names.
+        # ============================================================
+
+        # ── YOUR CODE HERE ──────────────────────────────────────────
+        raise NotImplementedError('HSV mask generation is not implemented yet')
+        # ─────────────────────────────────────────────────────────────
+
+## Student completion condition
+
+The periodic debug output must report non-zero mask-pixel counts when the corresponding cubes are visible.
         # Debug: log mask pixel counts every 60 frames
         if self.frame_count % 60 == 1:
             red_px = int(cv2.countNonZero(red_mask))
