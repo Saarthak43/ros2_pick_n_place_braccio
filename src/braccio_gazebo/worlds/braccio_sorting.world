@@ -51,20 +51,6 @@
         </visual>
       </link>
     </model>
-
-    <!--
-      ╔══════════════════════════════════════════════════════════════╗
-      ║  CUBE TABLE                                                  ║
-      ║                                                              ║
-      ║         ║
-      ║                                                              ║
-      ║  Cube size:       0.02 x 0.02 x 0.02 m                     ║
-      ║  Cube bottom:     z = 0.27 - 0.01 = 0.26 m                 ║
-      ║  Table top:       z = 0.26 m                                ║
-      ║  Table thickness: 0.01 m  →  table centre z = 0.255 m      ║
-      ║          ║
-      ╚══════════════════════════════════════════════════════════════╝
-    -->
     <model name="cube_table">
       <static>true</static>
       <pose>0.05 -0.15 0.255 0 0 0</pose>
@@ -82,15 +68,6 @@
         </visual>
       </link>
     </model>
-
-    <!--
-      ╔══════════════════════════════════════════════════════════════╗
-      ║  RED CUBE                                                    ║
-      ║                          ║
-      ║  Pixel:  u=181   v=448    (inside 640x480 FOV)             ║
-      ║  Radius from base: 0.197 m  (IK-safe zone)                 ║
-      ╚══════════════════════════════════════════════════════════════╝
-    -->
     <model name="red_cube_1">
       <pose>0.05 -0.10 0.27 0 0 0</pose>
       <link name="link">
@@ -113,15 +90,6 @@
         </visual>
       </link>
     </model>
-
-    <!--
-      ╔══════════════════════════════════════════════════════════════╗
-      ║  BLUE CUBE                                                   ║
-      ║ ║
-      ║  Pixel:  u=459   v=448    (inside 640x480 FOV)             ║
-      ║  Radius from base: 0.197 m  (IK-safe zone)                 ║
-      ╚══════════════════════════════════════════════════════════════╝
-    -->
     <model name="blue_cube_2">
       <pose>0.05 -0.20 0.27 0 0 0</pose>
       <link name="link">
@@ -148,7 +116,7 @@
     <!--
       ╔══════════════════════════════════════════════════════════════╗
       ║  RED CONTAINER  — drop zone for red cubes                   ║
-      ║  Placed at x=0.05, y=0.20 (close to base, +y side)         ║
+      ║  ║
       ╚══════════════════════════════════════════════════════════════╝
     -->
     <model name="red_container">
@@ -189,7 +157,7 @@
     <!--
       ╔══════════════════════════════════════════════════════════════╗
       ║  BLUE CONTAINER  — drop zone for blue cubes                 ║
-      ║  Placed at x=0.05, y=-0.20 (close to base, -y side)        ║
+      ║         ║
       ╚══════════════════════════════════════════════════════════════╝
     -->
     <model name="blue_container">
