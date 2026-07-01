@@ -32,7 +32,7 @@ ROS infrastructure (do NOT modify):
   _check_and_start()    — timer that fires _sort_sequence when detections
                           are stable
   _sort_worker()        — runs _sort_sequence on a background thread
-
+"""
 import math
 import threading
 import time
@@ -49,8 +49,6 @@ from moveit_msgs.srv import GetPositionIK
 from sensor_msgs.msg import JointState
 from trajectory_msgs.msg import JointTrajectoryPoint
 from vision_msgs.msg import Detection2DArray
-"""
-
 class BraccioMoveItSortingController(Node):
     """MoveIt-based sorting controller with real IK and live pixel→world."""
 
