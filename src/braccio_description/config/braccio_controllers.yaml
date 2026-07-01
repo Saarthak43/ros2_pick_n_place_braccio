@@ -8,40 +8,81 @@ controller_manager:
     gripper_controller:
       type: joint_trajectory_controller/JointTrajectoryController
 
+# ================================================================
+# TODO (Part 4 — ROS 2 Control):
+# Configure the trajectory controllers used by the Braccio arm
+# and gripper.
+#
+# The controller types are already registered above under
+# controller_manager. Complete the per-controller parameters below.
+#
+# arm_controller requirements:
+#   1. Control these joints in this exact order:
+#      - base_joint
+#      - shoulder_joint
+#      - elbow_joint
+#      - wrist_pitch_joint
+#      - wrist_roll_joint
+#   2. Accept position commands.
+#   3. Publish position and velocity state interfaces.
+#   4. Disable open-loop control.
+#   5. Allow trajectory integration and non-zero final velocity.
+#   6. Add stopped-velocity and goal-time constraints.
+#
+# gripper_controller requirements:
+#   1. Control gripper_joint.
+#   2. Accept position commands.
+#   3. Publish position and velocity state interfaces.
+#   4. Add suitable trajectory and joint-goal tolerances.
+#
+# The controller names must stay exactly:
+#   arm_controller
+#   gripper_controller
+#
+# They are used by the FollowJointTrajectory action clients in
+# braccio_moveit_sorting_controller.py.
+# ================================================================
+
+# ── YOUR CONFIGURATION HERE ──────────────────────────────────────
 arm_controller:
   ros__parameters:
-    joints:
-      - base_joint
-      - shoulder_joint
-      - elbow_joint
-      - wrist_pitch_joint
-      - wrist_roll_joint
-    command_interfaces:
-      - position
-    state_interfaces:
-      - position
-      - velocity
-    open_loop_control: false
-    allow_integration_in_goal_trajectories: true
-    allow_nonzero_velocity_at_trajectory_end: true
-    constraints:
-      stopped_velocity_tolerance: 0.5
-      goal_time: 5.0
+    joints: []
+    command_interfaces: []
+    state_interfaces: []
 
 gripper_controller:
   ros__parameters:
-    joints:
-      - gripper_joint
-    command_interfaces:
-      - position
-    state_interfaces:
-      - position
-      - velocity
-    open_loop_control: false
-    allow_integration_in_goal_trajectories: true
-    allow_nonzero_velocity_at_trajectory_end: true
-    constraints:
-      stopped_velocity_tolerance: 0.5
-      goal_time: 2.0
-      gripper_joint:
-        goal: 0.1
+    joints: []
+    command_interfaces: []
+    state_interfaces: []
+# ─────────────────────────────────────────────────────────────────
+```
+
+## Student completion condition
+
+After implementation:
+
+```bash
+ros2 control list_controllers
+```
+
+must show:
+
+```text
+joint_state_broadcaster
+arm_controller
+gripper_controller
+```
+
+and:
+
+```bash
+ros2 action list
+```
+
+must contain:
+
+```text
+/arm_controller/follow_joint_trajectory
+/gripper_controller/follow_joint_trajectory
+```
