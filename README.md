@@ -221,7 +221,144 @@ This launch file connects perception, kinematics, simulation, and manipulation i
 ```bash 
 ros2 launch braccio_yolo_sorting braccio_moveit_sorting.launch.py
 ```
+## Install Packages 
 
+### System Requirements
+
+This project is designed for:
+
+* Ubuntu 24.04
+* ROS 2 Jazzy Jalisco
+* Gazebo Harmonic
+* Python 3
+* A workspace built using `colcon`
+
+Make sure ROS 2 Jazzy is already installed and sourced:
+
+```bash
+source /opt/ros/jazzy/setup.bash
+```
+
+---
+
+### Pre-requisite Packages
+
+Install all packages required for Gazebo simulation, ROS 2 control, MoveIt, inverse kinematics, camera bridging, computer vision, and visualization:
+
+```bash
+sudo apt update
+
+sudo apt install -y \
+  git \
+  python3-colcon-common-extensions \
+  python3-rosdep \
+  python3-opencv \
+  python3-numpy \
+  ros-jazzy-ros-gz \
+  ros-jazzy-gz-ros2-control \
+  ros-jazzy-ros2-control \
+  ros-jazzy-ros2-controllers \
+  ros-jazzy-controller-manager \
+  ros-jazzy-robot-state-publisher \
+  ros-jazzy-joint-state-publisher \
+  ros-jazzy-joint-state-publisher-gui \
+  ros-jazzy-xacro \
+  ros-jazzy-tf2-ros \
+  ros-jazzy-rviz2 \
+  ros-jazzy-moveit \
+  ros-jazzy-trac-ik-kinematics-plugin \
+  ros-jazzy-vision-msgs \
+  ros-jazzy-cv-bridge \
+  ros-jazzy-image-transport
+```
+
+These packages provide:
+
+* `ros_gz_sim` for running Gazebo Harmonic
+* `ros_gz_bridge` for bridging Gazebo and ROS 2 topics
+* `ros_gz_image` for exposing the simulated camera feed
+* `gz_ros2_control` for controlling the simulated Braccio joints
+* `ros2_control` and ROS 2 controllers for arm and gripper trajectories
+* MoveIt for robot-state handling and inverse-kinematics services
+* TRAC-IK as the inverse-kinematics solver
+* `vision_msgs` for publishing object detections
+* `cv_bridge` and OpenCV for processing camera images
+* RViz for robot, TF, camera, and detection visualization
+
+---
+
+### Initialize `rosdep`
+
+Run this only if `rosdep` has not previously been initialized on your system:
+
+```bash
+sudo rosdep init
+```
+
+Update its dependency database:
+
+```bash
+rosdep update
+```
+
+---
+
+### Clone the Repository
+
+```bash
+cd ~
+git clone -b initial \
+  https://github.com/Saarthak43/ros2_pick_n_place_braccio.git
+
+cd ros2_pick_n_place_braccio
+```
+
+---
+
+### Install Any Remaining Dependencies
+
+From the root of the workspace, run:
+
+```bash
+rosdep install \
+  --from-paths src \
+  --ignore-src \
+  --rosdistro jazzy \
+  -r \
+  -y
+```
+
+This checks the dependencies declared in each package’s `package.xml` and installs anything missing.
+
+---
+
+### Build the Workspace
+
+```bash
+colcon build --symlink-install
+```
+
+After a successful build, source the workspace:
+
+```bash
+source install/setup.bash
+```
+
+The workspace must be sourced in every new terminal before running any package:
+
+```bash
+cd ~/ros2_pick_n_place_braccio
+source install/setup.bash
+```
+
+---
+
+### Launch the Complete Sorting System
+
+```bash
+ros2 launch braccio_yolo_sorting \
+  braccio_moveit_sorting.launch.py
+```
 
 
 ## What You Need To Implement
@@ -663,6 +800,245 @@ A successful implementation should:
 8. Move it to the matching container
 9. Return to the scanning position after every attempt
 10. Finish at home and print a sorting summary
+
+
+## Bonus Challenges
+
+The core assignment builds a complete simulated perception-and-manipulation pipeline. After completing all required TODOs, attempt one or more of the following extensions.
+
+### 1. Replace HSV Detection with YOLO
+
+The current detector uses HSV colour segmentation and contour filtering.
+
+Replace it with a trained YOLO model capable of detecting objects based on visual features rather than only colour.
+
+Your implementation should:
+
+* Load a local YOLO model
+* Process images from `/camera/image_raw`
+* Publish detections using `vision_msgs/Detection2DArray`
+* Preserve compatibility with the sorting controller
+* Reject detections below a configurable confidence threshold
+
+---
+
+### 2. Support Multiple Objects of the Same Colour
+
+The current controller stores detections according to object colour.
+
+Extend it so that multiple red or blue cubes can be detected, tracked, and sorted independently.
+
+Your implementation should:
+
+* Assign a unique identity to each object
+* Prevent nearby detections from being merged
+* Remove objects from the active list after successful placement
+* Avoid attempting to sort the same object twice
+
+---
+
+### 3. Add Collision-Aware MoveIt Planning
+
+The current controller obtains an inverse-kinematics solution and sends joint positions directly to the trajectory controller.
+
+Extend the system to use MoveIt motion planning.
+
+Your implementation should:
+
+* Add the table, containers, and workspace boundaries to the planning scene
+* Request collision-free trajectories
+* Execute the generated trajectories through MoveIt
+* Report planning failures clearly
+* Prevent the arm from moving through the table or containers
+
+---
+
+## Deliverables
+
+Submit the following items after completing the assignment.
+
+### 1. Completed Source Code
+
+Your repository must contain working implementations for every required TODO.
+
+The following files should be completed:
+
+```text
+src/braccio_description/config/braccio_controllers.yaml
+
+src/braccio_gazebo/launch/braccio_gazebo.launch.py
+
+src/braccio_moveit_config/config/braccio.srdf
+
+src/braccio_moveit_config/config/kinematics.yaml
+
+src/braccio_yolo_sorting/braccio_yolo_sorting/
+├── yolo_detector_node.py
+└── braccio_moveit_sorting_controller.py
+
+src/braccio_yolo_sorting/launch/
+└── braccio_moveit_sorting.launch.py
+```
+
+Do not submit placeholder values, empty configuration blocks, or remaining `NotImplementedError` statements.
+
+---
+
+### 2. Working Simulation
+
+The complete system must launch using:
+
+```bash
+ros2 launch braccio_yolo_sorting \
+  braccio_moveit_sorting.launch.py
+```
+
+The simulation should demonstrate:
+
+* Gazebo starting successfully
+* The Braccio arm spawning correctly
+* Arm and gripper controllers becoming active
+* Camera images publishing
+* Red and blue cubes being detected
+* Pixel coordinates being converted into world positions
+* MoveIt returning valid IK solutions
+* The arm picking objects
+* Objects being placed in the correct containers
+* The robot returning home after completion
+
+---
+
+### 3. Demonstration Video
+
+Submit a screen recording showing the complete system working.
+
+The video should clearly show:
+
+* Gazebo
+* RViz
+* Terminal output
+* Object detections
+* Arm movement
+* Gripper operation
+* At least one successful red-object placement
+* At least one successful blue-object placement
+* The final sorting summary
+
+Recommended video duration:
+
+```text
+2–5 minutes
+```
+
+---
+
+### 4. Implementation Report
+
+Include a short report in the repository as:
+
+```text
+IMPLEMENTATION.md
+```
+
+The report should explain:
+
+* How HSV detection was implemented
+* How contours were filtered
+* How pixel coordinates were converted into world coordinates
+* How the MoveIt IK request was constructed
+* How drop poses were calibrated
+* How the sorting sequence handles failures
+* Any assumptions made by the implementation
+* Any limitations that remain
+
+Keep the explanation focused on your own implementation decisions.
+
+---
+
+### 5. Testing Evidence
+
+Include terminal screenshots or copied command outputs showing:
+
+```bash
+ros2 control list_controllers
+ros2 action list
+ros2 topic hz /camera/image_raw
+ros2 topic echo /detections
+ros2 service list | grep compute_ik
+```
+
+The evidence should confirm that the required ROS 2 interfaces were available during execution.
+
+---
+
+### 6. Repository Submission
+
+Your final repository should:
+
+* Build without compilation errors
+* Contain no unresolved merge conflicts
+* Contain no unnecessary build artifacts
+* Include clear commit history
+* Include the completed README
+* Include `IMPLEMENTATION.md`
+* Include a link to the demonstration video
+* Mention any attempted bonus challenges
+
+Do not commit the following generated directories:
+
+```text
+build/
+install/
+log/
+```
+
+---
+
+## Final Message
+
+This assignment may appear to be about moving coloured cubes from one location to another, but the real challenge is much larger.
+
+A successful implementation must connect multiple robotics systems:
+
+```text
+Simulation
+    ↓
+Camera Perception
+    ↓
+Object Detection
+    ↓
+Coordinate Transformation
+    ↓
+Inverse Kinematics
+    ↓
+Trajectory Control
+    ↓
+Grasping
+    ↓
+Autonomous Decision-Making
+```
+
+Each subsystem may work independently, but the robot succeeds only when all of them communicate correctly.
+
+Do not focus only on making the final animation run.
+
+Understand:
+
+* Why each topic exists
+* Why every frame matters
+* Why joint order must remain consistent
+* Why an IK solution can fail
+* Why a detection may be incorrect
+* Why startup order affects the system
+* Why simulation shortcuts may not transfer directly to hardware
+
+Debug one layer at a time, verify every interface, and question every assumption.
+
+> The goal is not merely to complete the TODOs. The goal is to understand how visual information is transformed into deliberate robotic action.
+
+Once the Braccio arm can observe an unstructured workspace, locate an object, calculate how to reach it, grasp it, and place it correctly, you have built more than a pick-and-place animation.
+
+You have built a complete perception-to-manipulation pipeline.
 
 
 
