@@ -224,7 +224,446 @@ ros2 launch braccio_yolo_sorting braccio_moveit_sorting.launch.py
 
 
 
-## What you need to implement 
+## What You Need To Implement
+
+This repository contains **11 TODOs distributed across seven files**. Together, they cover the complete perception-and-manipulation pipeline: Gazebo integration, visual detection, coordinate estimation, inverse kinematics, trajectory control, and autonomous object sorting.
+
+Complete the TODOs in the order shown below. Each stage provides an interface required by the next one.
+
+---
+
+### 1. ROS 2 Arm and Gripper Controllers
+
+**File:**
+`src/braccio_description/config/braccio_controllers.yaml`
+
+#### TODO 1 — Configure the Braccio Trajectory Controllers
+
+Configure `arm_controller` for the five arm joints and `gripper_controller` for `gripper_joint`.
+
+Your configuration must:
+
+* Use `joint_trajectory_controller/JointTrajectoryController`
+* Include all five Braccio arm joints in the correct order
+* Configure the gripper controller for `gripper_joint`
+* Use position command interfaces
+* Expose position and velocity state interfaces
+* Define suitable goal-time and stopped-velocity tolerances
+* Preserve the controller names expected by the sorting controller
+
+These controllers must provide:
+
+```text
+/arm_controller/follow_joint_trajectory
+/gripper_controller/follow_joint_trajectory
+```
+
+Without these action servers, the sorting controller cannot move either the arm or the gripper.
+
+---
+
+### 2. Gazebo Sensor and Controller Bringup
+
+**File:**
+`src/braccio_gazebo/launch/braccio_gazebo.launch.py`
+
+#### TODO 1 — Connect Gazebo to ROS 2 Perception and Control
+
+Complete the Gazebo launch integration required by the rest of the system.
+
+Your implementation must:
+
+* Bridge simulation time through `/clock`
+* Bridge the camera information topic
+* Bridge the Gazebo RGB image topic into ROS 2
+* Expose the image as `/camera/image_raw`
+* Start `joint_state_broadcaster`
+* Start `arm_controller`
+* Start `gripper_controller`
+* Activate controllers only after the robot and controller manager are available
+
+This completes the connection:
+
+```text
+Gazebo Physics
+      ↓
+Braccio Robot Model
+      ↓
+ros2_control
+      ↓
+Arm and Gripper Trajectory Controllers
+```
+
+It also provides the camera images required by the object detector.
+
+---
+
+### 3. MoveIt Semantic Robot Configuration
+
+**File:**
+`src/braccio_moveit_config/config/braccio.srdf`
+
+#### TODO 1 — Define the Arm, Gripper, and End Effector
+
+Complete the semantic description used by MoveIt.
+
+Your implementation must define:
+
+* An `arm` planning group
+* A kinematic chain from `base_link` to `tool_tip`
+* A `gripper` planning group containing `gripper_joint`
+* The gripper as an end effector attached to `tool_tip`
+* `sub_gripper_joint` as a passive joint
+* The existing `home` state for the arm group
+
+The planning-group name must remain `arm` because this is the group requested by `braccio_moveit_sorting_controller.py`.
+
+Without the correct semantic groups, MoveIt cannot determine which joints belong to the arm or calculate an inverse-kinematics solution for `tool_tip`.
+
+---
+
+### 4. MoveIt Inverse-Kinematics Configuration
+
+**File:**
+`src/braccio_moveit_config/config/kinematics.yaml`
+
+#### TODO 1 — Configure TRAC-IK for the Arm
+
+Configure the inverse-kinematics solver for the `arm` planning group.
+
+Your configuration must specify:
+
+* The TRAC-IK kinematics plugin
+* A suitable search resolution
+* A practical solver timeout
+* The number of solver attempts
+* Position-only inverse kinematics
+
+Position-only IK is used because the sorting controller primarily requests reachable tool positions above objects and containers.
+
+This completes the connection:
+
+```text
+Requested Tool Position
+      ↓
+MoveIt /compute_ik
+      ↓
+TRAC-IK
+      ↓
+Five Braccio Joint Positions
+```
+
+---
+
+### 5. HSV-Based Object Detection
+
+**File:**
+`src/braccio_yolo_sorting/braccio_yolo_sorting/yolo_detector_node.py`
+
+Despite the filename, this node uses HSV colour segmentation rather than neural-network YOLO inference.
+
+#### TODO 1 — Generate Clean Red and Blue Masks
+
+Implement the mask-generation stage inside `detect_objects_hsv()`.
+
+Your implementation must:
+
+* Convert the incoming BGR image into HSV
+* Generate both red hue-range masks
+* Combine the two red masks
+* Generate the blue mask
+* Apply morphological closing to fill small holes
+* Apply morphological opening to remove isolated noise
+* Produce one cleaned binary mask for each colour
+
+Red requires two hue ranges because it lies at both ends of OpenCV’s HSV hue scale.
+
+#### TODO 2 — Extract and Validate Cube Detections
+
+Process the cleaned masks and convert suitable contours into detections.
+
+Your implementation must:
+
+* Find external contours
+* Reject small noise contours
+* Calculate contour area
+* Generate bounding rectangles
+* Reject regions that are too large to be cubes
+* Reject destination-container-sized regions
+* Reject detections outside the useful vertical image region
+* Reject extreme aspect ratios
+* Append the accepted bounding box, colour, and confidence
+
+Return detections in the format expected by `image_callback()`:
+
+```python
+{
+    'bbox': [x_min, y_min, x_max, y_max],
+    'color': 'red' or 'blue',
+    'confidence': confidence_value,
+}
+```
+
+The existing callback will convert these results into `Detection2DArray` messages and publish the annotated image.
+
+---
+
+### 6. Autonomous MoveIt Sorting Controller
+
+**File:**
+`src/braccio_yolo_sorting/braccio_yolo_sorting/braccio_moveit_sorting_controller.py`
+
+This file contains the four central manipulation TODOs.
+
+#### TODO 1 — Calibrate the Container Drop Configurations
+
+Find five-joint arm configurations that position the gripper above the red and blue destination containers.
+
+Your implementation must:
+
+* Test candidate arm configurations
+* Observe the resulting pose in Gazebo and RViz
+* Verify the `tool_tip` position using `/compute_fk`
+* Store the final configurations as `drop_red` and `drop_blue`
+* Ensure that each configuration is reachable without colliding with the table
+
+The configurations must follow this joint order:
+
+```text
+base_joint
+shoulder_joint
+elbow_joint
+wrist_pitch_joint
+wrist_roll_joint
+```
+
+This is a calibration task. The final values should be obtained from the simulated robot rather than copied blindly.
+
+#### TODO 2 — Convert Image Pixels into World Coordinates
+
+Implement `_pixel_to_world()`.
+
+The detector provides an object centroid as image coordinates `(u, v)`. Convert this point into an estimated object position in the world frame.
+
+Use:
+
+* Camera world position
+* Camera principal point
+* Camera focal lengths
+* Known cube height
+* Camera-to-world axis mapping
+* Pinhole back-projection
+
+For this camera orientation:
+
+```text
+Image columns → World Y
+Image rows    → World X
+```
+
+Return:
+
+```python
+{
+    'x': world_x,
+    'y': world_y,
+    'z': cube_world_z,
+}
+```
+
+This completes the perception transformation:
+
+```text
+Bounding-Box Centre
+      ↓
+Pixel Coordinates
+      ↓
+Camera Projection
+      ↓
+Estimated World Position
+```
+
+#### TODO 3 — Compute a Valid Inverse-Kinematics Solution
+
+Implement `_compute_ik()`.
+
+Your implementation must:
+
+* Construct a `GetPositionIK` request
+* Use the `arm` planning group
+* Express the target in the `world` frame
+* Calculate a suitable seed for `base_joint`
+* Create a complete seed state for all five arm joints
+* Reuse the previous IK result when available
+* Call `/compute_ik` asynchronously
+* Wait for the response with a timeout
+* Handle service failures and unsuccessful MoveIt error codes
+* Match returned positions using joint names
+* Return positions in controller joint order
+* Store successful solutions for future warm starts
+
+The function must return five joint positions when successful and `None` when no valid solution is found.
+
+#### TODO 4 — Coordinate the Complete Sorting Mission
+
+Implement `_sort_sequence()`.
+
+The complete sequence must:
+
+1. Move the arm to `home`
+2. Move the arm to `scan`
+3. Iterate through all detected objects
+4. Determine whether each object is red or blue
+5. Call `_pick()` for the selected object
+6. Call `_place()` only after a successful pick
+7. Place red objects at `drop_red`
+8. Place blue objects at `drop_blue`
+9. Continue safely after individual failures
+10. Return to `scan` after every attempt
+11. Return to `home` after all objects have been processed
+12. Report successful and failed attempts for both colours
+
+Use the provided helper functions:
+
+```text
+_move_named()
+_pick()
+_place()
+```
+
+Do not rewrite the action-client and trajectory infrastructure already provided by the repository.
+
+---
+
+### 7. Complete Sorting-System Bringup
+
+**File:**
+`src/braccio_yolo_sorting/launch/braccio_moveit_sorting.launch.py`
+
+#### TODO 1 — Launch and Configure the Complete Autonomy Stack
+
+Bring all subsystems together in the correct order.
+
+Your implementation must:
+
+* Start Gazebo and ros2_control first
+* Start MoveIt after robot state and controllers are available
+* Start the detector after camera images are available
+* Start the sorting controller after `/compute_ik` is available
+* Configure `/camera/image_raw` as the detector input
+* Configure `arm` as the planning group
+* Configure `world` as the planning frame
+* Pass the confidence and stabilization parameters
+* Pass the calibrated camera focal lengths
+* Start RViz with `braccio_sorting.rviz`
+
+The completed launch pipeline should be:
+
+```text
+Gazebo and Robot
+      ↓
+ROS 2 Controllers and Camera Bridge
+      ↓
+MoveIt move_group
+      ↓
+HSV Object Detector
+      ↓
+Autonomous Sorting Controller
+      ↓
+RViz Visualization
+```
+
+Fixed startup delays are acceptable for this assignment, but they must leave enough time for Gazebo, the camera bridge, controllers, and MoveIt to initialize.
+
+---
+
+## Recommended Implementation Order
+
+```text
+1. braccio_controllers.yaml
+           ↓
+2. braccio_gazebo.launch.py
+           ↓
+3. braccio.srdf
+           ↓
+4. kinematics.yaml
+           ↓
+5. yolo_detector_node.py
+           ↓
+6. Drop-pose calibration
+           ↓
+7. _pixel_to_world()
+           ↓
+8. _compute_ik()
+           ↓
+9. _sort_sequence()
+           ↓
+10. braccio_moveit_sorting.launch.py
+```
+
+Do not begin by running the complete sorting system. Test every layer independently before moving to the next one.
+
+---
+
+## Testing Your Implementation
+
+Build the workspace:
+
+```bash
+colcon build --symlink-install
+source install/setup.bash
+```
+
+### Verify the Controllers
+
+```bash
+ros2 control list_controllers
+ros2 action list
+```
+
+The joint-state broadcaster, arm controller, and gripper controller should be active.
+
+### Verify the Camera Pipeline
+
+```bash
+ros2 topic hz /camera/image_raw
+ros2 topic echo /camera/camera_info --once
+```
+
+### Verify Object Detection
+
+```bash
+ros2 topic echo /detections
+```
+
+The detector should report the red and blue cubes without treating the destination containers as cubes.
+
+### Verify MoveIt
+
+```bash
+ros2 service list | grep compute_ik
+ros2 service list | grep compute_fk
+```
+
+### Run the Complete System
+
+```bash
+ros2 launch braccio_yolo_sorting braccio_moveit_sorting.launch.py
+```
+
+A successful implementation should:
+
+1. Spawn the Braccio arm and sorting environment
+2. Publish camera images
+3. Activate the arm and gripper controllers
+4. Detect both coloured cubes
+5. Estimate stable world coordinates
+6. Obtain valid IK solutions
+7. Approach and grasp each cube
+8. Move it to the matching container
+9. Return to the scanning position after every attempt
+10. Finish at home and print a sorting summary
+
 
 
 
