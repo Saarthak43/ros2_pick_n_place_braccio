@@ -138,8 +138,21 @@ class BraccioMoveItSortingController(Node):
         self.named_positions = {
             'home':       [2.5,   2.8,   2.8,   2.8,   2.6],
             'scan':       [2.5,   2.3,   2.0,   3.2,   2.6],
-            'drop_red':   [3.28,  2.5,   3.8,   1.8,   2.6],
-            'drop_blue':  [1.72,  2.5,   3.8,   1.8,   2.6],
+            self.named_positions = {
+            'home':       [2.5,   2.8,   2.8,   2.8,   2.6],
+            'scan':       [2.5,   2.3,   2.0,   3.2,   2.6],
+            # TODO (Part 0 — calibration):
+            # Find the joint angles that place the gripper above each container.
+            # Use forward kinematics (ros2 service call /compute_fk) to verify.
+            # Command:
+            #   ros2 service call /compute_fk moveit_msgs/srv/GetPositionFK \
+            #     "{header: {frame_id: 'world'}, fk_link_names: ['tool_tip'], \
+            #      robot_state: {joint_state: {name: ['base_joint','shoulder_joint',
+            #      'elbow_joint','wrist_pitch_joint','wrist_roll_joint'],
+            #      position: [?, ?, ?, ?, ?]}}}"
+            # Fill in the five values below once you have verified them.
+            'drop_red':   [0.0,   0.0,   0.0,   0.0,   0.0],   # ← replace
+            'drop_blue':  [0.0,   0.0,   0.0,   0.0,   0.0],   # ← replace
         }
         self.gripper_open   = 3.85
         self.gripper_closed = 2.7
@@ -150,11 +163,6 @@ class BraccioMoveItSortingController(Node):
         self.is_sorting            = False
         self._sort_lock            = threading.Lock()
         self.last_ik_solution      = None
-
-        # BUG FIX B: position history buffer for median stabilisation.
-        # Accumulate last N world-position readings per colour before
-        # committing.  This prevents a single noisy frame from passing
-        # a wrong XY into IK right before the sort fires.
         self._pos_history: dict = {'red': [], 'blue': []}
         self._pos_history_len = 10   # median window (frames)
 
@@ -174,38 +182,39 @@ class BraccioMoveItSortingController(Node):
 
     def _pixel_to_world(self, u, v):
         """
-        Convert image pixel centroid (u=col, v=row) to world XY position.
+        TODO (Part 1 — Perception): Convert pixel centroid to world XY position.
 
-        Camera transform analysis (from braccio.urdf.xacro):
-          camera_joint      rpy = "0  pi/2  pi"
-          camera_optical    rpy = "-pi/2  0  -pi/2"
+        The camera looks straight down from world position
+        (self.cam_wx, self.cam_wy, self.cam_wz).
 
-        Combined, the optical frame axes in world frame are:
-          Camera Z (forward) = world  -Z   (looks straight down)
-          Camera X (right)   = world  +Y   (image columns → world +Y)
-          Camera Y (down)    = world  +X   (image rows    → world +X)
+        The camera's optical axes map to world axes as follows
+        (derived from camera_joint rpy="0 pi/2 pi" in the URDF):
+            image columns (u)  →  world Y
+            image rows    (v)  →  world X
 
-        So for a point on the flat surface at known world Z:
-            depth   = cam_wz - cube_z
-            world_x = cam_wx + (v - cy) * depth / fy   ← rows    → +X
-            world_y = cam_wy + (u - cx) * depth / fx   ← columns → +Y
+        Pinhole projection for a point on a flat surface at known world Z:
 
-        Verified against Gazebo ground truth:
-          cube at (0.18,  0.08) appears at pixel (458, 34) ✓
-          cube at (0.18, -0.08) appears at pixel (183, 34) ✓
+            depth   = self.cam_wz - self.cube_z       # metres between camera and surface
+            world_x = ???                              # function of v, self.cam_cy, depth, self.cam_fy
+            world_y = ???                              # function of u, self.cam_cx, depth, self.cam_fx
+
+        Hint: the standard pinhole back-projection formula is:
+            real_world_coord = focal_origin + (pixel - principal_point) * depth / focal_length
+
+        Args:
+            u (float): pixel column (x) of the bounding box centre
+            v (float): pixel row    (y) of the bounding box centre
+
+        Returns:
+            dict with keys 'x', 'y', 'z' — world coordinates in metres
         """
-        depth   = self.cam_wz - self.cube_z
-        world_x = self.cam_wx + (v - self.cam_cy) * depth / self.cam_fy
-        world_y = self.cam_wy + (u - self.cam_cx) * depth / self.cam_fx
-        return {'x': round(world_x, 4), 'y': round(world_y, 4), 'z': self.cube_z}
+# ── YOUR CODE HERE ──────────────────────────────────────────────────
+        raise NotImplementedError('_pixel_to_world() is not implemented yet')
+# ────────────────────────────────────────────────────────────────────
 
     def _detection_cb(self, msg):
         if self.is_sorting:
             return
-
-        # BUG FIX B: accumulate per-colour position history, then build
-        # detected_objects from the per-colour median position so that a
-        # single noisy frame cannot corrupt the IK target.
         seen_colors = set()
         for det in msg.detections:
             if not det.results:
@@ -310,68 +319,43 @@ class BraccioMoveItSortingController(Node):
 
         req.ik_request.pose_stamped   = ps
         req.ik_request.timeout.sec    = 5
-
-        # Seed: bias base_joint toward the target direction
-        from sensor_msgs.msg import JointState as JS
-        seed = JS()
-        seed.name = self.arm_joint_names
-        base_target = 2.5 + math.atan2(target['y'], target['x'])
-        # BUG FIX G: was clamped to [2.0, 3.0] which is far narrower than
-        # the URDF limit [0.05, 5.0].  That restricted IK exploration to a
-        # fraction of the real workspace and caused failures on wider poses.
-        base_target = max(0.5, min(4.5, base_target))
-        if self.last_ik_solution is not None:
-            seed.position = list(self.last_ik_solution)
-            seed.position[0] = base_target
-        else:
-            seed.position = [base_target, 2.7, 2.5, 1.4, 2.6]
-        req.ik_request.robot_state.joint_state = seed
-
-        self.get_logger().info(
-            f'IK target: x={target["x"]:.4f} y={target["y"]:.4f} z={target["z"]:.4f} | '
-            f'seed base={base_target:.3f}'
-        )
-
-        future = self.ik_client.call_async(req)
-        event  = threading.Event()
-        future.add_done_callback(lambda _f: event.set())
-        if not event.wait(timeout=20.0):
-            self.get_logger().warn('IK service call timed out')
-            return None
-
-        resp = future.result()
-        if resp is None or resp.error_code.val != 1:
-            code = resp.error_code.val if resp else 'no response'
-            self.get_logger().warn(f'IK failed (code {code})')
-            return None
-
-        js = resp.solution.joint_state
-        positions = []
-        for jn in self.arm_joint_names:
-            try:
-                positions.append(js.position[js.name.index(jn)])
-            except ValueError:
-                self.get_logger().error(f'Joint {jn} missing in IK solution')
-                return None
-
-        # Correct base_joint if IK returned the mirror solution
-        correct_base = 2.5 + math.atan2(target['y'], target['x'])
-        correct_base = max(0.5, min(4.5, correct_base))
-        if abs(positions[0] - correct_base) > 0.5:
-            positions[0] = correct_base
-
-        # Keep wrist_roll in a sane range
-        while positions[4] > 4.0:
-            positions[4] -= math.pi
-        while positions[4] < 1.0:
-            positions[4] += math.pi
-
-        self.get_logger().info(
-            f'IK solution: base={positions[0]:.3f} shoulder={positions[1]:.3f} '
-            f'elbow={positions[2]:.3f} wrist_pitch={positions[3]:.3f} '
-            f'wrist_roll={positions[4]:.3f}'
-        )
-        self.last_ik_solution = list(positions)
+        # TODO (Part 2 — Inverse Kinematics):
+        #
+        # Step A — Seed the IK solver with a good starting joint state.
+        #   TRAC-IK is a numerical solver: it searches from a seed configuration.
+        #   A good seed dramatically improves success rate and speed.
+        #
+        #   Recommended seed strategy for base_joint:
+        #     The base rotates around world Z. The angle toward the target is:
+        #       angle = math.atan2(target['y'], target['x'])
+        #     The Braccio's zero-heading offset means the joint value is:
+        #       base_target = 2.5 + angle
+        #     Clamp to the URDF joint limits [0.05, 5.0] with some margin.
+        #
+        #   For the remaining joints, either:
+        #     (a) use self.last_ik_solution if available (warm start), OR
+        #     (b) use a neutral default like [base_target, 2.7, 2.5, 1.4, 2.6]
+        #
+        #   Build a sensor_msgs/JointState, set .name = self.arm_joint_names
+        #   and .position = your seed list, then assign it to:
+        #     req.ik_request.robot_state.joint_state = seed
+        #
+        # Step B — Call the service asynchronously and wait for the result.
+        #   Use self.ik_client.call_async(req).
+        #   Use threading.Event() to block until the future completes.
+        #   Apply a timeout (recommended: 20 seconds).
+        #   Log a warning and return None on timeout.
+        #
+        # Step C — Validate and extract the solution.
+        #   Check resp.error_code.val == 1 (SUCCESS). Return None on failure.
+        #   Extract joint positions for self.arm_joint_names IN ORDER from
+        #     resp.solution.joint_state (match by name, not by index).
+        #   Store the result in self.last_ik_solution for warm-starting next call.
+        #   Return the list of 5 floats.
+        #
+        # ── YOUR CODE HERE ──────────────────────────────────────────────────
+        raise NotImplementedError('_compute_ik() is not implemented yet')
+        # ────────────────────────────────────────────────────────────────────
         return positions
 
     def _send_trajectory(self, client, joint_names, positions, duration_sec):
@@ -486,43 +470,39 @@ class BraccioMoveItSortingController(Node):
         return True
 
     def _sort_sequence(self, objects):
-      self._move_named('home')
-      self._move_named('scan')
+        """
+        TODO (Part 3 — Pick-and-Place Loop):
 
-      red = blue = 0
-      red_failed = blue_failed = 0
-      for obj in objects:
-         color = 'red' if 'red' in obj['class_id'] else 'blue'
-         attempt_idx = (red + red_failed + 1) if color == 'red' else (blue + blue_failed + 1)
+        Implement the full sorting sequence. The arm should:
+          1. Move to 'home', then 'scan' position (use self._move_named()).
+          2. For each object in `objects`:
+               - Each object is a dict:
+                   {
+                     'class_id': 'red_cube' or 'blue_cube',
+                     'position': {'x': float, 'y': float, 'z': float},
+                     'confidence': float
+                   }
+               - Determine the colour ('red' or 'blue').
+               - Call self._pick(obj, index) → returns True if successful.
+               - If pick succeeded, call self._place(color) → True if successful.
+               - If pick failed, log a warning and skip to the next object.
+               - After each object (success or fail), return to 'scan'.
+          3. Move back to 'home'.
+          4. Log a summary: how many red/blue succeeded and failed.
 
-         picked = self._pick(obj, attempt_idx)
-         placed = False
-         if picked:
-             placed = self._place(color)
-         else:
-             self.get_logger().warn(
-                 f'Pick FAILED for {color} cube #{attempt_idx} — skipping place'
-            )
+        Available helpers:
+          self._move_named(name)    — move to a named preset, returns bool
+          self._pick(obj, idx)      — full pick sequence, returns bool
+          self._place(color)        — drop in container, returns bool
+          self.get_logger().info()  — log a message
+          self.get_logger().warn()  — log a warning
 
-         if picked and placed:
-             if color == 'red':
-                 red += 1
-             else:
-                 blue += 1
-         else:
-             if color == 'red':
-                 red_failed += 1
-             else:
-                 blue_failed += 1
-
-         self._move_named('scan')
-
-      self._move_named('home')
-      self.get_logger().info(
-         f'Sorting complete — red: {red} succeeded / {red_failed} failed, '
-         f'blue: {blue} succeeded / {blue_failed} failed'
-      )
-
+        Args:
+            objects (list): list of detected object dicts (see above)
+        """
+        # ── YOUR CODE HERE ──────────────────────────────────────────────────
+        raise NotImplementedError('_sort_sequence() is not implemented yet')
+        # ────────────────────────────────────────────────────────────────────
 def main(args=None):
     rclpy.init(args=args)
     node = BraccioMoveItSortingController()
