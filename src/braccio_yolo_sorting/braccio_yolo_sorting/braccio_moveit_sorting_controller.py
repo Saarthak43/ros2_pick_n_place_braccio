@@ -138,9 +138,6 @@ class BraccioMoveItSortingController(Node):
         self.named_positions = {
             'home':       [2.5,   2.8,   2.8,   2.8,   2.6],
             'scan':       [2.5,   2.3,   2.0,   3.2,   2.6],
-            self.named_positions = {
-            'home':       [2.5,   2.8,   2.8,   2.8,   2.6],
-            'scan':       [2.5,   2.3,   2.0,   3.2,   2.6],
             # TODO (Part 0 — calibration):
             # Find the joint angles that place the gripper above each container.
             # Use forward kinematics (ros2 service call /compute_fk) to verify.
