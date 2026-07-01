@@ -53,7 +53,7 @@
     </model>
     <model name="cube_table">
       <static>true</static>
-      <pose>0.05 -0.15 0.255 0 0 0</pose>
+      <pose>0.20 0.00 0.255 0 0 0</pose>
       <link name="link">
         <collision name="collision">
           <geometry><box><size>0.10 0.18 0.01</size></box></geometry>
@@ -69,7 +69,7 @@
       </link>
     </model>
     <model name="red_cube_1">
-      <pose>0.05 -0.10 0.27 0 0 0</pose>
+      <pose>0.20 0.08 0.27 0 0 0</pose>
       <link name="link">
         <inertial>
           <mass>0.05</mass>
@@ -91,7 +91,7 @@
       </link>
     </model>
     <model name="blue_cube_2">
-      <pose>0.05 -0.20 0.27 0 0 0</pose>
+      <pose>0.05 -0.08 0.27 0 0 0</pose>
       <link name="link">
         <inertial>
           <mass>0.05</mass>
