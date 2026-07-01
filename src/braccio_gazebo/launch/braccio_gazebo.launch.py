@@ -127,56 +127,80 @@ def generate_launch_description():
         ],
     )
 
-    # /clock + /camera_info via parameter_bridge.
-    param_bridge = Node(
-        package='ros_gz_bridge',
-        executable='parameter_bridge',
-        name='param_bridge',
-        output='screen',
-        arguments=[
-            '/clock@rosgraph_msgs/msg/Clock[gz.msgs.Clock',
-            '/camera_info@sensor_msgs/msg/CameraInfo[gz.msgs.CameraInfo',
-        ],
-        remappings=[
-            ('/camera_info', '/camera/camera_info'),
-        ],
-        parameters=[{'use_sim_time': use_sim_time}],
-    )
-
-    # Image stream via ros_gz_image (uses image_transport, sensor_data QoS).
-    image_bridge = Node(
-        package='ros_gz_image',
-        executable='image_bridge',
-        name='image_bridge',
-        output='screen',
-        arguments=['/camera'],
-        remappings=[
-            ('/camera', '/camera/image_raw'),
-        ],
-        parameters=[{'use_sim_time': use_sim_time}],
-    )
-
-    load_jsb = ExecuteProcess(
-        cmd=['ros2', 'control', 'load_controller',
-             '--set-state', 'active', 'joint_state_broadcaster'],
-        output='screen',
-    )
-    load_arm = ExecuteProcess(
-        cmd=['ros2', 'control', 'load_controller',
-             '--set-state', 'active', 'arm_controller'],
-        output='screen',
-    )
-    load_gripper = ExecuteProcess(
-        cmd=['ros2', 'control', 'load_controller',
-             '--set-state', 'active', 'gripper_controller'],
-        output='screen',
-    )
-
+  ```python
     from launch.actions import TimerAction as _TimerAction
-    after_spawn = _TimerAction(period=15.0, actions=[load_jsb])
-    after_jsb = _TimerAction(period=18.0, actions=[load_arm])
-    after_arm = _TimerAction(period=21.0, actions=[load_gripper])
 
+    # ================================================================
+    # TODO (Part 5 — Gazebo/ROS Integration):
+    # Connect the Gazebo simulation to the ROS 2 perception and
+    # control stack.
+    #
+    # Step A — Parameter bridge
+    # Create a ros_gz_bridge parameter_bridge node that bridges:
+    #   - Gazebo /clock to rosgraph_msgs/msg/Clock
+    #   - Gazebo /camera_info to sensor_msgs/msg/CameraInfo
+    #
+    # Remap:
+    #   /camera_info  →  /camera/camera_info
+    #
+    # Step B — Image bridge
+    # Create a ros_gz_image image_bridge node for the Gazebo camera
+    # topic and remap:
+    #   /camera  →  /camera/image_raw
+    #
+    # Step C — Controller activation
+    # Create ExecuteProcess actions that activate:
+    #   1. joint_state_broadcaster
+    #   2. arm_controller
+    #   3. gripper_controller
+    #
+    # Step D — Startup order
+    # Wrap the three controller-loading actions in delayed launch
+    # actions so controller_manager has time to become available.
+    #
+    # Required variable names:
+    #   param_bridge
+    #   image_bridge
+    #   load_jsb
+    #   load_arm
+    #   load_gripper
+    #   after_spawn
+    #   after_jsb
+    #   after_arm
+    #
+    # These names are already referenced by the LaunchDescription
+    # returned at the bottom of this file.
+    # ================================================================
+
+    # ── YOUR CODE HERE ──────────────────────────────────────────────
+    raise NotImplementedError(
+        'Gazebo bridges and controller activation are not implemented yet'
+    )
+    # ─────────────────────────────────────────────────────────────────
+```
+
+## Keep unchanged
+
+Do not remove or modify:
+
+- `robot_state_publisher`
+- `world_to_base`
+- `gazebo`
+- `spawn_robot`
+- the RViz node
+- the final `LaunchDescription` list
+
+## Student completion condition
+
+```bash
+ros2 topic hz /camera/image_raw
+ros2 topic echo /camera/camera_info --once
+ros2 control list_controllers
+```
+
+must confirm that the camera and controllers are available.
+
+---
     rviz = Node(
         package='rviz2',
         executable='rviz2',
